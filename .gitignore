@@ -4,14 +4,18 @@
 # Log file
 *.log
 
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# IDEA & Gradle
+/.gradle
+/.idea
+/out
+/build
+*.iml
+*.ipr
+*.iws
 
 # Package Files #
 *.jar
+!gradle-wrapper.jar
 *.war
 *.nar
 *.ear
