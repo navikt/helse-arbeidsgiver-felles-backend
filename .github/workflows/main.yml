@@ -1,9 +1,9 @@
-name: Merge til master
+name: Merge til main
 
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
