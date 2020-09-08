@@ -17,7 +17,7 @@ val mockKVersion = "1.9.3"
 
 
 // Versjonering av artifakten
-val dateFormat = SimpleDateFormat("yyyy.MM.dd-hh-mm")
+val dateFormat = SimpleDateFormat("yyyy.MM.dd-HH-mm")
 dateFormat.timeZone = TimeZone.getTimeZone(ZoneId.of("Europe/Oslo"))
 val gitHash = System.getenv("GITHUB_SHA")?.takeLast(5) ?: "local-build"
 group = "no.nav.helsearbeidsgiver"
