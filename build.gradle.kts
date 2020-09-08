@@ -1,4 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.util.*
+
 
 val logback_version = "1.2.1"
 val logback_contrib_version = "0.1.5"
@@ -16,10 +20,20 @@ val jaxwsVersion = "2.3.1"
 val jaxwsToolsVersion = "2.3.1"
 
 
+val dateFormat = SimpleDateFormat("yyyy.MM.dd-hh-mm")
+dateFormat.timeZone = TimeZone.getTimeZone(ZoneId.of("Europe/Oslo"))
+val gitHash = System.getenv("GITHUB_SHA")?.takeLast(5) ?: "local-build"
+val javaTimeAdapterVersion = "1.1.3"
+group = "no.nav.sykepenger.kontrakter"
+version = "${dateFormat.format(Date())}-$gitHash"
+version = "0.1"
+
+
 plugins {
     kotlin("jvm") version "1.4.0"
     id("org.sonarqube") version "2.8"
     id("com.github.ben-manes.versions") version "0.27.0"
+    id("maven-publish")
     jacoco
 }
 
@@ -138,4 +152,39 @@ task<Test>("slowTests") {
 
 tasks.withType<Wrapper> {
     gradleVersion = "6.0.1"
+}
+
+configure<PublishingExtension> {
+    repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/navikt/helse-arbeidsgiver-felles-backend")
+            credentials {
+                username = System.getenv("GITHUB_USERNAME")
+                password = System.getenv("GITHUB_PASSWORD")
+            }
+        }
+    }
+    publications {
+        create<MavenPublication>("mavenJava") {
+
+            pom {
+                name.set("inntektsmelding-kontrakt")
+                description.set("Felleskomponenter for backend for team arbeidsgiver i PO Helse")
+                url.set("https://github.com/navikt/helse-arbeidsgiver-felles-backend")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:https://github.com/navikt/helse-arbeidsgiver-felles-backend")
+                    developerConnection.set("scm:git:https://github.com/navikt/helse-arbeidsgiver-felles-backend")
+                    url.set("https://github.com/navikt/helse-arbeidsgiver-felles-backend")
+                }
+            }
+            from(components["java"])
+        }
+    }
 }
