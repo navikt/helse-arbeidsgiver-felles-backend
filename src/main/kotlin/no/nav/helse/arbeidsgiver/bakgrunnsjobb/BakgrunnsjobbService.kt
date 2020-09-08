@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 class BakgrunnsjobbService(
         val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
-        val delayMillis: Long,
+        val delayMillis: Long
 ) {
 
     private val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()

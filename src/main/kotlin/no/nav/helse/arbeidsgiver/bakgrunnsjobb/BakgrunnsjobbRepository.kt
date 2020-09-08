@@ -122,10 +122,10 @@ where jobb_id = ?::uuid
         }
     }
 
-    override fun delete(id: UUID) {
+    override fun delete(uuid: UUID) {
         dataSource.connection.use {
             it.prepareStatement(deleteStatement).apply {
-                setString(1, id.toString())
+                setString(1, uuid.toString())
             }.executeUpdate()
         }
     }
