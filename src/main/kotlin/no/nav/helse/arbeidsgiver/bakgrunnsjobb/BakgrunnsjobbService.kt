@@ -9,23 +9,26 @@ import java.time.LocalDateTime
 
 class BakgrunnsjobbService(
         val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
-        val delayMillis: Long
+        val delayMillis: Long,
+        val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) {
 
     private val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
     private val logger: org.slf4j.Logger = LoggerFactory.getLogger("BakgrunnsjobbService")
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     init {
         sjekkOgProsseserVentendeBakgrunnsjobber()
     }
 
+    fun leggTilBakgrunnsjobbProsesserer(type: String, prosesserer: BakgrunnsjobbProsesserer) {
+        prossesserere[type] = prosesserer
+    }
 
     fun sjekkOgProsseserVentendeBakgrunnsjobber() {
         coroutineScope.launch {
             finnVentende()
                     .also { logger.info("Fant ${it.size} bakgrunnsjobber å kjøre") }
-                    .forEach{prosesser(it)}
+                    .forEach { prosesser(it) }
             delay(delayMillis)
             sjekkOgProsseserVentendeBakgrunnsjobber()
         }

@@ -1,6 +1,10 @@
-package no.nav.helse.arbeidsgiver.bakgrunnsjobb
+package no.nav.helse.slowtests.arbeidsgiver.bakgrunnsjobb
 
 import com.zaxxer.hikari.HikariDataSource
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbStatus
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.createLocalHikariConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
