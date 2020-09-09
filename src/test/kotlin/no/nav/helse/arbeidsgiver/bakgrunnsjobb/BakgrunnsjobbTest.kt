@@ -1,9 +1,12 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
 import com.zaxxer.hikari.HikariDataSource
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
+import java.util.*
 
 
 internal class PostgresBakgrunnsjobbRepositoryTest {
@@ -14,15 +17,15 @@ internal class PostgresBakgrunnsjobbRepositoryTest {
 
     @BeforeEach
     internal fun setUp() {
-        // dataSource = HikariDataSource(createLocalHikariConfig())
-        //repo = PostgresBakgrunnsjobbRepository(dataSource)
+         dataSource = HikariDataSource(createLocalHikariConfig())
+        repo = PostgresBakgrunnsjobbRepository(dataSource)
     }
 
     @AfterEach
     internal fun cleanUp() {
-        //repo.deleteAll()
+        repo.deleteAll()
     }
-/*
+
     @Test
     fun `Lagre Les Oppdater Slett`() {
         val uuid = UUID.randomUUID()
@@ -90,7 +93,7 @@ internal class PostgresBakgrunnsjobbRepositoryTest {
         assertThat(jobs).hasSize(1)
         assertThat(jobs.first().behandlet).isNull()
 
-    }*/
+    }
 
 
 }
