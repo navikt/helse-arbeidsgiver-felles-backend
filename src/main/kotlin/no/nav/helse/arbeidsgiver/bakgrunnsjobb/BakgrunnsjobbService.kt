@@ -29,7 +29,8 @@ class BakgrunnsjobbService(
             finnVentende()
                     .also { logger.info("Fant ${it.size} bakgrunnsjobber å kjøre") }
                     .forEach { prosesser(it) }
-            delay(delayMillis)
+            if (finnVentende().isEmpty())
+                delay(delayMillis)
             sjekkOgProsseserVentendeBakgrunnsjobber()
         }
     }
