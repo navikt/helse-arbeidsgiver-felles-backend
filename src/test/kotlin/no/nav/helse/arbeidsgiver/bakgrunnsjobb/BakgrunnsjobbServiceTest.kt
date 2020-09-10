@@ -12,11 +12,14 @@ internal class BakgrunnsjobbServiceTest {
     val testCoroutineScope = TestCoroutineScope()
     val service = BakgrunnsjobbService(repoMock, 1, testCoroutineScope)
 
+    val now = LocalDateTime.now()
+
 
     @BeforeEach
     internal fun setup() {
         service.leggTilBakgrunnsjobbProsesserer("test", testProsesserer())
         repoMock.deleteAll()
+        service.startAsync(true)
     }
 
     @Test
@@ -40,19 +43,15 @@ internal class BakgrunnsjobbServiceTest {
     fun `sett jobb til stoppet hvis feiler for mye `() {
         val testJobb = Bakgrunnsjobb(
                 type = "test",
-                opprettet = LocalDateTime.now().minusHours(1),
+                opprettet = now.minusHours(1),
                 maksAntallForsoek = 3,
                 data = "fail"
         )
         repoMock.save(testJobb)
         testCoroutineScope.advanceTimeBy(1)
-        assertThat(repoMock.findByKjoeretidBeforeAndStatusIn(LocalDateTime.now(), setOf(BakgrunnsjobbStatus.FEILET)))
-                .hasSize(1)
 
-        testCoroutineScope.advanceTimeBy(3)
-        assertThat(repoMock.findByKjoeretidBeforeAndStatusIn(LocalDateTime.now(), setOf(BakgrunnsjobbStatus.FEILET)))
-                .hasSize(0)
-        assertThat(repoMock.findByKjoeretidBeforeAndStatusIn(LocalDateTime.now(), setOf(BakgrunnsjobbStatus.STOPPET)))
+        //Den går rett til stoppet i denne testen
+        assertThat(repoMock.findByKjoeretidBeforeAndStatusIn(now.plusMinutes(1), setOf(BakgrunnsjobbStatus.STOPPET)))
                 .hasSize(1)
     }
 }

@@ -2,37 +2,27 @@ package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
+import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import java.time.LocalDateTime
 
 class BakgrunnsjobbService(
         val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
         val delayMillis: Long,
         val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
-) {
+) : RecurringJob(coroutineScope, delayMillis) {
 
     private val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
-    private val logger: org.slf4j.Logger = LoggerFactory.getLogger("BakgrunnsjobbService")
-
-    init {
-        sjekkOgProsseserVentendeBakgrunnsjobber()
-    }
 
     fun leggTilBakgrunnsjobbProsesserer(type: String, prosesserer: BakgrunnsjobbProsesserer) {
         prossesserere[type] = prosesserer
     }
 
-    fun sjekkOgProsseserVentendeBakgrunnsjobber() {
-        coroutineScope.launch {
+    override fun doJob() {
+        do {
             finnVentende()
                     .also { logger.info("Fant ${it.size} bakgrunnsjobber å kjøre") }
                     .forEach { prosesser(it) }
-            if (finnVentende().isEmpty())
-                delay(delayMillis)
-            sjekkOgProsseserVentendeBakgrunnsjobber()
-        }
+        } while (finnVentende().isNotEmpty())
     }
 
     fun prosesser(jobb: Bakgrunnsjobb) {
@@ -62,7 +52,6 @@ class BakgrunnsjobbService(
     fun finnVentende(): List<Bakgrunnsjobb> =
             bakgrunnsjobbRepository.findByKjoeretidBeforeAndStatusIn(LocalDateTime.now(), setOf(BakgrunnsjobbStatus.OPPRETTET, BakgrunnsjobbStatus.FEILET))
 }
-
 
 /**
  * Interface for en klasse som kan prosessere en bakgrunnsjobbstype
