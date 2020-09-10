@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 class BakgrunnsjobbService(
         val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
-        val delayMillis: Long,
+        val delayMillis: Long = 30 * 1000L,
         val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) : RecurringJob(coroutineScope, delayMillis) {
 
