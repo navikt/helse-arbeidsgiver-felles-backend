@@ -19,10 +19,11 @@ class BakgrunnsjobbService(
 
     override fun doJob() {
         do {
-            finnVentende()
+            val wasEmpty = finnVentende()
                     .also { logger.info("Fant ${it.size} bakgrunnsjobber å kjøre") }
-                    .forEach { prosesser(it) }
-        } while (finnVentende().isNotEmpty())
+                    .onEach { prosesser(it) }
+                    .isEmpty()
+        } while (!wasEmpty)
     }
 
     fun prosesser(jobb: Bakgrunnsjobb) {
