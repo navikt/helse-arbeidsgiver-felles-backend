@@ -11,7 +11,7 @@ abstract class RecurringJob(
 
     protected val logger = LoggerFactory.getLogger(this::class.java)
 
-    private var isRunning = false
+    protected var isRunning = false
 
     fun startAsync(retryOnFail: Boolean = false) {
         logger.debug("Starter opp")
