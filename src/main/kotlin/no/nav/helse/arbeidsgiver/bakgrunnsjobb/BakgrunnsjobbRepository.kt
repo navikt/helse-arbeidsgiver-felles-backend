@@ -1,5 +1,6 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
+import java.sql.Connection
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.*
@@ -7,17 +8,23 @@ import javax.sql.DataSource
 
 interface BakgrunnsjobbRepository {
     fun save(bakgrunnsjobb: Bakgrunnsjobb)
+    fun save(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection)
     fun findByKjoeretidBeforeAndStatusIn(timeout: LocalDateTime, tilstander: Set<BakgrunnsjobbStatus>): List<Bakgrunnsjobb>
     fun delete(uuid: UUID)
     fun deleteAll()
     fun update(bakgrunnsjobb: Bakgrunnsjobb)
+    fun update(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection)
 }
 
 class MockBakgrunnsjobbRepository : BakgrunnsjobbRepository {
 
-    private val jobs =  mutableListOf<Bakgrunnsjobb>()
+    private val jobs = mutableListOf<Bakgrunnsjobb>()
 
     override fun save(bakgrunnsjobb: Bakgrunnsjobb) {
+        jobs.add(bakgrunnsjobb)
+    }
+
+    override fun save(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection) {
         jobs.add(bakgrunnsjobb)
     }
 
@@ -27,7 +34,7 @@ class MockBakgrunnsjobbRepository : BakgrunnsjobbRepository {
     }
 
     override fun delete(uuid: UUID) {
-        jobs.removeIf{ it.uuid == uuid}
+        jobs.removeIf { it.uuid == uuid }
     }
 
     override fun deleteAll() {
@@ -37,6 +44,10 @@ class MockBakgrunnsjobbRepository : BakgrunnsjobbRepository {
     override fun update(bakgrunnsjobb: Bakgrunnsjobb) {
         delete(bakgrunnsjobb.uuid)
         save(bakgrunnsjobb)
+    }
+
+    override fun update(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection) {
+        update(bakgrunnsjobb)
     }
 }
 
@@ -68,7 +79,11 @@ where jobb_id = ?::uuid
     private val deleteAllStatement = "DELETE FROM $tableName"
 
     override fun save(bakgrunnsjobb: Bakgrunnsjobb) {
-        dataSource.connection.use {
+        save(bakgrunnsjobb, dataSource.connection)
+    }
+
+    override fun save(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection) {
+        connection.use {
             it.prepareStatement(insertStatement).apply {
                 setString(1, bakgrunnsjobb.uuid.toString())
                 setString(2, bakgrunnsjobb.type)
@@ -84,7 +99,11 @@ where jobb_id = ?::uuid
     }
 
     override fun update(bakgrunnsjobb: Bakgrunnsjobb) {
-        dataSource.connection.use {
+        update(bakgrunnsjobb, dataSource.connection)
+    }
+
+    override fun update(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection) {
+        connection.use {
             it.prepareStatement(updateStatement).apply {
                 setTimestamp(1, bakgrunnsjobb.behandlet?.let(Timestamp::valueOf))
                 setString(2, bakgrunnsjobb.status.toString())
