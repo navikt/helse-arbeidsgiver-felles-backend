@@ -10,14 +10,21 @@ import java.time.Instant
 import java.util.*
 
 
+interface RestStsClient {
+    fun getOidcToken(): String
+}
+
 /**
- * STS-klient for å hente access token for bruk i andre tjenester, feks joark
- * Cacher tokenet til det 5 minutter unna å gå ut på dato.
+ * STS-klient for å hente access token for bruk i andre tjenester, feks joark, PDL eller Oppgave.
+ *
+ * Det returnerte tokenet representerer den angitte servicebrukeren (username, password)
+ *
+ * Cacher tokenet til det 5 minutter unna å bli ugyldig.
  */
-class RestStsClient(username: String,
-                    password: String,
-                    stsEndpoint: String,
-                    private val httpClient: HttpClient) {
+class RestStsClientImpl(username: String,
+                        password: String,
+                        stsEndpoint: String,
+                        private val httpClient: HttpClient) : RestStsClient {
 
     private val endpointURI: String
     private val basicAuth: String
@@ -31,7 +38,7 @@ class RestStsClient(username: String,
     }
 
 
-    fun getOidcToken(): String {
+    override fun getOidcToken(): String {
         if (isExpired(currentToken, Date.from(Instant.now().plusSeconds(300)))) {
             log.debug("OIDC Token is expired, getting a new one from the STS")
             currentToken = requestToken()
@@ -75,7 +82,7 @@ class RestStsClient(username: String,
     )
 
     companion object {
-        private val log = LoggerFactory.getLogger(RestStsClient::class.java)
+        private val log = LoggerFactory.getLogger(RestStsClientImpl::class.java)
     }
 }
 

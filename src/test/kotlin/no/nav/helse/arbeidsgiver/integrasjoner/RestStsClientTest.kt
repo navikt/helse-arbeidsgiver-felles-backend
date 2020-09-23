@@ -47,7 +47,7 @@ class RestStsClientTests {
 
     @Test
     internal fun `valid answer from STS returns valid token, second call gives cached answer`() {
-        val stsClient = RestStsClient("username", "password", successUrl, client)
+        val stsClient = RestStsClientImpl("username", "password", successUrl, client)
         val token = stsClient.getOidcToken()
         assertThat(token).isNotNull()
 
@@ -58,7 +58,7 @@ class RestStsClientTests {
     @Test
     internal fun `Error response (5xx) from STS throws exception`() {
         assertThrows(ServerResponseException::class.java) {
-            val stsClient = RestStsClient("username", "password", timeoutUrl, client)
+            val stsClient = RestStsClientImpl("username", "password", timeoutUrl, client)
         }
     }
 }
