@@ -83,19 +83,17 @@ where jobb_id = ?::uuid
     }
 
     override fun save(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection) {
-        connection.use {
-            it.prepareStatement(insertStatement).apply {
-                setString(1, bakgrunnsjobb.uuid.toString())
-                setString(2, bakgrunnsjobb.type)
-                setTimestamp(3, bakgrunnsjobb.behandlet?.let(Timestamp::valueOf))
-                setTimestamp(4, Timestamp.valueOf(bakgrunnsjobb.opprettet))
-                setString(5, bakgrunnsjobb.status.toString())
-                setTimestamp(6, Timestamp.valueOf(bakgrunnsjobb.kjoeretid))
-                setInt(7, bakgrunnsjobb.forsoek)
-                setInt(8, bakgrunnsjobb.maksAntallForsoek)
-                setString(9, bakgrunnsjobb.data)
-            }.executeUpdate()
-        }
+        connection.prepareStatement(insertStatement).apply {
+            setString(1, bakgrunnsjobb.uuid.toString())
+            setString(2, bakgrunnsjobb.type)
+            setTimestamp(3, bakgrunnsjobb.behandlet?.let(Timestamp::valueOf))
+            setTimestamp(4, Timestamp.valueOf(bakgrunnsjobb.opprettet))
+            setString(5, bakgrunnsjobb.status.toString())
+            setTimestamp(6, Timestamp.valueOf(bakgrunnsjobb.kjoeretid))
+            setInt(7, bakgrunnsjobb.forsoek)
+            setInt(8, bakgrunnsjobb.maksAntallForsoek)
+            setString(9, bakgrunnsjobb.data)
+        }.executeUpdate()
     }
 
     override fun update(bakgrunnsjobb: Bakgrunnsjobb) {
@@ -103,16 +101,14 @@ where jobb_id = ?::uuid
     }
 
     override fun update(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection) {
-        connection.use {
-            it.prepareStatement(updateStatement).apply {
-                setTimestamp(1, bakgrunnsjobb.behandlet?.let(Timestamp::valueOf))
-                setString(2, bakgrunnsjobb.status.toString())
-                setTimestamp(3, Timestamp.valueOf(bakgrunnsjobb.kjoeretid))
-                setInt(4, bakgrunnsjobb.forsoek)
-                setString(5, bakgrunnsjobb.data)
-                setString(6, bakgrunnsjobb.uuid.toString())
-            }.executeUpdate()
-        }
+        connection.prepareStatement(updateStatement).apply {
+            setTimestamp(1, bakgrunnsjobb.behandlet?.let(Timestamp::valueOf))
+            setString(2, bakgrunnsjobb.status.toString())
+            setTimestamp(3, Timestamp.valueOf(bakgrunnsjobb.kjoeretid))
+            setInt(4, bakgrunnsjobb.forsoek)
+            setString(5, bakgrunnsjobb.data)
+            setString(6, bakgrunnsjobb.uuid.toString())
+        }.executeUpdate()
     }
 
     override fun findByKjoeretidBeforeAndStatusIn(timeout: LocalDateTime, tilstander: Set<BakgrunnsjobbStatus>): List<Bakgrunnsjobb> {
