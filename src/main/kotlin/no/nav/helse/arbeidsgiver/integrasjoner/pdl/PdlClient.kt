@@ -13,6 +13,15 @@ interface PdlClient {
     fun person(ident: String): PdlPerson?
 }
 
+/**
+ * Enkel GraphQL-klient for PDL, ment for å hente ut navn fra FNR.
+ *
+ * Authorisasjon gjøres via den gitte STS-klienten, og servicebrukeren som er angitt i STS-klienten må være i
+ * i AD-gruppen 0000-GA-TEMA_SYK som dokumentert her
+ * https://navikt.github.io/pdl/index-intern.html#_konsumentroller_basert_p%C3%A5_tema
+ *
+ * Klienten vil alltid gi PDL-Temaet 'SYK', så om du trenger et annet tema må du endre denne klienten.
+ */
 class PdlClientImpl(
         private val pdlUrl: String,
         private val stsClient: RestStsClient,
