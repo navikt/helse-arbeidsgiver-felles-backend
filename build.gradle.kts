@@ -34,7 +34,6 @@ plugins {
     jacoco
 }
 
-
 sonarqube {
     properties {
         property("sonar.projectKey", "navikt_helse-arbeidsgiver-felles-backend")
@@ -42,6 +41,14 @@ sonarqube {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
         property("sonar.exclusions", "**Mock**,**/App**")
+    }
+}
+
+tasks.jacocoTestReport {
+    executionData("build/jacoco/test.exec", "build/jacoco/slowTests.exec")
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = true
     }
 }
 
