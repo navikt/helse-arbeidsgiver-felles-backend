@@ -17,6 +17,7 @@ import java.time.LocalDate
 
 internal class DokarkivKlientImplTest{
     val validResponse = "dokarkiv-mock-data/dokarkiv-success-response.json".loadFromResources()
+    val ikkeFerdigstiltResponse = "dokarkiv-mock-data/dokarkiv-ikke-ferdigstilt-response.json".loadFromResources()
     val errorResponse = "dokarkiv-mock-data/dokarkiv-error-response.json".loadFromResources()
 
     val mockStsClient = mockk<RestStsClient>(relaxed = true)
@@ -36,9 +37,9 @@ internal class DokarkivKlientImplTest{
                         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
                         respond(validResponse, headers = responseHeaders)
                     }
-                    body.contains("ugyldig kanal") -> {
+                    body.contains("ugyldig for ferdigstillelse") -> {
                         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-                        respond(errorResponse, headers = responseHeaders)
+                        respond(ikkeFerdigstiltResponse, headers = responseHeaders)
                     }
                     body.contains(badRequest) -> {
                         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
@@ -91,9 +92,9 @@ internal class DokarkivKlientImplTest{
 
 
     @Test
-    internal fun `Kaster FerdigstillingFeiletException ved feilrespons fra når man ville ferdigstille`() {
+    internal fun `Kaster FerdigstillingFeiletException ved 200 OK men ikke ferdistilt når man ville ferdigstille`() {
         val exception = assertThrows<DokarkivKlientImpl.FerdigstillingFeiletException>{
-            dokarkivKlient.journalførDokument(request.copy(kanal = "ugyldig kanal"), true, "call-id")
+            dokarkivKlient.journalførDokument(request.copy(kanal = "ugyldig for ferdigstillelse"), true, "call-id")
         }
 
         assertThat(exception.journalpostId).isGreaterThan("0")
