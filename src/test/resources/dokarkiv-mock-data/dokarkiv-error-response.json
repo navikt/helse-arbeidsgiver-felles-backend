@@ -1,0 +1,13 @@
+{
+  "journalpostId": 0,
+  "journalpostFerdigstilt": false,
+  "journalStatus": "J",
+  "melding": null,
+  "dokumenter": [
+    {
+      "brevkode": "test_brevkode",
+      "dokumentInfoId": 12332524,
+      "tittel": "Test tittel"
+    }
+  ]
+}
