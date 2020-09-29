@@ -34,6 +34,25 @@ plugins {
     jacoco
 }
 
+sonarqube {
+    properties {
+        property("sonar.projectKey", "navikt_helse-arbeidsgiver-felles-backend")
+        property("sonar.organization", "navit")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.login", System.getenv("SONAR_TOKEN"))
+        property("sonar.exclusions", "**Mock**,**/App**")
+    }
+}
+
+tasks.jacocoTestReport {
+    executionData("build/jacoco/test.exec", "build/jacoco/slowTests.exec")
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = true
+    }
+}
+
+
 buildscript {
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
