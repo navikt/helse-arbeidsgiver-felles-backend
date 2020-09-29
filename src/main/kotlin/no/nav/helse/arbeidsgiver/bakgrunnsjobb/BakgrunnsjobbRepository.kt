@@ -79,7 +79,9 @@ where jobb_id = ?::uuid
     private val deleteAllStatement = "DELETE FROM $tableName"
 
     override fun save(bakgrunnsjobb: Bakgrunnsjobb) {
-        save(bakgrunnsjobb, dataSource.connection)
+        dataSource.connection.use {
+            save(bakgrunnsjobb, it)
+        }
     }
 
     override fun save(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection) {
@@ -97,7 +99,9 @@ where jobb_id = ?::uuid
     }
 
     override fun update(bakgrunnsjobb: Bakgrunnsjobb) {
-        update(bakgrunnsjobb, dataSource.connection)
+        dataSource.connection.use {
+            update(bakgrunnsjobb, it)
+        }
     }
 
     override fun update(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection) {
