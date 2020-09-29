@@ -76,6 +76,7 @@ internal class DokarkivKlientImplTest{
                             fysiskDokument = "base64EncodedDocument"
                     ))
             )),
+            eksternReferanseId = "ref",
             kanal = "ALTINN",
             journalposttype = Journalposttype.UTGAAENDE,
             datoMottatt = LocalDate.now()
