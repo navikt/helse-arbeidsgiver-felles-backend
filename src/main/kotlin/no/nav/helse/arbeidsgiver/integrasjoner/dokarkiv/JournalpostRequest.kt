@@ -33,6 +33,11 @@ data class JournalpostRequest(
          */
         val kanal: String,
 
+        /**
+         * Unik id for forsendelsen som kan brukes til sporing gjennom verdikjeden.
+         */
+        val eksternReferanseId: String,
+
         val dokumenter: List<Dokument>,
         val sak: Sak = Sak.GENERELL,
         val datoMottatt: LocalDate
