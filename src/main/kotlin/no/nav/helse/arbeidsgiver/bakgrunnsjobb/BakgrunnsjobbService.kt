@@ -8,7 +8,8 @@ import java.time.LocalDateTime
 class BakgrunnsjobbService(
         val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
         val delayMillis: Long = 30 * 1000L,
-        val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+        val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+        val bakgrunnsvarsler: Bakgrunnsvarsler = TomVarsler()
 ) : RecurringJob(coroutineScope, delayMillis) {
 
     private val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
@@ -41,6 +42,7 @@ class BakgrunnsjobbService(
             jobb.status = if (jobb.forsoek >= jobb.maksAntallForsoek) BakgrunnsjobbStatus.STOPPET else BakgrunnsjobbStatus.FEILET
             if (jobb.status == BakgrunnsjobbStatus.STOPPET) {
                 logger.error("Jobb ${jobb.uuid} feilet permanent", ex)
+                bakgrunnsvarsler.rapporterPermanentFeiletJobb()
             } else {
                 logger.error("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}", ex)
             }
