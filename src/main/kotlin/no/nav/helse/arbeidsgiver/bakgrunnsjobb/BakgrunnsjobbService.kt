@@ -1,7 +1,10 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
+import io.ktor.client.features.*
+import io.ktor.utils.io.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import java.time.LocalDateTime
 
@@ -39,6 +42,8 @@ class BakgrunnsjobbService(
             prossessorForType.prosesser(jobb.data)
             jobb.status = BakgrunnsjobbStatus.OK
         } catch (ex: Exception) {
+            tryLogResponseBody(ex)
+
             jobb.status = if (jobb.forsoek >= jobb.maksAntallForsoek) BakgrunnsjobbStatus.STOPPET else BakgrunnsjobbStatus.FEILET
             if (jobb.status == BakgrunnsjobbStatus.STOPPET) {
                 logger.error("Jobb ${jobb.uuid} feilet permanent", ex)
@@ -51,6 +56,16 @@ class BakgrunnsjobbService(
         }
     }
 
+    private fun tryLogResponseBody(jobException: Exception) {
+        if ( jobException is ResponseException) {
+            try {
+                val responseBody = runBlocking { jobException.response?.content?.readUTF8Line() }
+                logger.error("Response body: $responseBody")
+            } catch (readEx: Exception) {
+                logger.debug("Kunne ikke lese responsen fra feilet HTTP-kall i jobben")
+            }
+        }
+    }
 
     fun finnVentende(): List<Bakgrunnsjobb> =
             bakgrunnsjobbRepository.findByKjoeretidBeforeAndStatusIn(LocalDateTime.now(), setOf(BakgrunnsjobbStatus.OPPRETTET, BakgrunnsjobbStatus.FEILET))
