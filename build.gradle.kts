@@ -14,7 +14,7 @@ val vaultJdbcVersion = "1.3.1"
 val junitJupiterVersion = "5.5.0-RC2"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
-val ktorVersion = "1.4.0"
+val ktorVersion = "1.4.1"
 
 
 // Versjonering av artifakten
@@ -62,8 +62,10 @@ buildscript {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
-    implementation(kotlin("stdlib-jdk8", "$kotlinVersion"))
-    implementation(kotlin("reflect", "$kotlinVersion"))
+    implementation(kotlin("stdlib-jdk8", kotlinVersion))
+    implementation(kotlin("reflect", kotlinVersion))
+
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
 
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
