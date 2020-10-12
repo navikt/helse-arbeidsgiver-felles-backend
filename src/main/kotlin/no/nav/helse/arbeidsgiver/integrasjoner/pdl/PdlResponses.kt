@@ -29,22 +29,10 @@ data class PdlHentPerson(
 ) : Serializable
 
 data class PdlPerson(
-        val navn: List<PdlPersonNavn>,
-        val adressebeskyttelse: List<Adressebeskyttelse>?
-) : Serializable
+        val navn: List<PdlPersonNavn>) : Serializable
 
 data class PdlPersonNavn(
         val fornavn: String,
         val mellomnavn: String?,
         val etternavn: String
 ) : Serializable
-
-data class Adressebeskyttelse(
-        val gradering: Gradering
-) : Serializable
-
-enum class Gradering : Serializable {
-    STRENGT_FORTROLIG,
-    FORTROLIG,
-    UGRADERT
-}
