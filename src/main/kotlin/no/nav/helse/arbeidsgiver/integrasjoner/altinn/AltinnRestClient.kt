@@ -11,11 +11,13 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.util.concurrent.CancellationException
 
-
 /**
- * Klient som benytter Altinns REST API for å hente organisasjoner som en gitt bruker har tilgang til
+ * Klient som benytter Altinns REST API for å hente organisasjoner som en gitt bruker har tilgang til for den gitte tjenesten.
  *
+ * Dokumentasjon her: https://www.altinn.no/api/serviceowner/help
  *
+ * For å få tilgang til dette APIet må det settes opp tilgang gjennom API-Gateway til tjenesten (vi går ikke mot den offesielle Altinn URLen).
+ * For hjelp med dette spør i #apigw
  *
  */
 class AltinnRestClient(
