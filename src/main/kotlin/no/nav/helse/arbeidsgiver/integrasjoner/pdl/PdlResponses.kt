@@ -1,7 +1,5 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.pdl
 
-import java.io.Serializable
-
 data class PdlPersonResponse(
         val errors: List<PdlError>?,
         val data: PdlHentPerson?
@@ -26,13 +24,22 @@ data class PdlErrorExtension(
 
 data class PdlHentPerson(
         val hentPerson: PdlPerson?
-) : Serializable
+)
 
 data class PdlPerson(
-        val navn: List<PdlPersonNavn>) : Serializable
+        val navn: List<PdlPersonNavn>
+)
 
 data class PdlPersonNavn(
         val fornavn: String,
         val mellomnavn: String?,
-        val etternavn: String
-) : Serializable
+        val etternavn: String,
+        val metadata: PdlPersonNavnMetadata
+)
+
+data class PdlPersonNavnMetadata(
+        /**
+         * Inneholder "Freg" dersom "eieren" av informasjonen er folkeregisteret
+         */
+        val master: String
+)

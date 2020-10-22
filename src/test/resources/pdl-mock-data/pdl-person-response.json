@@ -4,7 +4,10 @@
           "navn": [{
             "fornavn": "Ola",
             "mellomnavn": "",
-            "etternavn": "Norrbagg"
+            "etternavn": "Norrbagg",
+            "metadata": {
+              "master": "Freg"
+            }
           }]
         }
 },

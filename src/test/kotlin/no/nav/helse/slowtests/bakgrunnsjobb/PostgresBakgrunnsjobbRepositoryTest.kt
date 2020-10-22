@@ -1,4 +1,4 @@
-package no.nav.helse.slowtests.arbeidsgiver.bakgrunnsjobb
+package no.nav.helse.slowtests.bakgrunnsjobb
 
 import com.zaxxer.hikari.HikariDataSource
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb

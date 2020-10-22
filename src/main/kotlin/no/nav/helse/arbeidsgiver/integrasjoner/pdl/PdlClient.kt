@@ -28,15 +28,11 @@ class PdlClientImpl(
         private val httpClient: HttpClient,
         private val om: ObjectMapper
 ) : PdlClient {
-    private val query = this::class.java.getResource("/pdl/hentPerson.graphql").readText().replace(Regex("[\n\r]"), "")
-
-    init {
-        LOG.debug("Query: $query")
-    }
-
+    private val personNavnQuery = this::class.java.getResource("/pdl/hentPersonNavn.graphql").readText().replace(Regex("[\n\r]"), "")
+    
     override fun person(ident: String): PdlPerson? {
         val stsToken = stsClient.getOidcToken()
-        val entity = PdlRequest(query, Variables(ident))
+        val entity = PdlRequest(personNavnQuery, Variables(ident))
         val pdlPersonReponse = runBlocking {
             httpClient.post<PdlPersonResponse> {
                 url(pdlUrl)
@@ -53,6 +49,8 @@ class PdlClientImpl(
 
         return pdlPersonReponse.data?.hentPerson
     }
+
+
 
     companion object {
         private val LOG = LoggerFactory.getLogger(PdlClient::class.java)
