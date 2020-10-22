@@ -6,6 +6,5 @@ data class PdlRequest(
 )
 
 data class Variables(
-        val ident: String,
-        val navnHistorikk: Boolean = false
+        val ident: String
 )

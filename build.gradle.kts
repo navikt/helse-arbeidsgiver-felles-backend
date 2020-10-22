@@ -93,6 +93,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
+    testImplementation("io.ktor:ktor-client-apache:$ktorVersion") // Brukes i integrasjonstester
+
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }

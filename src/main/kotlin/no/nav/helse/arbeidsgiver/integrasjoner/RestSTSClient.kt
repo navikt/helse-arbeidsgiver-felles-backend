@@ -47,7 +47,6 @@ class RestStsClientImpl(username: String,
         return currentToken.tokenAsString
     }
 
-
     private fun requestToken(): JwtToken {
         val response = runBlocking {
             httpClient.get<STSOidcResponse>(endpointURI) {
