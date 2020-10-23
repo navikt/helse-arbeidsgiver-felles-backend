@@ -15,6 +15,7 @@ import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.LocalDate
 
 class PdlClientImplTest {
     val validPdlNavnResponse = "pdl-mock-data/pdl-person-response.json".loadFromResources()
@@ -68,8 +69,9 @@ class PdlClientImplTest {
         val name = response
                 ?.navn
                 ?.firstOrNull()
-                ?.fornavn
-        assertThat(name).isEqualTo("Ola")
+        assertThat(name?.fornavn).isEqualTo("Ola")
+        assertThat(name?.metadata?.master).isEqualTo("Freg")
+
     }
 
     @Test
@@ -80,7 +82,16 @@ class PdlClientImplTest {
                 ?.navn
                 ?.firstOrNull()
                 ?.fornavn
+
         assertThat(name).isEqualTo("TREIG")
+        assertThat(response?.hentIdenter?.identer).hasSize(2)
+        assertThat(response?.hentIdenter?.identer?.filter { it.gruppe==PdlIdent.PdlIdentGruppe.AKTORID }).hasSize(1)
+        assertThat(response?.hentIdenter?.identer?.filter { it.gruppe==PdlIdent.PdlIdentGruppe.FOLKEREGISTERIDENT }).hasSize(1)
+
+        assertThat(response?.hentPerson?.adressebeskyttelse?.firstOrNull()?.gradering).isEqualTo("UGRADERT")
+        assertThat(response?.hentPerson?.foedsel?.firstOrNull()?.foedselsdato).isEqualTo(LocalDate.of(1978, 12, 9))
+        assertThat(response?.hentPerson?.doedsfall).hasSize(0)
+        assertThat(response?.hentPerson?.kjoenn?.firstOrNull()?.kjoenn).isEqualTo("MANN")
     }
 
     @Test
