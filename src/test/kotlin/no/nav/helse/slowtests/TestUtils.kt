@@ -10,7 +10,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.client.features.json.*
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier
 import org.apache.http.conn.ssl.NoopHostnameVerifier
 
 object TestUtils {

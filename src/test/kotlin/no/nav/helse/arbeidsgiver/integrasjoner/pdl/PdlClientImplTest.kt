@@ -2,6 +2,8 @@ package no.nav.helse.arbeidsgiver.integrasjoner.pdl
 
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import io.ktor.client.features.json.*
@@ -15,7 +17,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class PdlClientImplTest {
-    val validPdlResponse = "pdl-mock-data/pdl-person-response.json".loadFromResources()
+    val validPdlNavnResponse = "pdl-mock-data/pdl-person-response.json".loadFromResources()
+    val validPdlFullPersonResponse = "pdl-mock-data/pdl-hentFullPerson-response.json".loadFromResources()
     val errorPdlResponse = "pdl-mock-data/pdl-error-response.json".loadFromResources()
 
     val mockStsClient = mockk<RestStsClient>(relaxed = true)
@@ -25,15 +28,21 @@ class PdlClientImplTest {
 
         install(JsonFeature) { serializer = JacksonSerializer {
             configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+            registerModule(JavaTimeModule())
+            registerModule(KotlinModule())
         } }
 
         engine {
             addHandler { request ->
                 val body = (request.body as TextContent).text
                 when {
+                    body.contains("hentIdent") -> {
+                        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
+                        respond(validPdlFullPersonResponse, headers = responseHeaders)
+                    }
                     body.contains(testFnr) -> {
                         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-                        respond(validPdlResponse, headers = responseHeaders)
+                        respond(validPdlNavnResponse, headers = responseHeaders)
                     }
                     body.contains("fail") -> {
                         val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
@@ -55,7 +64,7 @@ class PdlClientImplTest {
 
     @Test
     internal fun `Returnerer en person ved gyldig respons fra PDL`() {
-        val response = pdlClient.person(testFnr)
+        val response = pdlClient.personNavn(testFnr)
         val name = response
                 ?.navn
                 ?.firstOrNull()
@@ -64,9 +73,20 @@ class PdlClientImplTest {
     }
 
     @Test
+    internal fun `Full Person returnerer en person ved gyldig respons fra PDL`() {
+        val response = pdlClient.fullPerson(testFnr)
+        val name = response
+                ?.hentPerson
+                ?.navn
+                ?.firstOrNull()
+                ?.fornavn
+        assertThat(name).isEqualTo("TREIG")
+    }
+
+    @Test
     internal fun `Kaster PdlException ved feilrespons fra PDL`() {
         assertThrows<PdlClientImpl.PdlException> {
-            pdlClient.person("fail")
+            pdlClient.personNavn("fail")
         }
     }
 }

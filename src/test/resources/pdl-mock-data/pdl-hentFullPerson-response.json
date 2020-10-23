@@ -1,0 +1,44 @@
+{
+  "data": {
+    "hentIdenter": {
+      "identer": [
+        {
+          "ident": "09127821914",
+          "gruppe": "FOLKEREGISTERIDENT"
+        },
+        {
+          "ident": "2649500819544",
+          "gruppe": "AKTORID"
+        }
+      ]
+    },
+    "hentPerson": {
+      "navn": [
+        {
+          "fornavn": "TREIG",
+          "mellomnavn": null,
+          "etternavn": "KONSOLL",
+          "metadata": {
+            "master": "Freg"
+          }
+        }
+      ],
+      "foedsel": [
+        {
+          "foedselsdato": "1978-12-09"
+        }
+      ],
+      "doedsfall": [],
+      "adressebeskyttelse": [
+        {
+          "gradering": "UGRADERT"
+        }
+      ],
+      "kjoenn": [
+        {
+          "kjoenn": "MANN"
+        }
+      ]
+    }
+  }
+}

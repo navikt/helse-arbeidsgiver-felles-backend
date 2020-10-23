@@ -1,8 +1,10 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.pdl
 
-data class PdlPersonResponse(
-        val errors: List<PdlError>?,
-        val data: PdlHentPerson?
+import java.time.LocalDate
+
+open class PdlResponse<T>(
+        open val errors: List<PdlError>?,
+        open val data: T?
 )
 
 data class PdlError(
@@ -22,20 +24,47 @@ data class PdlErrorExtension(
         val classification: String
 )
 
-data class PdlHentPerson(
-        val hentPerson: PdlPerson?
-)
+/**
+ * Tilsvarer graphql-spørringen hentPersonNavn.graphql
+ */
+data class PdlHentPersonNavn(val hentPerson: PdlPersonNavneliste?) {
+        data class PdlPersonNavneliste(val navn: List<PdlPersonNavn>) {
+                data class PdlPersonNavn(val fornavn: String,val mellomnavn: String?,val etternavn: String,val metadata: PdlPersonNavnMetadata)
+        }
+}
 
-data class PdlPerson(
-        val navn: List<PdlPersonNavn>
-)
 
-data class PdlPersonNavn(
-        val fornavn: String,
-        val mellomnavn: String?,
-        val etternavn: String,
-        val metadata: PdlPersonNavnMetadata
-)
+/**
+ * Tilsvarer graphql-spørringen hentFullPerson.graphql
+ */
+data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdenter: PdlIdentResponse?) {
+
+        data class PdlIdentResponse(val identer: List<PdlIdent>)
+
+        data class PdlFullPersonliste(
+                val navn: List<PdlFullPerson>,
+                val foedsel: List<PdlFoedsel>,
+                val doedsfall: List<PdlDoedsfall>,
+                val adressebeskyttelse: List<PdlAdressebeskyttelse>,
+                val kjoenn: List<PdlKjoenn>) {
+
+                data class PdlFullPerson(
+                        val fornavn: String,
+                        val mellomnavn: String?,
+                        val etternavn: String,
+                        val metadata: PdlPersonNavnMetadata
+                )
+
+                data class PdlKjoenn(val kjoenn: String)
+                data class PdlAdressebeskyttelse(val gradering: String)
+                data class PdlFoedsel(val foedselsdato: LocalDate)
+                data class PdlDoedsfall(val doedsdato: LocalDate)
+        }
+}
+
+data class PdlIdent(val ident: String, val gruppe: PdlIdentGruppe) {
+        enum class PdlIdentGruppe { AKTORID, FOLKEREGISTERIDENT, NPID }
+}
 
 data class PdlPersonNavnMetadata(
         /**
