@@ -2,28 +2,6 @@ package no.nav.helse.arbeidsgiver.integrasjoner.pdl
 
 import java.time.LocalDate
 
-open class PdlResponse<T>(
-        open val errors: List<PdlError>?,
-        open val data: T?
-)
-
-data class PdlError(
-        val message: String,
-        val locations: List<PdlErrorLocation>,
-        val path: List<String>?,
-        val extensions: PdlErrorExtension
-)
-
-data class PdlErrorLocation(
-        val line: Int?,
-        val column: Int?
-)
-
-data class PdlErrorExtension(
-        val code: String?,
-        val classification: String
-)
-
 /**
  * Tilsvarer graphql-spørringen hentPersonNavn.graphql
  */
@@ -44,6 +22,7 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
         data class PdlFullPersonliste(
                 val navn: List<PdlFullPerson>,
                 val foedsel: List<PdlFoedsel>,
+                val geografiskTilknytning: PdlGeografiskTilknytning,
                 val doedsfall: List<PdlDoedsfall>,
                 val adressebeskyttelse: List<PdlAdressebeskyttelse>,
                 val kjoenn: List<PdlKjoenn>) {
@@ -55,6 +34,9 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
                         val metadata: PdlPersonNavnMetadata
                 )
 
+                data class PdlGeografiskTilknytning(val gtType: PdlGtType, val gtKommune: String?, val gtBydel: String?, val gtLand: String?) {
+                        enum class PdlGtType { KOMMUNE, BYDEL, UTLAND, UDEFINERT }
+                }
                 data class PdlKjoenn(val kjoenn: String)
                 data class PdlAdressebeskyttelse(val gradering: String)
                 data class PdlFoedsel(val foedselsdato: LocalDate)
@@ -71,4 +53,27 @@ data class PdlPersonNavnMetadata(
          * Inneholder "Freg" dersom "eieren" av informasjonen er folkeregisteret
          */
         val master: String
+)
+
+
+open class PdlResponse<T>(
+        open val errors: List<PdlError>?,
+        open val data: T?
+)
+
+data class PdlError(
+        val message: String,
+        val locations: List<PdlErrorLocation>,
+        val path: List<String>?,
+        val extensions: PdlErrorExtension
+)
+
+data class PdlErrorLocation(
+        val line: Int?,
+        val column: Int?
+)
+
+data class PdlErrorExtension(
+        val code: String?,
+        val classification: String
 )

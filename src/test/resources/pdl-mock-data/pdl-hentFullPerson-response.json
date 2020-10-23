@@ -23,6 +23,14 @@
           }
         }
       ],
+
+      "geografiskTilknytning": {
+        "gtType": "KOMMUNE",
+        "gtKommune": "1851",
+        "gtBydel": null,
+        "gtLand": null
+      },
+
       "foedsel": [
         {
           "foedselsdato": "1978-12-09"

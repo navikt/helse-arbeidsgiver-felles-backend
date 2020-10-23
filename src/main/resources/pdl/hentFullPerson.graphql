@@ -9,6 +9,8 @@ query($ident: ID!) {
             metadata {  master }
         }
 
+        geografiskTilknytning {gtType gtKommune gtBydel gtLand}
+
         foedsel {foedselsdato}
         doedsfall {doedsdato}
         adressebeskyttelse {gradering}
