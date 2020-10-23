@@ -10,11 +10,16 @@ import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
 import org.slf4j.LoggerFactory
 
 interface PdlClient {
-    fun person(ident: String): PdlPerson?
+    /**
+     * Ident kan være enten FNR eller AktørID
+     */
+    fun personNavn(ident: String): PdlHentPersonNavn.PdlPersonNavneliste?
+    fun fullPerson(ident: String): PdlHentFullPerson?
 }
 
 /**
- * Enkel GraphQL-klient for PDL, ment for å hente ut navn fra FNR.
+ * Enkel GraphQL-klient for PDL som kan enten hente navn fra aktør eller fnr (ident)
+ * eller hente mer fullstendig data om en person via fnr eller aktørid (ident)
  *
  * Authorisasjon gjøres via den gitte STS-klienten, og servicebrukeren som er angitt i STS-klienten må være i
  * i AD-gruppen 0000-GA-TEMA_SYK som dokumentert her
@@ -29,28 +34,41 @@ class PdlClientImpl(
         private val om: ObjectMapper
 ) : PdlClient {
     private val personNavnQuery = this::class.java.getResource("/pdl/hentPersonNavn.graphql").readText().replace(Regex("[\n\r]"), "")
-    
-    override fun person(ident: String): PdlPerson? {
+    private val fullPersonQuery = this::class.java.getResource("/pdl/hentFullPerson.graphql").readText().replace(Regex("[\n\r]"), "")
+
+
+    override fun personNavn(ident: String): PdlHentPersonNavn.PdlPersonNavneliste? {
+        val entity = PdlQueryObject(personNavnQuery, Variables(ident))
+        val response = queryPdl<PdlHentPersonNavn?, PdlResponse<PdlHentPersonNavn?>>(entity)
+        return response?.hentPerson
+    }
+
+    override fun fullPerson(ident: String): PdlHentFullPerson? {
+        val queryObject = PdlQueryObject(fullPersonQuery, Variables(ident))
+        val response = queryPdl<PdlHentFullPerson?, PdlResponse<PdlHentFullPerson?>>(queryObject)
+        return response
+    }
+
+
+    private inline fun <K, reified T: PdlResponse<K>> queryPdl(graphqlQuery: PdlQueryObject): K? {
         val stsToken = stsClient.getOidcToken()
-        val entity = PdlRequest(personNavnQuery, Variables(ident))
         val pdlPersonReponse = runBlocking {
-            httpClient.post<PdlPersonResponse> {
+            httpClient.post<T> {
                 url(pdlUrl)
-                body = TextContent(om.writeValueAsString(entity), contentType = ContentType.Application.Json)
+                body = TextContent(om.writeValueAsString(graphqlQuery), contentType = ContentType.Application.Json)
                 header("Tema", "SYK")
                 header("Authorization", "Bearer $stsToken")
                 header("Nav-Consumer-Token", "Bearer $stsToken")
             }
         }
 
-        if (pdlPersonReponse.errors != null && pdlPersonReponse.errors.isNotEmpty()) {
+        if (pdlPersonReponse.errors != null && pdlPersonReponse.errors!!.isNotEmpty()) {
             throw PdlException(pdlPersonReponse.errors)
         }
 
-        return pdlPersonReponse.data?.hentPerson
+        return pdlPersonReponse.data
+
     }
-
-
 
     companion object {
         private val LOG = LoggerFactory.getLogger(PdlClient::class.java)

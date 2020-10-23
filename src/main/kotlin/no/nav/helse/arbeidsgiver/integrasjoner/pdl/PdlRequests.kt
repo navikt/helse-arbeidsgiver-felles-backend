@@ -1,6 +1,6 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.pdl
 
-data class PdlRequest(
+data class PdlQueryObject(
         val query: String,
         val variables: Variables
 )

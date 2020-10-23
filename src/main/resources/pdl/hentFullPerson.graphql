@@ -1,0 +1,17 @@
+query($ident: ID!) {
+    hentIdenter(ident: $ident) {
+        identer {ident gruppe}
+    }
+
+    hentPerson(ident: $ident) {
+        navn {
+            fornavn mellomnavn etternavn
+            metadata {  master }
+        }
+
+        foedsel {foedselsdato}
+        doedsfall {doedsdato}
+        adressebeskyttelse {gradering}
+        kjoenn { kjoenn }
+    }
+}
