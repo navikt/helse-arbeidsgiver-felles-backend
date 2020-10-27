@@ -17,7 +17,10 @@ data class PdlHentPersonNavn(val hentPerson: PdlPersonNavneliste?) {
  */
 data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdenter: PdlIdentResponse?) {
 
-        data class PdlIdentResponse(val identer: List<PdlIdent>)
+        data class PdlIdentResponse(val identer: List<PdlIdent>) {
+                fun trekkUtIdent(gruppe: PdlIdent.PdlIdentGruppe): String? = identer.filter { it.gruppe == gruppe }.firstOrNull()?.ident
+
+        }
 
         data class PdlFullPersonliste(
                 val navn: List<PdlFullPerson>,
@@ -26,6 +29,12 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
                 val doedsfall: List<PdlDoedsfall>,
                 val adressebeskyttelse: List<PdlAdressebeskyttelse>,
                 val kjoenn: List<PdlKjoenn>) {
+
+                fun trekkUtFulltNavn() = navn.map { "${it.fornavn} ${it.mellomnavn ?: ""} ${it.etternavn}".replace("  ", " ") }.firstOrNull()
+                fun trekkUtKjoenn() = kjoenn.firstOrNull()?.kjoenn
+                fun trekkUtDoedsfalldato() = doedsfall.firstOrNull()?.doedsdato
+                fun trekkUtFoedselsdato() = foedsel.firstOrNull()?.foedselsdato
+                fun trekkUtDiskresjonskode() = adressebeskyttelse.firstOrNull()?.gradering
 
                 data class PdlFullPerson(
                         val fornavn: String,
