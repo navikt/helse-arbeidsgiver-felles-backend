@@ -44,6 +44,14 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
                 )
 
                 data class PdlGeografiskTilknytning(val gtType: PdlGtType, val gtKommune: String?, val gtBydel: String?, val gtLand: String?) {
+                        fun hentTilknytning(): String? {
+                                return when(gtType){
+                                        PdlGtType.KOMMUNE -> gtKommune
+                                        PdlGtType.BYDEL -> gtBydel
+                                        PdlGtType.UTLAND -> gtLand
+                                        PdlGtType.UDEFINERT -> null
+                                }
+                        }
                         enum class PdlGtType { KOMMUNE, BYDEL, UTLAND, UDEFINERT }
                 }
                 data class PdlKjoenn(val kjoenn: String)
