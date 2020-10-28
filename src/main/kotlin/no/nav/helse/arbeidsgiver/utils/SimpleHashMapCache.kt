@@ -5,11 +5,14 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 
+
 class SimpleHashMapCache<T>(
         private val cacheDuration: Duration,
         private val maxCachedItems: Int,
-        private val timeProvider: TimeProvider = object: TimeProvider {}
+        private val timeProvider: TimeProvider
 ) {
+    constructor(cacheDuration: Duration, maxCachedItems: Int) : this(cacheDuration, maxCachedItems,  object: TimeProvider {})
+
     private val cache = mutableMapOf<String, Entry<T>>()
     val size: Int
         get() {return cache.size}
