@@ -67,7 +67,7 @@ data class PdlIdent(val ident: String, val gruppe: PdlIdentGruppe) {
 
 data class PdlPersonNavnMetadata(
         /**
-         * Inneholder "Freg" dersom "eieren" av informasjonen er folkeregisteret
+         * Inneholder "FREG" dersom "eieren" av informasjonen er folkeregisteret
          */
         val master: String
 )
