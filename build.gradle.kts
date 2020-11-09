@@ -15,6 +15,7 @@ val junitJupiterVersion = "5.5.0-RC2"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
 val ktorVersion = "1.4.1"
+val valiktorVersion = "0.12.0"
 
 
 // Versjonering av artifakten
@@ -81,6 +82,10 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+
+    implementation("org.valiktor:valiktor-core:$valiktorVersion")
+    implementation("org.valiktor:valiktor-javatime:$valiktorVersion")
+
 
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
