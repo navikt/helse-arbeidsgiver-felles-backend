@@ -9,11 +9,16 @@ query($ident: ID!) {
             metadata {  master }
         }
 
-        geografiskTilknytning {gtType gtKommune gtBydel gtLand}
-
         foedsel {foedselsdato}
         doedsfall {doedsdato}
         adressebeskyttelse {gradering}
         kjoenn { kjoenn }
+    }
+
+    hentGeografiskTilknytning(ident: $ident) {
+        gtType,
+        gtLand,
+        gtKommune,
+        gtBydel
     }
 }

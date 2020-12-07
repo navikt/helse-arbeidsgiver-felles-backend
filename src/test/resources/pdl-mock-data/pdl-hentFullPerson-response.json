@@ -12,6 +12,14 @@
         }
       ]
     },
+
+    "hentGeografiskTilknytning": {
+        "gtType": "KOMMUNE",
+        "gtKommune": "1851",
+        "gtBydel": null,
+        "gtLand": null
+    },
+
     "hentPerson": {
       "navn": [
         {
@@ -23,13 +31,6 @@
           }
         }
       ],
-
-      "geografiskTilknytning": {
-        "gtType": "KOMMUNE",
-        "gtKommune": "1851",
-        "gtBydel": null,
-        "gtLand": null
-      },
 
       "foedsel": [
         {

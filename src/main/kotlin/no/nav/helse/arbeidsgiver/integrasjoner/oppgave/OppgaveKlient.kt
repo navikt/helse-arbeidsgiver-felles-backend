@@ -42,7 +42,15 @@ data class OpprettOppgaveRequest(
         val beskrivelse: String? = null,
         val tema: String? = null,
         val oppgavetype: String,
+
+        /**
+         * https://kodeverk-web.nais.adeo.no/kodeverksoversikt/kodeverk/Behandlingstyper
+         */
         val behandlingstype: String? = null,
+
+        /**
+         * https://kodeverk-web.nais.adeo.no/kodeverksoversikt/kodeverk/Behandlingstema
+         */
         val behandlingstema: String? = null,
         val aktivDato: LocalDate,
         val fristFerdigstillelse: LocalDate? = null,

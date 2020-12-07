@@ -11,21 +11,31 @@ data class PdlHentPersonNavn(val hentPerson: PdlPersonNavneliste?) {
         }
 }
 
-
 /**
  * Tilsvarer graphql-spørringen hentFullPerson.graphql
  */
-data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdenter: PdlIdentResponse?) {
+data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdenter: PdlIdentResponse?, val hentGeografiskTilknytning: PdlGeografiskTilknytning?) {
 
         data class PdlIdentResponse(val identer: List<PdlIdent>) {
                 fun trekkUtIdent(gruppe: PdlIdent.PdlIdentGruppe): String? = identer.filter { it.gruppe == gruppe }.firstOrNull()?.ident
 
         }
 
+        data class PdlGeografiskTilknytning(val gtType: PdlGtType, val gtKommune: String?, val gtBydel: String?, val gtLand: String?) {
+                fun hentTilknytning(): String? {
+                        return when(gtType){
+                                PdlGtType.KOMMUNE -> gtKommune
+                                PdlGtType.BYDEL -> gtBydel
+                                PdlGtType.UTLAND -> gtLand
+                                PdlGtType.UDEFINERT -> null
+                        }
+                }
+                enum class PdlGtType { KOMMUNE, BYDEL, UTLAND, UDEFINERT }
+        }
+
         data class PdlFullPersonliste(
                 val navn: List<PdlFullPerson>,
                 val foedsel: List<PdlFoedsel>,
-                val geografiskTilknytning: PdlGeografiskTilknytning,
                 val doedsfall: List<PdlDoedsfall>,
                 val adressebeskyttelse: List<PdlAdressebeskyttelse>,
                 val kjoenn: List<PdlKjoenn>) {
@@ -43,17 +53,6 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
                         val metadata: PdlPersonNavnMetadata
                 )
 
-                data class PdlGeografiskTilknytning(val gtType: PdlGtType, val gtKommune: String?, val gtBydel: String?, val gtLand: String?) {
-                        fun hentTilknytning(): String? {
-                                return when(gtType){
-                                        PdlGtType.KOMMUNE -> gtKommune
-                                        PdlGtType.BYDEL -> gtBydel
-                                        PdlGtType.UTLAND -> gtLand
-                                        PdlGtType.UDEFINERT -> null
-                                }
-                        }
-                        enum class PdlGtType { KOMMUNE, BYDEL, UTLAND, UDEFINERT }
-                }
                 data class PdlKjoenn(val kjoenn: String)
                 data class PdlAdressebeskyttelse(val gradering: String)
                 data class PdlFoedsel(val foedselsdato: LocalDate)
@@ -67,7 +66,7 @@ data class PdlIdent(val ident: String, val gruppe: PdlIdentGruppe) {
 
 data class PdlPersonNavnMetadata(
         /**
-         * Inneholder "FREG" dersom "eieren" av informasjonen er folkeregisteret
+         * Inneholder "freg" dersom "eieren" av informasjonen er folkeregisteret
          */
         val master: String
 )
