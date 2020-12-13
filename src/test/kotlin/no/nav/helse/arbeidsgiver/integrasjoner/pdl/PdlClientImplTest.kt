@@ -10,7 +10,7 @@ import io.ktor.client.features.json.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.mockk.mockk
-import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -22,7 +22,7 @@ class PdlClientImplTest {
     val validPdlFullPersonResponse = "pdl-mock-data/pdl-hentFullPerson-response.json".loadFromResources()
     val errorPdlResponse = "pdl-mock-data/pdl-error-response.json".loadFromResources()
 
-    val mockStsClient = mockk<RestStsClient>(relaxed = true)
+    val mockStsClient = mockk<AccessTokenProvider>(relaxed = true)
     private val testFnr = "test-ident"
 
     val client = HttpClient(MockEngine) {

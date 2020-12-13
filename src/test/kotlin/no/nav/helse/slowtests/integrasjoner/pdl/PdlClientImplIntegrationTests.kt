@@ -1,6 +1,6 @@
 package no.nav.helse.slowtests.integrasjoner.pdl
 
-import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlClientImpl
 import no.nav.helse.slowtests.TestUtils
 import org.assertj.core.api.Assertions.assertThat
@@ -28,8 +28,8 @@ internal class PdlClientImplIntegrationTests {
 
     val pdlKlient = PdlClientImpl(
             "https://pdl-api.dev-fss.nais.io/graphql",
-            object: RestStsClient {
-                override fun getOidcToken() = "" // Sett inn token fra STS
+            object: AccessTokenProvider {
+                override fun getToken() = "" // Sett inn token fra STS
             },
             TestUtils.commonHttpClient(),
             TestUtils.commonObjectMapper()

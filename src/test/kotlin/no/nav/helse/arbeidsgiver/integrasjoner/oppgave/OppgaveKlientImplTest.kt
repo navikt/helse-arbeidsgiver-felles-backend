@@ -9,7 +9,7 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -19,7 +19,7 @@ internal class OppgaveKlientImplTest {
     val validResponse = "oppgave-mock-data/oppgave-success-response.json".loadFromResources()
     val errorResponse = "oppgave-mock-data/oppgave-error-response.json".loadFromResources()
 
-    val mockStsClient = mockk<RestStsClient>(relaxed = true)
+    val mockStsClient = mockk<AccessTokenProvider>(relaxed = true)
     private val badRequest = "bad request"
     private val successRequest = "success request"
 

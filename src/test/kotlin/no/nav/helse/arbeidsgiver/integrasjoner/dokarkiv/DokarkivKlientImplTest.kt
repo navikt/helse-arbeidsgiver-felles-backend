@@ -8,7 +8,7 @@ import io.ktor.client.features.json.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.mockk.mockk
-import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -20,7 +20,7 @@ internal class DokarkivKlientImplTest{
     val ikkeFerdigstiltResponse = "dokarkiv-mock-data/dokarkiv-ikke-ferdigstilt-response.json".loadFromResources()
     val errorResponse = "dokarkiv-mock-data/dokarkiv-error-response.json".loadFromResources()
 
-    val mockStsClient = mockk<RestStsClient>(relaxed = true)
+    val mockStsClient = mockk<AccessTokenProvider>(relaxed = true)
     private val badRequest = "bad request"
 
     val client = HttpClient(MockEngine) {

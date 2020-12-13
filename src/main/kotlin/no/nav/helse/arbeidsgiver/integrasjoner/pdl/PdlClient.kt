@@ -6,7 +6,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import org.slf4j.LoggerFactory
 
 interface PdlClient {
@@ -21,7 +21,7 @@ interface PdlClient {
  * Enkel GraphQL-klient for PDL som kan enten hente navn fra aktør eller fnr (ident)
  * eller hente mer fullstendig data om en person via fnr eller aktørid (ident)
  *
- * Authorisasjon gjøres via den gitte STS-klienten, og servicebrukeren som er angitt i STS-klienten må være i
+ * Authorisasjon gjøres via den gitte Token prodvideren, og servicebrukeren som er angitt i token provideren må være i
  * i AD-gruppen 0000-GA-TEMA_SYK som dokumentert her
  * https://navikt.github.io/pdl/index-intern.html#_konsumentroller_basert_p%C3%A5_tema
  *
@@ -29,7 +29,7 @@ interface PdlClient {
  */
 class PdlClientImpl(
         private val pdlUrl: String,
-        private val stsClient: RestStsClient,
+        private val stsClient: AccessTokenProvider,
         private val httpClient: HttpClient,
         private val om: ObjectMapper
 ) : PdlClient {
@@ -51,7 +51,7 @@ class PdlClientImpl(
 
 
     private inline fun <K, reified T: PdlResponse<K>> queryPdl(graphqlQuery: PdlQueryObject): K? {
-        val stsToken = stsClient.getOidcToken()
+        val stsToken = stsClient.getToken()
         val pdlPersonReponse = runBlocking {
             httpClient.post<T> {
                 url(pdlUrl)

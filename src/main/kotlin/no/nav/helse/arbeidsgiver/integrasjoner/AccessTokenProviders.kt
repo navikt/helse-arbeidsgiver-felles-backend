@@ -5,13 +5,16 @@ import com.nimbusds.jwt.JWTParser
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
+import no.nav.security.token.support.client.core.ClientProperties
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
 
 
-interface RestStsClient {
-    fun getOidcToken(): String
+
+interface AccessTokenProvider {
+    fun getToken(): String
 }
 
 /**
@@ -21,10 +24,11 @@ interface RestStsClient {
  *
  * Cacher tokenet til det 5 minutter unna å bli ugyldig.
  */
-class RestStsClientImpl(username: String,
-                        password: String,
-                        stsEndpoint: String,
-                        private val httpClient: HttpClient) : RestStsClient {
+@Deprecated("STS skal fases ut til fordel for TokenX")
+class RestSTSAccessTokenProvider(username: String,
+                                 password: String,
+                                 stsEndpoint: String,
+                                 private val httpClient: HttpClient) : AccessTokenProvider {
 
     private val endpointURI: String
     private val basicAuth: String
@@ -38,7 +42,7 @@ class RestStsClientImpl(username: String,
     }
 
 
-    override fun getOidcToken(): String {
+    override fun getToken(): String {
         if (isExpired(currentToken, Date.from(Instant.now().plusSeconds(300)))) {
             log.debug("OIDC Token is expired, getting a new one from the STS")
             currentToken = requestToken()
@@ -69,7 +73,6 @@ class RestStsClientImpl(username: String,
                 jwtToken.expirationTime.before(date)
     }
 
-
     private class JwtToken(encodedToken: String) {
         val tokenAsString: String = encodedToken
         val jwt: JWT = JWTParser.parse(encodedToken)
@@ -81,7 +84,21 @@ class RestStsClientImpl(username: String,
     )
 
     companion object {
-        private val log = LoggerFactory.getLogger(RestStsClientImpl::class.java)
+        private val log = LoggerFactory.getLogger(RestSTSAccessTokenProvider::class.java)
     }
 }
 
+/**
+ * OAuth2 Token Exchange -klient for å hente access token for bruk i andre tjenester, feks joark, PDL eller Oppgave.
+ *
+ * Det returnerte tokenet representerer den angitte servicebrukeren (username, password)
+ *
+ * Cacher tokenet til det 5 minutter unna å bli ugyldig.
+ */
+class ServiceUserTokenXTokenProvider(
+        private val oauth2Service: OAuth2AccessTokenService,
+        private val clientProperties: ClientProperties) : AccessTokenProvider {
+    override fun getToken(): String {
+        return oauth2Service.getAccessToken(clientProperties).accessToken
+    }
+}

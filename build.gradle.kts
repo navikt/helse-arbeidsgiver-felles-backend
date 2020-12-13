@@ -91,6 +91,7 @@ dependencies {
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("org.postgresql:postgresql:42.2.13")
     implementation("com.nimbusds:nimbus-jose-jwt:8.15")
+    implementation("no.nav.security:token-client-core:1.3.1")
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
     testImplementation("io.mockk:mockk:$mockKVersion")

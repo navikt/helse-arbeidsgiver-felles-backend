@@ -15,7 +15,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
-class RestStsClientTests {
+class AccessTokenProviderTests {
     val validStsResponse = "sts-mock-data/valid-sts-token.json".loadFromResources()
 
     private val successUrl = "https://success-url"
@@ -47,18 +47,18 @@ class RestStsClientTests {
 
     @Test
     internal fun `valid answer from STS returns valid token, second call gives cached answer`() {
-        val stsClient = RestStsClientImpl("username", "password", successUrl, client)
-        val token = stsClient.getOidcToken()
+        val stsClient = RestSTSAccessTokenProvider("username", "password", successUrl, client)
+        val token = stsClient.getToken()
         assertThat(token).isNotNull()
 
-        val token2 = stsClient.getOidcToken()
+        val token2 = stsClient.getToken()
         assertThat(token).isEqualTo(token2)
     }
 
     @Test
     internal fun `Error response (5xx) from STS throws exception`() {
         assertThrows(ServerResponseException::class.java) {
-            val stsClient = RestStsClientImpl("username", "password", timeoutUrl, client)
+            val stsClient = RestSTSAccessTokenProvider("username", "password", timeoutUrl, client)
         }
     }
 }

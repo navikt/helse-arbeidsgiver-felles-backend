@@ -5,7 +5,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.url
 import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import org.slf4j.LoggerFactory
 
 interface DokarkivKlient {
@@ -15,13 +15,13 @@ interface DokarkivKlient {
 /**
  * Oppretter en journalpost i dokarkiv @see JournalpostRequest
  *
- * Servicebrukeren i STS-klienten må være i AD-gruppen 0000-GA-joark-journalpostapi-skriv
+ * Servicebrukeren i Token provdieren må være i AD-gruppen 0000-GA-joark-journalpostapi-skriv
  * Joark tilgangskontroll-dok: https://confluence.adeo.no/pages/viewpage.action?pageId=315962195
  */
 class DokarkivKlientImpl(
         private val dokarkivBaseUrl: String,
         private val httpClient: HttpClient,
-        private val stsClient: RestStsClient) : DokarkivKlient {
+        private val accessTokenProvider: AccessTokenProvider) : DokarkivKlient {
 
     private val logger: org.slf4j.Logger = LoggerFactory.getLogger("DokarkivClient")
 
@@ -32,7 +32,7 @@ class DokarkivKlientImpl(
         val response = runBlocking {
             httpClient.post<JournalpostResponse> {
                 url(url)
-                headers.append("Authorization", "Bearer " + stsClient.getOidcToken())
+                headers.append("Authorization", "Bearer " + accessTokenProvider.getToken())
                 headers.append("Nav-Call-Id", callId)
                 contentType(io.ktor.http.ContentType.Application.Json)
                 body = journalpost

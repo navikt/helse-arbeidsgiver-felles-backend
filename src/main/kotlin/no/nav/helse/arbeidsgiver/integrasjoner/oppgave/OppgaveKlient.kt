@@ -5,7 +5,7 @@ import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import no.nav.helse.arbeidsgiver.integrasjoner.RestStsClient
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
@@ -14,11 +14,11 @@ interface OppgaveKlient {
 }
 
 class OppgaveKlientImpl(
-        private val url: String, private val stsClient: RestStsClient, private val httpClient: HttpClient
+        private val url: String, private val stsClient: AccessTokenProvider, private val httpClient: HttpClient
 ) : OppgaveKlient {
 
     override suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, callId: String): OpprettOppgaveResponse {
-        val stsToken = stsClient.getOidcToken()
+        val stsToken = stsClient.getToken()
         return httpClient.post(url) {
             contentType(ContentType.Application.Json)
             this.header("Authorization", "Bearer $stsToken")
