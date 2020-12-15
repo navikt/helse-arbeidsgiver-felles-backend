@@ -89,13 +89,9 @@ class RestSTSAccessTokenProvider(username: String,
 }
 
 /**
- * OAuth2 Token Exchange -klient for å hente access token for bruk i andre tjenester, feks joark, PDL eller Oppgave.
- *
- * Det returnerte tokenet representerer den angitte servicebrukeren (username, password)
- *
- * Cacher tokenet til det 5 minutter unna å bli ugyldig.
+ * OAuth2 Token-klient for å hente access token for bruk i andre tjenester, feks joark, PDL eller Oppgave.
  */
-class ServiceUserTokenXTokenProvider(
+class OAuth2TokenProvider(
         private val oauth2Service: OAuth2AccessTokenService,
         private val clientProperties: ClientProperties) : AccessTokenProvider {
     override fun getToken(): String {
