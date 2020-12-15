@@ -24,7 +24,7 @@ interface AccessTokenProvider {
  *
  * Cacher tokenet til det 5 minutter unna å bli ugyldig.
  */
-@Deprecated("STS skal fases ut til fordel for TokenX")
+@Deprecated("STS skal fases ut til fordel for OAuth2 Client Credentials og Token Exchange (TokenX)")
 class RestSTSAccessTokenProvider(username: String,
                                  password: String,
                                  stsEndpoint: String,
