@@ -7,6 +7,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import java.time.LocalDateTime
+import java.util.*
+import kotlin.collections.HashMap
 
 class BakgrunnsjobbService(
         val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
@@ -42,25 +44,25 @@ class BakgrunnsjobbService(
             prossessorForType.prosesser(jobb.data)
             jobb.status = BakgrunnsjobbStatus.OK
         } catch (ex: Exception) {
-            tryLogResponseBody(ex)
+            tryLogResponseBody(ex, jobb.uuid)
 
             jobb.status = if (jobb.forsoek >= jobb.maksAntallForsoek) BakgrunnsjobbStatus.STOPPET else BakgrunnsjobbStatus.FEILET
             if (jobb.status == BakgrunnsjobbStatus.STOPPET) {
                 logger.error("Jobb ${jobb.uuid} feilet permanent", ex)
                 bakgrunnsvarsler.rapporterPermanentFeiletJobb()
             } else {
-                logger.error("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}", ex)
+                logger.warn("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}", ex)
             }
         } finally {
             bakgrunnsjobbRepository.update(jobb)
         }
     }
 
-    private fun tryLogResponseBody(jobException: Exception) {
+    private fun tryLogResponseBody(jobException: Exception, jobId: UUID) {
         if ( jobException is ResponseException) {
             try {
                 val responseBody = runBlocking { jobException.response?.content?.readUTF8Line() }
-                logger.error("Response body: $responseBody")
+                logger.info("Jobb $jobId fikk fra ekstern tjeneste: $responseBody")
             } catch (readEx: Exception) {
                 logger.debug("Kunne ikke lese responsen fra feilet HTTP-kall i jobben")
             }
