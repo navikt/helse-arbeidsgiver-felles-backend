@@ -44,29 +44,29 @@ class BakgrunnsjobbService(
             prossessorForType.prosesser(jobb.data)
             jobb.status = BakgrunnsjobbStatus.OK
         } catch (ex: Exception) {
-            tryLogResponseBody(ex, jobb.uuid)
-
+            val responseBody = tryGetResponseBody(ex, jobb.uuid)
+            val responseBodyMessage = if (responseBody != null) "Feil fra ekstern tjeneste: $responseBody" else ""
             jobb.status = if (jobb.forsoek >= jobb.maksAntallForsoek) BakgrunnsjobbStatus.STOPPET else BakgrunnsjobbStatus.FEILET
             if (jobb.status == BakgrunnsjobbStatus.STOPPET) {
-                logger.error("Jobb ${jobb.uuid} feilet permanent", ex)
+                logger.error("Jobb ${jobb.uuid} feilet permanent. $responseBodyMessage", ex)
                 bakgrunnsvarsler.rapporterPermanentFeiletJobb()
             } else {
-                logger.warn("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}", ex)
+                logger.warn("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}. $responseBodyMessage", ex)
             }
         } finally {
             bakgrunnsjobbRepository.update(jobb)
         }
     }
 
-    private fun tryLogResponseBody(jobException: Exception, jobId: UUID) {
+    private fun tryGetResponseBody(jobException: Exception, jobId: UUID): String? {
         if ( jobException is ResponseException) {
-            try {
-                val responseBody = runBlocking { jobException.response?.content?.readUTF8Line() }
-                logger.info("Jobb $jobId fikk fra ekstern tjeneste: $responseBody")
+            return try {
+                runBlocking { jobException.response?.content?.readUTF8Line() }
             } catch (readEx: Exception) {
-                logger.debug("Kunne ikke lese responsen fra feilet HTTP-kall i jobben")
+                null
             }
         }
+        return null
     }
 
     fun finnVentende(): List<Bakgrunnsjobb> =
