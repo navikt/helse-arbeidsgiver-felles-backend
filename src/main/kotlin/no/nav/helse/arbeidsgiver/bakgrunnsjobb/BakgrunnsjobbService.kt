@@ -2,6 +2,7 @@ package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
 import io.ktor.client.features.*
 import io.ktor.utils.io.*
+import io.prometheus.client.Counter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -9,6 +10,29 @@ import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.HashMap
+
+
+val FEILET_JOBB_COUNTER = Counter.build()
+    .namespace("helsearbeidsgiver")
+    .name("feilet_jobb")
+    .labelNames("jobbtype")
+    .help("Teller jobber som har midlertidig feilet, men vil bli forsøkt igjen")
+    .register()
+
+val STOPPET_JOBB_COUNTER = Counter.build()
+    .namespace("helsearbeidsgiver")
+    .name("stoppet_jobb")
+    .labelNames("jobbtype")
+    .help("Teller jobber som har feilet permanent og må følges opp")
+    .register()
+
+val OK_JOBB_COUNTER = Counter.build()
+    .namespace("helsearbeidsgiver")
+    .name("jobb_ok")
+    .labelNames("jobbtype")
+    .help("Teller jobber som har blitt utført OK")
+    .register()
+
 
 class BakgrunnsjobbService(
         val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
@@ -43,15 +67,18 @@ class BakgrunnsjobbService(
             jobb.kjoeretid = prossessorForType.nesteForsoek(jobb.forsoek, LocalDateTime.now())
             prossessorForType.prosesser(jobb.data)
             jobb.status = BakgrunnsjobbStatus.OK
+            OK_JOBB_COUNTER.labels(jobb.type).inc()
         } catch (ex: Exception) {
             val responseBody = tryGetResponseBody(ex, jobb.uuid)
             val responseBodyMessage = if (responseBody != null) "Feil fra ekstern tjeneste: $responseBody" else ""
             jobb.status = if (jobb.forsoek >= jobb.maksAntallForsoek) BakgrunnsjobbStatus.STOPPET else BakgrunnsjobbStatus.FEILET
             if (jobb.status == BakgrunnsjobbStatus.STOPPET) {
                 logger.error("Jobb ${jobb.uuid} feilet permanent. $responseBodyMessage", ex)
+                STOPPET_JOBB_COUNTER.labels(jobb.type).inc()
                 bakgrunnsvarsler.rapporterPermanentFeiletJobb()
             } else {
                 logger.warn("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}. $responseBodyMessage", ex)
+                FEILET_JOBB_COUNTER.labels(jobb.type).inc()
             }
         } finally {
             bakgrunnsjobbRepository.update(jobb)

@@ -16,6 +16,7 @@ val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
 val ktorVersion = "1.4.1"
 val valiktorVersion = "0.12.0"
+val prometheusVersion = "0.6.0"
 
 
 // Versjonering av artifakten
@@ -86,7 +87,7 @@ dependencies {
     implementation("org.valiktor:valiktor-core:$valiktorVersion")
     implementation("org.valiktor:valiktor-javatime:$valiktorVersion")
 
-
+    implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("org.postgresql:postgresql:42.2.13")
