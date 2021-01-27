@@ -105,5 +105,13 @@ class BakgrunnsjobbService(
  */
 interface BakgrunnsjobbProsesserer {
     fun prosesser(jobbData: String)
-    fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime
+
+    /**
+     * Defaulter til en fibonacci-ish backoffløsning
+     * ment for bruk med 10 forsøk, feiler permanent etter 230 timer = 9,5 dager
+     */
+    fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
+        val backoffWaitInHours = if (forsoek == 1) 1 else forsoek-1 + forsoek
+        return LocalDateTime.now().plusHours(backoffWaitInHours.toLong())
+    }
 }
