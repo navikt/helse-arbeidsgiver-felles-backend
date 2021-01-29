@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
+import java.sql.Connection
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.HashMap
@@ -35,24 +36,29 @@ val OK_JOBB_COUNTER = Counter.build()
 
 
 class BakgrunnsjobbService(
-        val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
-        val delayMillis: Long = 30 * 1000L,
-        val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
-        val bakgrunnsvarsler: Bakgrunnsvarsler = TomVarsler()
+    val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
+    val delayMillis: Long = 30 * 1000L,
+    val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+    val bakgrunnsvarsler: Bakgrunnsvarsler = TomVarsler()
 ) : RecurringJob(coroutineScope, delayMillis) {
 
-    private val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
+    val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
 
+    @Deprecated("Bruk registrer(..)")
     fun leggTilBakgrunnsjobbProsesserer(type: String, prosesserer: BakgrunnsjobbProsesserer) {
         prossesserere[type] = prosesserer
+    }
+
+    fun registrer(prosesserer: BakgrunnsjobbProsesserer) {
+        prossesserere[prosesserer.JOB_TYPE] = prosesserer
     }
 
     override fun doJob() {
         do {
             val wasEmpty = finnVentende()
-                    .also { logger.debug("Fant ${it.size} bakgrunnsjobber å kjøre") }
-                    .onEach { prosesser(it) }
-                    .isEmpty()
+                .also { logger.debug("Fant ${it.size} bakgrunnsjobber å kjøre") }
+                .onEach { prosesser(it) }
+                .isEmpty()
         } while (!wasEmpty)
     }
 
@@ -62,7 +68,7 @@ class BakgrunnsjobbService(
 
         try {
             val prossessorForType = prossesserere[jobb.type]
-                    ?: throw IllegalArgumentException("Det finnes ingen prossessor for typen '${jobb.type}'. Dette må konfigureres.")
+                ?: throw IllegalArgumentException("Det finnes ingen prossessor for typen '${jobb.type}'. Dette må konfigureres.")
 
             jobb.kjoeretid = prossessorForType.nesteForsoek(jobb.forsoek, LocalDateTime.now())
             prossessorForType.prosesser(jobb.data)
@@ -71,7 +77,8 @@ class BakgrunnsjobbService(
         } catch (ex: Exception) {
             val responseBody = tryGetResponseBody(ex, jobb.uuid)
             val responseBodyMessage = if (responseBody != null) "Feil fra ekstern tjeneste: $responseBody" else ""
-            jobb.status = if (jobb.forsoek >= jobb.maksAntallForsoek) BakgrunnsjobbStatus.STOPPET else BakgrunnsjobbStatus.FEILET
+            jobb.status =
+                if (jobb.forsoek >= jobb.maksAntallForsoek) BakgrunnsjobbStatus.STOPPET else BakgrunnsjobbStatus.FEILET
             if (jobb.status == BakgrunnsjobbStatus.STOPPET) {
                 logger.error("Jobb ${jobb.uuid} feilet permanent. $responseBodyMessage", ex)
                 STOPPET_JOBB_COUNTER.labels(jobb.type).inc()
@@ -86,7 +93,7 @@ class BakgrunnsjobbService(
     }
 
     private fun tryGetResponseBody(jobException: Exception, jobId: UUID): String? {
-        if ( jobException is ResponseException) {
+        if (jobException is ResponseException) {
             return try {
                 runBlocking { jobException.response?.content?.readUTF8Line() }
             } catch (readEx: Exception) {
@@ -97,13 +104,41 @@ class BakgrunnsjobbService(
     }
 
     fun finnVentende(): List<Bakgrunnsjobb> =
-            bakgrunnsjobbRepository.findByKjoeretidBeforeAndStatusIn(LocalDateTime.now(), setOf(BakgrunnsjobbStatus.OPPRETTET, BakgrunnsjobbStatus.FEILET))
+        bakgrunnsjobbRepository.findByKjoeretidBeforeAndStatusIn(
+            LocalDateTime.now(),
+            setOf(BakgrunnsjobbStatus.OPPRETTET, BakgrunnsjobbStatus.FEILET)
+        )
+
+    inline fun <reified T : BakgrunnsjobbProsesserer> opprettJobb(
+        kjoeretid: LocalDateTime = LocalDateTime.now(),
+        forsoek: Int = 0,
+        maksAntallForsoek: Int = 3,
+        data: String,
+        connection: Connection
+    ) {
+        val prosesserer = prossesserere.values.filterIsInstance<T>().firstOrNull()
+            ?: throw IllegalArgumentException("Denne prosessereren er ukjent")
+
+        bakgrunnsjobbRepository.save(
+            Bakgrunnsjobb(
+                type = prosesserer.JOB_TYPE,
+                kjoeretid = kjoeretid,
+                forsoek = forsoek,
+                maksAntallForsoek = maksAntallForsoek,
+                data = data
+            ),
+            connection
+        )
+    }
 }
 
 /**
  * Interface for en klasse som kan prosessere en bakgrunnsjobbstype
  */
 interface BakgrunnsjobbProsesserer {
+
+    val JOB_TYPE: String
+
     fun prosesser(jobbData: String)
 
     /**
@@ -111,7 +146,7 @@ interface BakgrunnsjobbProsesserer {
      * ment for bruk med 10 forsøk, feiler permanent etter 230 timer = 9,5 dager
      */
     fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
-        val backoffWaitInHours = if (forsoek == 1) 1 else forsoek-1 + forsoek
+        val backoffWaitInHours = if (forsoek == 1) 1 else forsoek - 1 + forsoek
         return LocalDateTime.now().plusHours(backoffWaitInHours.toLong())
     }
 }
