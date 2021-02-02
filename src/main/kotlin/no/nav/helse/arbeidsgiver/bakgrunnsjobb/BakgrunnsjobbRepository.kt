@@ -12,6 +12,7 @@ interface BakgrunnsjobbRepository {
     fun findByKjoeretidBeforeAndStatusIn(timeout: LocalDateTime, tilstander: Set<BakgrunnsjobbStatus>): List<Bakgrunnsjobb>
     fun delete(uuid: UUID)
     fun deleteAll()
+    fun deleteOldOkJobs(months : Long)
     fun update(bakgrunnsjobb: Bakgrunnsjobb)
     fun update(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection)
 }
@@ -49,15 +50,19 @@ class MockBakgrunnsjobbRepository : BakgrunnsjobbRepository {
     override fun update(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection) {
         update(bakgrunnsjobb)
     }
+
+    override fun deleteOldOkJobs(months: Long) {
+        val someMonthsAgo = LocalDateTime.now().minusMonths(months)
+        jobs.removeIf{ it.behandlet?.isBefore(someMonthsAgo)!! && it.status.equals(BakgrunnsjobbStatus.OK) }
+    }
 }
 
 class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : BakgrunnsjobbRepository {
-
     private val tableName = "bakgrunnsjobb"
 
     private val insertStatement = """INSERT INTO $tableName
-(jobb_id, type, behandlet, opprettet, status, kjoeretid, forsoek, maks_forsoek, data) VALUES
-(?::uuid,?,?,?,?,?,?,?,?::json)"""
+    (jobb_id, type, behandlet, opprettet, status, kjoeretid, forsoek, maks_forsoek, data) VALUES
+    (?::uuid,?,?,?,?,?,?,?,?::json)"""
             .trimIndent()
 
     private val updateStatement = """UPDATE $tableName
@@ -66,15 +71,16 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
          , kjoeretid = ?
          , forsoek = ?
          , data = ?::json
-where jobb_id = ?::uuid
-"""
-            .trimIndent()
+        where jobb_id = ?::uuid"""
+        .trimIndent()
 
     private val selectStatement = """
         select * from $tableName where kjoeretid < ? and status = ANY(?)
     """.trimIndent() //and
 
     private val deleteStatement = "DELETE FROM $tableName where jobb_id = ?::uuid"
+
+    private val deleteOldJobsStatement = "DELETE FROM $tableName WHERE status = 'OK' AND kjoeretid > current_date - interval '? months'"
 
     private val deleteAllStatement = "DELETE FROM $tableName"
 
@@ -155,4 +161,11 @@ where jobb_id = ?::uuid
         }
     }
 
+    override fun deleteOldOkJobs(months: Long) {
+        dataSource.connection.use {
+            it.prepareStatement(deleteOldJobsStatement).apply {
+                setString(1, months.toString())
+            }.executeUpdate()
+        }
+    }
 }

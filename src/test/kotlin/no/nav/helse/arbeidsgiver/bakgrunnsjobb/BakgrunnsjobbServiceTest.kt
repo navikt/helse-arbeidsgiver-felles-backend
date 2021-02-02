@@ -54,6 +54,21 @@ internal class BakgrunnsjobbServiceTest {
         assertThat(repoMock.findByKjoeretidBeforeAndStatusIn(now.plusMinutes(1), setOf(BakgrunnsjobbStatus.STOPPET)))
                 .hasSize(1)
     }
+
+    @Test
+    fun `jobb som er ok og eldre enn tre månder blir slettet`(){
+        val testJobb = Bakgrunnsjobb(
+                type = "test",
+                behandlet = now.minusMonths(3),
+                data = "ok",
+                status = BakgrunnsjobbStatus.OK
+        )
+        repoMock.save(testJobb)
+        testCoroutineScope.advanceTimeBy(1000)
+        repoMock.deleteOldOkJobs(3)
+        assertThat(repoMock.findByKjoeretidBeforeAndStatusIn(now.plusMinutes(1), setOf(BakgrunnsjobbStatus.OK)))
+                .hasSize(0)
+    }
 }
 
 
