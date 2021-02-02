@@ -43,8 +43,8 @@ class BakgrunnsjobbService(
 
     private val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
 
-    fun autoClean(måneder : Long){
-        bakgrunnsjobbRepository.deleteOldOkJobs(måneder)
+    fun autoClean(maander : Long){
+        bakgrunnsjobbRepository.deleteOldOkJobs(maander)
     }
 
     fun leggTilBakgrunnsjobbProsesserer(type: String, prosesserer: BakgrunnsjobbProsesserer) {
