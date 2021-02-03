@@ -80,7 +80,7 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
 
     private val deleteStatement = "DELETE FROM $tableName where jobb_id = ?::uuid"
 
-    private val deleteOldJobsStatement = "DELETE FROM $tableName WHERE status = 'OK' AND kjoeretid > current_date - interval '? months'"
+    private val deleteOldJobsStatement = "DELETE FROM $tableName WHERE status = 'OK' AND behandlet < current_date - interval '? months'"
 
     private val deleteAllStatement = "DELETE FROM $tableName"
 
