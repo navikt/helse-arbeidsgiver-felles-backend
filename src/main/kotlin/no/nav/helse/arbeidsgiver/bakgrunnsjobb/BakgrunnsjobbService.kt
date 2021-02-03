@@ -44,11 +44,11 @@ class BakgrunnsjobbService(
     private val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
 
     fun startAutoClean(frekvensITimer: Int, maander : Long){
-        
         // legg til auto-clean-prosesserer
-        // insert jobb med frekvens og maaneder
 
-        bakgrunnsjobbRepository.deleteOldOkJobs(maander)
+        // finn ut om det finnes en eksisterende ventende autoclean jobb
+        // hvis det finnes: oppdater jobbdataene
+        // insert jobb med frekvens og maaneder om det ikke finnes fra før
     }
 
     fun leggTilBakgrunnsjobbProsesserer(type: String, prosesserer: BakgrunnsjobbProsesserer) {
