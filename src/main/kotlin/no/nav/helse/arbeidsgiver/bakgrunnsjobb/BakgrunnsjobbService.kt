@@ -43,7 +43,11 @@ class BakgrunnsjobbService(
 
     private val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
 
-    fun autoClean(maander : Long){
+    fun startAutoClean(frekvensITimer: Int, maander : Long){
+        
+        // legg til auto-clean-prosesserer
+        // insert jobb med frekvens og maaneder
+
         bakgrunnsjobbRepository.deleteOldOkJobs(maander)
     }
 
