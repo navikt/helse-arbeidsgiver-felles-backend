@@ -1,13 +1,10 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.14.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
+
 ignore:
-  SNYK-JAVA-ORGAPACHEHTTPCOMPONENTS-1016906:
+  'snyk:lic:npm:goof:GPL-2.0':
     - '*':
         reason: None Given
-        expires: 2020-11-22T11:40:42.588Z
-  SNYK-JAVA-COMMONSCODEC-561518:
-    - '*':
-        reason: None Given
-        expires: 2020-11-22T11:41:36.953Z
+        expires: 2021-11-07T11:38:28.614Z
 patch: {}
