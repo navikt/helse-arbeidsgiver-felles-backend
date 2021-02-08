@@ -1,5 +1,6 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
+import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import java.sql.Connection
 import java.sql.Timestamp
 import java.time.LocalDateTime
@@ -7,8 +8,10 @@ import java.util.*
 import javax.sql.DataSource
 
 interface BakgrunnsjobbRepository {
+
     fun save(bakgrunnsjobb: Bakgrunnsjobb)
     fun save(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection)
+    fun findAutoCleanJobs(): List<Bakgrunnsjobb>
     fun findByKjoeretidBeforeAndStatusIn(timeout: LocalDateTime, tilstander: Set<BakgrunnsjobbStatus>): List<Bakgrunnsjobb>
     fun delete(uuid: UUID)
     fun deleteAll()
@@ -20,6 +23,11 @@ interface BakgrunnsjobbRepository {
 class MockBakgrunnsjobbRepository : BakgrunnsjobbRepository {
 
     private val jobs = mutableListOf<Bakgrunnsjobb>()
+
+    override fun findAutoCleanJobs(): List<Bakgrunnsjobb> {
+        return jobs.filter { it.type.equals(AutoCleanJobbProcessor.JOB_TYPE) }
+    }
+
 
     override fun save(bakgrunnsjobb: Bakgrunnsjobb) {
         jobs.add(bakgrunnsjobb)
@@ -55,6 +63,7 @@ class MockBakgrunnsjobbRepository : BakgrunnsjobbRepository {
         val someMonthsAgo = LocalDateTime.now().minusMonths(months)
         jobs.removeIf{ it.behandlet?.isBefore(someMonthsAgo)!! && it.status.equals(BakgrunnsjobbStatus.OK) }
     }
+
 }
 
 class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : BakgrunnsjobbRepository {
@@ -76,13 +85,20 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
 
     private val selectStatement = """
         select * from $tableName where kjoeretid < ? and status = ANY(?)
-    """.trimIndent() //and
+    """.trimIndent()
+
+    private val selectByIdStatement = """
+        select * from $tableName where jobb_id = ?
+    """.trimIndent()
+
+    private val selectAutoClean = """select * from table where type = 'auto-clean-bakgrunnsjobb'""".trimIndent()
 
     private val deleteStatement = "DELETE FROM $tableName where jobb_id = ?::uuid"
 
     private val deleteOldJobsStatement = "DELETE FROM $tableName WHERE status = 'OK' AND behandlet < current_date - interval '? months'"
 
     private val deleteAllStatement = "DELETE FROM $tableName"
+
 
     override fun save(bakgrunnsjobb: Bakgrunnsjobb) {
         dataSource.connection.use {
@@ -119,6 +135,29 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
             setString(5, bakgrunnsjobb.data)
             setString(6, bakgrunnsjobb.uuid.toString())
         }.executeUpdate()
+    }
+
+    override fun findAutoCleanJobs(): List<Bakgrunnsjobb> {
+        dataSource.connection.use {
+            val res = it.prepareStatement(selectAutoClean).executeQuery()
+
+            val resultatListe = mutableListOf<Bakgrunnsjobb>()
+
+            while (res.next()) {
+                resultatListe.add(Bakgrunnsjobb(
+                        UUID.fromString(res.getString("jobb_id")),
+                        res.getString("type"),
+                        res.getTimestamp("behandlet")?.toLocalDateTime(),
+                        res.getTimestamp("opprettet").toLocalDateTime(),
+                        BakgrunnsjobbStatus.valueOf(res.getString("status")),
+                        res.getTimestamp("kjoeretid").toLocalDateTime(),
+                        res.getInt("forsoek"),
+                        res.getInt("maks_forsoek"),
+                        res.getString("data")
+                ))
+            }
+            return resultatListe
+        }
     }
 
     override fun findByKjoeretidBeforeAndStatusIn(timeout: LocalDateTime, tilstander: Set<BakgrunnsjobbStatus>): List<Bakgrunnsjobb> {
