@@ -65,14 +65,7 @@ internal class BakgrunnsjobbServiceTest {
                 repoMock.findAutoCleanJobs().get(0).kjoeretid < now.plusHours(3)
         )
     }
-    @Test
-    fun `autoClean får parametre med til data`() {
-        service.startAutoClean(2, 3)
-        val objectMapper = ObjectMapper()
-        val autocleanrequest: AutoCleanJobb = objectMapper.readValue(repoMock.findAutoCleanJobs().get(0).data, AutoCleanJobb::class.java)
-        assert(autocleanrequest.slettEldre.equals(3))
-        assert(autocleanrequest.interval.equals(2))
-    }
+
     @Test
     fun `autoClean opprettes med interval under 1 blir ikke lagret`() {
         service.startAutoClean(0, 3)
@@ -84,21 +77,6 @@ internal class BakgrunnsjobbServiceTest {
         service.startAutoClean(2,3)
         assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
     }
-
-    @Test
-    fun `hvis vi allerede har en autoclean jobb så blir den oppdatert med nye parametre`(){
-        service.startAutoClean(2, 3)
-        assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
-        service.startAutoClean(5, 6)
-        assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
-        val objectMapper = ObjectMapper()
-        val autocleanrequest: AutoCleanJobb = objectMapper.readValue(repoMock.findAutoCleanJobs().get(0).data, AutoCleanJobb::class.java)
-        assert(autocleanrequest.slettEldre.equals(6))
-        assert(autocleanrequest.interval.equals(5))
-    }
-
-
-
 }
 
 

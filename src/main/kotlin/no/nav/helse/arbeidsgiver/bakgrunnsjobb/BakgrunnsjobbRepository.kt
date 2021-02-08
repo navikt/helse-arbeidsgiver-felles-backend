@@ -8,7 +8,7 @@ import java.util.*
 import javax.sql.DataSource
 
 interface BakgrunnsjobbRepository {
-
+    fun getById(id: UUID) : Bakgrunnsjobb
     fun save(bakgrunnsjobb: Bakgrunnsjobb)
     fun save(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection)
     fun findAutoCleanJobs(): List<Bakgrunnsjobb>
@@ -28,6 +28,9 @@ class MockBakgrunnsjobbRepository : BakgrunnsjobbRepository {
         return jobs.filter { it.type.equals(AutoCleanJobbProcessor.JOB_TYPE) }
     }
 
+    override fun getById(id: UUID): Bakgrunnsjobb {
+        return jobs.filter{it.uuid.equals(id)}.get(0)
+    }
 
     override fun save(bakgrunnsjobb: Bakgrunnsjobb) {
         jobs.add(bakgrunnsjobb)
@@ -66,6 +69,7 @@ class MockBakgrunnsjobbRepository : BakgrunnsjobbRepository {
 
 }
 
+
 class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : BakgrunnsjobbRepository {
     private val tableName = "bakgrunnsjobb"
 
@@ -98,6 +102,24 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
     private val deleteOldJobsStatement = "DELETE FROM $tableName WHERE status = 'OK' AND behandlet < current_date - interval '? months'"
 
     private val deleteAllStatement = "DELETE FROM $tableName"
+
+    override fun getById(id: UUID): Bakgrunnsjobb {
+        dataSource.connection.use {
+            val res = it.prepareStatement(selectByIdStatement).executeQuery()
+
+            return Bakgrunnsjobb(
+                        UUID.fromString(res.getString("jobb_id")),
+                        res.getString("type"),
+                        res.getTimestamp("behandlet")?.toLocalDateTime(),
+                        res.getTimestamp("opprettet").toLocalDateTime(),
+                        BakgrunnsjobbStatus.valueOf(res.getString("status")),
+                        res.getTimestamp("kjoeretid").toLocalDateTime(),
+                        res.getInt("forsoek"),
+                        res.getInt("maks_forsoek"),
+                        res.getString("data")
+                )
+            }
+}
 
 
     override fun save(bakgrunnsjobb: Bakgrunnsjobb) {
