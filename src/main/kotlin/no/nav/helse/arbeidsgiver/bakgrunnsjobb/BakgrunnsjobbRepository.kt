@@ -2,6 +2,7 @@ package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
 import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import java.sql.Connection
+import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.util.*
@@ -107,17 +108,7 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
         dataSource.connection.use {
             val res = it.prepareStatement(selectByIdStatement).executeQuery()
 
-            return Bakgrunnsjobb(
-                        UUID.fromString(res.getString("jobb_id")),
-                        res.getString("type"),
-                        res.getTimestamp("behandlet")?.toLocalDateTime(),
-                        res.getTimestamp("opprettet").toLocalDateTime(),
-                        BakgrunnsjobbStatus.valueOf(res.getString("status")),
-                        res.getTimestamp("kjoeretid").toLocalDateTime(),
-                        res.getInt("forsoek"),
-                        res.getInt("maks_forsoek"),
-                        res.getString("data")
-                )
+            return resultsetTilResultatliste(res).get(0)
             }
 }
 
@@ -163,22 +154,7 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
         dataSource.connection.use {
             val res = it.prepareStatement(selectAutoClean).executeQuery()
 
-            val resultatListe = mutableListOf<Bakgrunnsjobb>()
-
-            while (res.next()) {
-                resultatListe.add(Bakgrunnsjobb(
-                        UUID.fromString(res.getString("jobb_id")),
-                        res.getString("type"),
-                        res.getTimestamp("behandlet")?.toLocalDateTime(),
-                        res.getTimestamp("opprettet").toLocalDateTime(),
-                        BakgrunnsjobbStatus.valueOf(res.getString("status")),
-                        res.getTimestamp("kjoeretid").toLocalDateTime(),
-                        res.getInt("forsoek"),
-                        res.getInt("maks_forsoek"),
-                        res.getString("data")
-                ))
-            }
-            return resultatListe
+            return resultsetTilResultatliste(res)
         }
     }
 
@@ -189,23 +165,27 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
                 setArray(2, it.createArrayOf("VARCHAR", tilstander.map { it.toString() }.toTypedArray()))
             }.executeQuery()
 
-            val resultatListe = mutableListOf<Bakgrunnsjobb>()
-
-            while (res.next()) {
-                resultatListe.add(Bakgrunnsjobb(
-                        UUID.fromString(res.getString("jobb_id")),
-                        res.getString("type"),
-                        res.getTimestamp("behandlet")?.toLocalDateTime(),
-                        res.getTimestamp("opprettet").toLocalDateTime(),
-                        BakgrunnsjobbStatus.valueOf(res.getString("status")),
-                        res.getTimestamp("kjoeretid").toLocalDateTime(),
-                        res.getInt("forsoek"),
-                        res.getInt("maks_forsoek"),
-                        res.getString("data")
-                ))
-            }
-            return resultatListe
+            return resultsetTilResultatliste(res)
         }
+    }
+
+    private fun resultsetTilResultatliste(res : ResultSet): MutableList<Bakgrunnsjobb> {
+        val resultatListe = mutableListOf<Bakgrunnsjobb>()
+
+        while (res.next()) {
+            resultatListe.add(Bakgrunnsjobb(
+                    UUID.fromString(res.getString("jobb_id")),
+                    res.getString("type"),
+                    res.getTimestamp("behandlet")?.toLocalDateTime(),
+                    res.getTimestamp("opprettet").toLocalDateTime(),
+                    BakgrunnsjobbStatus.valueOf(res.getString("status")),
+                    res.getTimestamp("kjoeretid").toLocalDateTime(),
+                    res.getInt("forsoek"),
+                    res.getInt("maks_forsoek"),
+                    res.getString("data")
+            ))
+        }
+        return resultatListe
     }
 
     override fun delete(uuid: UUID) {
