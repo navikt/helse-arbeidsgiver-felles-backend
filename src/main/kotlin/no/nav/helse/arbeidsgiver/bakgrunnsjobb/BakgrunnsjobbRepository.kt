@@ -96,7 +96,8 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
         select * from $tableName where jobb_id = ?
     """.trimIndent()
 
-    private val selectAutoClean = """SELECT * from $tableName WHERE status = IN ('opprettet', 'feilet') AND type = 'auto-clean-bakgrunnsjobb'""".trimIndent()
+
+    private val selectAutoClean = """SELECT * from $tableName WHERE status IN ('OPPRETTET', 'AVBRUTT') AND type = 'auto-clean-bakgrunnsjobb'""".trimIndent()
 
     private val deleteStatement = "DELETE FROM $tableName where jobb_id = ?::uuid"
 
@@ -107,7 +108,6 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
     override fun getById(id: UUID): Bakgrunnsjobb {
         dataSource.connection.use {
             val res = it.prepareStatement(selectByIdStatement).executeQuery()
-
             return resultsetTilResultatliste(res).get(0)
             }
 }
