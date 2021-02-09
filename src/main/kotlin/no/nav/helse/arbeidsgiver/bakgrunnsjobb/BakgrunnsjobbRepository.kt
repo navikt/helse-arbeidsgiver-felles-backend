@@ -95,7 +95,7 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
         select * from $tableName where jobb_id = ?
     """.trimIndent()
 
-    private val selectAutoClean = """select * from table where type = 'auto-clean-bakgrunnsjobb'""".trimIndent()
+    private val selectAutoClean = """SELECT * from $tableName WHERE status = IN ('opprettet', 'feilet') AND type = 'auto-clean-bakgrunnsjobb'""".trimIndent()
 
     private val deleteStatement = "DELETE FROM $tableName where jobb_id = ?::uuid"
 
