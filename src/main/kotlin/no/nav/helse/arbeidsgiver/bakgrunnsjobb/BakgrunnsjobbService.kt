@@ -26,7 +26,7 @@ class BakgrunnsjobbService(
     }
 
     fun registrer(prosesserer: BakgrunnsjobbProsesserer) {
-        prossesserere[prosesserer.JOB_TYPE] = prosesserer
+        prossesserere[prosesserer.type] = prosesserer
     }
 
     inline fun <reified T : BakgrunnsjobbProsesserer> opprettJobb(
@@ -41,7 +41,7 @@ class BakgrunnsjobbService(
 
         bakgrunnsjobbRepository.save(
             Bakgrunnsjobb(
-                type = prosesserer.JOB_TYPE,
+                type = prosesserer.type,
                 kjoeretid = kjoeretid,
                 forsoek = forsoek,
                 maksAntallForsoek = maksAntallForsoek,
@@ -77,7 +77,7 @@ class BakgrunnsjobbService(
             val responseBodyMessage = if (responseBody != null) "Feil fra ekstern tjeneste: $responseBody" else ""
             jobb.status = if (jobb.forsoek >= jobb.maksAntallForsoek) BakgrunnsjobbStatus.STOPPET else BakgrunnsjobbStatus.FEILET
             if (jobb.status == BakgrunnsjobbStatus.STOPPET) {
-                logger.error("Jobb ${jobb.uuid} feilet permanent. $responseBodyMessage", ex)
+                logger.error("Jobb ${jobb.uuid} feilet permanent og ble stoppet fra å kjøre igjen. $responseBodyMessage", ex)
                 STOPPET_JOBB_COUNTER.labels(jobb.type).inc()
                 bakgrunnsvarsler.rapporterPermanentFeiletJobb()
                 tryStopAction(prossessorForType, jobb)
@@ -121,7 +121,7 @@ class BakgrunnsjobbService(
  * Interface for en klasse som kan prosessere en bakgrunnsjobbstype
  */
 interface BakgrunnsjobbProsesserer {
-    val JOB_TYPE: String
+    val type: String
 
     /**
      * Logikken som skal håndtere jobben. Får inn en kopi av jobben med all metadata

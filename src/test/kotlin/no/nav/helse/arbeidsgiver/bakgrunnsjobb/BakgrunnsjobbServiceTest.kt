@@ -13,11 +13,11 @@ internal class BakgrunnsjobbServiceTest {
     val service = BakgrunnsjobbService(repoMock, 1, testCoroutineScope)
 
     val now = LocalDateTime.now()
-
+    private val eksempelProsesserer = EksempelProsesserer()
 
     @BeforeEach
     internal fun setup() {
-        service.leggTilBakgrunnsjobbProsesserer("test", testProsesserer())
+        service.registrer(eksempelProsesserer)
         repoMock.deleteAll()
         service.startAsync(true)
     }
@@ -25,7 +25,7 @@ internal class BakgrunnsjobbServiceTest {
     @Test
     fun `sett jobb til ok hvis ingen feil `() {
         val testJobb = Bakgrunnsjobb(
-                type = "test",
+                type = EksempelProsesserer.JOBB_TYPE,
                 data = "ok"
         )
         repoMock.save(testJobb)
@@ -40,9 +40,9 @@ internal class BakgrunnsjobbServiceTest {
     }
 
     @Test
-    fun `sett jobb til stoppet hvis feiler for mye `() {
+    fun `sett jobb til stoppet og kjør stoppet-funksjonen hvis feiler for mye `() {
         val testJobb = Bakgrunnsjobb(
-                type = "test",
+                type = EksempelProsesserer.JOBB_TYPE,
                 opprettet = now.minusHours(1),
                 maksAntallForsoek = 3,
                 data = "fail"
@@ -53,15 +53,29 @@ internal class BakgrunnsjobbServiceTest {
         //Den går rett til stoppet i denne testen
         assertThat(repoMock.findByKjoeretidBeforeAndStatusIn(now.plusMinutes(1), setOf(BakgrunnsjobbStatus.STOPPET)))
                 .hasSize(1)
+
+        assertThat(eksempelProsesserer.bleStoppet).isTrue()
     }
 }
 
 
-class testProsesserer : BakgrunnsjobbProsesserer {
-    override fun prosesser(jobbData: String) {
-        if (jobbData == "fail")
-            throw RuntimeException()
+class EksempelProsesserer : BakgrunnsjobbProsesserer {
+    companion object {
+        val JOBB_TYPE: String = "TEST_TYPE"
+    }
 
+    var bleStoppet: Boolean = false
+
+    override val type = JOBB_TYPE
+
+    override fun prosesser(jobb: Bakgrunnsjobb) {
+        if (jobb.data == "fail")
+            throw RuntimeException()
+    }
+
+    override fun stoppet(jobb: Bakgrunnsjobb) {
+        bleStoppet = true
+        throw RuntimeException()
     }
 
     override fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {
