@@ -11,29 +11,6 @@ import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.HashMap
 
-
-val FEILET_JOBB_COUNTER = Counter.build()
-    .namespace("helsearbeidsgiver")
-    .name("feilet_jobb")
-    .labelNames("jobbtype")
-    .help("Teller jobber som har midlertidig feilet, men vil bli forsøkt igjen")
-    .register()
-
-val STOPPET_JOBB_COUNTER = Counter.build()
-    .namespace("helsearbeidsgiver")
-    .name("stoppet_jobb")
-    .labelNames("jobbtype")
-    .help("Teller jobber som har feilet permanent og må følges opp")
-    .register()
-
-val OK_JOBB_COUNTER = Counter.build()
-    .namespace("helsearbeidsgiver")
-    .name("jobb_ok")
-    .labelNames("jobbtype")
-    .help("Teller jobber som har blitt utført OK")
-    .register()
-
-
 class BakgrunnsjobbService(
         val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
         val delayMillis: Long = 30 * 1000L,
@@ -68,8 +45,8 @@ class BakgrunnsjobbService(
             prossessorForType.prosesser(jobb.data)
             jobb.status = BakgrunnsjobbStatus.OK
             OK_JOBB_COUNTER.labels(jobb.type).inc()
-        } catch (ex: Exception) {
-            val responseBody = tryGetResponseBody(ex, jobb.uuid)
+        } catch (ex: Throwable) {
+            val responseBody = tryGetResponseBody(ex)
             val responseBodyMessage = if (responseBody != null) "Feil fra ekstern tjeneste: $responseBody" else ""
             jobb.status = if (jobb.forsoek >= jobb.maksAntallForsoek) BakgrunnsjobbStatus.STOPPET else BakgrunnsjobbStatus.FEILET
             if (jobb.status == BakgrunnsjobbStatus.STOPPET) {
@@ -85,7 +62,7 @@ class BakgrunnsjobbService(
         }
     }
 
-    private fun tryGetResponseBody(jobException: Exception, jobId: UUID): String? {
+    private fun tryGetResponseBody(jobException: Throwable): String? {
         if ( jobException is ResponseException) {
             return try {
                 runBlocking { jobException.response?.content?.readUTF8Line() }
@@ -115,3 +92,34 @@ interface BakgrunnsjobbProsesserer {
         return LocalDateTime.now().plusHours(backoffWaitInHours.toLong())
     }
 }
+
+
+/**
+ * Interface for en klasse som kan prosessere en bakgrunnsjobbstype
+ */
+interface BakgrunnsjobbProsessererV2 : BakgrunnsjobbProsesserer {
+    fun prosesser(jobb: Bakgrunnsjobb) {
+        prosesser(jobb.data)
+    }
+}
+
+val FEILET_JOBB_COUNTER = Counter.build()
+    .namespace("helsearbeidsgiver")
+    .name("feilet_jobb")
+    .labelNames("jobbtype")
+    .help("Teller jobber som har midlertidig feilet, men vil bli forsøkt igjen")
+    .register()
+
+val STOPPET_JOBB_COUNTER = Counter.build()
+    .namespace("helsearbeidsgiver")
+    .name("stoppet_jobb")
+    .labelNames("jobbtype")
+    .help("Teller jobber som har feilet permanent og må følges opp")
+    .register()
+
+val OK_JOBB_COUNTER = Counter.build()
+    .namespace("helsearbeidsgiver")
+    .name("jobb_ok")
+    .labelNames("jobbtype")
+    .help("Teller jobber som har blitt utført OK")
+    .register()
