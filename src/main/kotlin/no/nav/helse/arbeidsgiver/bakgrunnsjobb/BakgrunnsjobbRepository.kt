@@ -16,6 +16,7 @@ interface BakgrunnsjobbRepository {
     fun save(bakgrunnsjobb: Bakgrunnsjobb)
     fun save(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection)
     fun findAutoCleanJobs(): List<Bakgrunnsjobb>
+    fun findOkAutoCleanJobs(): List<Bakgrunnsjobb>
     fun findByKjoeretidBeforeAndStatusIn(timeout: LocalDateTime, tilstander: Set<BakgrunnsjobbStatus>): List<Bakgrunnsjobb>
     fun delete(uuid: UUID)
     fun deleteAll()
@@ -32,6 +33,9 @@ class MockBakgrunnsjobbRepository : BakgrunnsjobbRepository {
         return jobs.filter { it.type.equals(AutoCleanJobbProcessor.JOB_TYPE) }
     }
 
+    override fun findOkAutoCleanJobs(): List<Bakgrunnsjobb> {
+        return jobs.filter { it.type.equals(AutoCleanJobbProcessor.JOB_TYPE) }
+    }
     override fun getById(id: UUID): Bakgrunnsjobb {
         return jobs.filter{it.uuid.equals(id)}.get(0)
     }
@@ -100,11 +104,13 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
     """.trimIndent()
 
 
-    private val selectAutoClean = """SELECT * from $tableName WHERE status IN ('OK') AND type = 'bakgrunnsjobb-autoclean'""".trimIndent()
+    private val selectAutoClean = """SELECT * from $tableName WHERE status IN ('${BakgrunnsjobbStatus.OPPRETTET}','${BakgrunnsjobbStatus.FEILET}) AND type = '${AutoCleanJobbProcessor.JOB_TYPE}'""".trimIndent()
+
+    private val selectOkAutoClean = """SELECT * from $tableName WHERE status = '${BakgrunnsjobbStatus.OK}' AND type = '${AutoCleanJobbProcessor.JOB_TYPE}'""".trimIndent()
 
     private val deleteStatement = "DELETE FROM $tableName where jobb_id = ?::uuid"
 
-    private val deleteOldJobsStatement = """DELETE FROM $tableName WHERE status = 'OK' AND behandlet < ?""".trimIndent()
+    private val deleteOldJobsStatement = """DELETE FROM $tableName WHERE status = '${BakgrunnsjobbStatus.OK}' AND behandlet < ?""".trimIndent()
 
     private val deleteAllStatement = "DELETE FROM $tableName"
 
@@ -160,6 +166,13 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
         }
     }
 
+    override fun findOkAutoCleanJobs(): List<Bakgrunnsjobb> {
+        dataSource.connection.use {
+            val res = it.prepareStatement(selectOkAutoClean).executeQuery()
+
+            return resultsetTilResultatliste(res)
+        }
+    }
     override fun findByKjoeretidBeforeAndStatusIn(timeout: LocalDateTime, tilstander: Set<BakgrunnsjobbStatus>): List<Bakgrunnsjobb> {
         dataSource.connection.use {
             val res = it.prepareStatement(selectStatement).apply {

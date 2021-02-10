@@ -100,11 +100,6 @@ internal class PostgresBakgrunnsjobbRepositoryTest {
     }
 
     @Test
-    fun `find autoclean jobs`(){
-        repo.findAutoCleanJobs()
-    }
-
-    @Test
     fun `job gets deleted if older than input`(){
         val uuid = UUID.randomUUID()
         val bakgrunnsjobb = Bakgrunnsjobb(
@@ -119,9 +114,9 @@ internal class PostgresBakgrunnsjobbRepositoryTest {
                 "{}"
         )
         repo.save(bakgrunnsjobb)
-        assertThat(repo.findAutoCleanJobs()).hasSize(1);
+        assertThat(repo.findOkAutoCleanJobs()).hasSize(1);
         repo.deleteOldOkJobs(2)
-        assertThat(repo.findAutoCleanJobs()).hasSize(0);
+        assertThat(repo.findOkAutoCleanJobs()).hasSize(0);
     }
 
     @Test
@@ -139,8 +134,8 @@ internal class PostgresBakgrunnsjobbRepositoryTest {
                 "{}"
         )
         repo.save(bakgrunnsjobb)
-        assertThat(repo.findAutoCleanJobs()).hasSize(1);
+        assertThat(repo.findOkAutoCleanJobs()).hasSize(1);
         repo.deleteOldOkJobs(2)
-        assertThat(repo.findAutoCleanJobs()).hasSize(1);
+        assertThat(repo.findOkAutoCleanJobs()).hasSize(1);
     }
 }

@@ -67,6 +67,12 @@ internal class BakgrunnsjobbServiceTest {
     }
 
     @Test
+    fun `autoClean blir ikke opprettet hvis frekvens er 0`() {
+        service.startAutoClean(0, 3)
+        assertThat(repoMock.findAutoCleanJobs()).hasSize(0)
+    }
+
+    @Test
     fun `autoClean opprettes med interval under 1 blir ikke lagret`() {
         service.startAutoClean(0, 3)
         assertThat(repoMock.findAutoCleanJobs()).hasSize(0)
