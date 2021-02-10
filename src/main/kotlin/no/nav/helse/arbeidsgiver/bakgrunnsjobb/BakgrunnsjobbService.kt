@@ -139,6 +139,7 @@ class BakgrunnsjobbService(
     private fun tryStopAction(prossessorForType: BakgrunnsjobbProsesserer, jobb: Bakgrunnsjobb) {
         try {
             prossessorForType.stoppet(jobb)
+            logger.error("Jobben ${jobb.uuid} kjørte sin opprydningsjobb!")
         } catch (ex: Throwable) {
             logger.error("Jobben ${jobb.uuid} feilet i sin opprydningsjobb!", ex)
         }
