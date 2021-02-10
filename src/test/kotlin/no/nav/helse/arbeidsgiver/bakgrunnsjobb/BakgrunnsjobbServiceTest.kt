@@ -1,9 +1,7 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.mockk
 import kotlinx.coroutines.test.TestCoroutineScope
-import no.nav.helse.arbeidsgiver.processing.AutoCleanJobb
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
