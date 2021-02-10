@@ -10,7 +10,7 @@ val logbackContribVersion = "0.1.5"
 val coroutinesVersion = "1.3.9"
 val jacksonVersion = "2.11.2"
 val hikariVersion = "3.3.1"
-val vaultJdbcVersion = "1.3.1"
+val vaultJdbcVersion = "1.3.7"
 val junitJupiterVersion = "5.5.0-RC2"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
@@ -62,6 +62,12 @@ buildscript {
 }
 
 dependencies {
+
+    //Snyk fikses
+    implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 gjennom ktor-client-apache
+    implementation("commons-codec:commons-codec:1.13") // overstyrer transiente 1.10
+    implementation("com.github.waffle:waffle-jna:3.0.0") //overstyrer no.nav.vault
+
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
     implementation(kotlin("stdlib-jdk8", kotlinVersion))

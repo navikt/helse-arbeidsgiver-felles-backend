@@ -1,13 +1,21 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.util.StdDateFormat
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.features.*
 import io.ktor.utils.io.*
 import io.prometheus.client.Counter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import no.nav.helse.arbeidsgiver.processing.AutoCleanJobb
+import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
+import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor.Companion.JOB_TYPE
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import java.sql.Connection
+import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import kotlin.collections.HashMap
 
@@ -19,6 +27,41 @@ class BakgrunnsjobbService(
 ) : RecurringJob(coroutineScope, delayMillis) {
 
     val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
+    private val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
+    val log = LoggerFactory.getLogger(BakgrunnsjobbService::class.java)
+
+    fun startAutoClean(frekvensITimer: Int, slettEldreEnnMaaneder : Long){
+        val om = ObjectMapper().apply {
+            registerKotlinModule()
+            disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            dateFormat = StdDateFormat()
+        }
+        if(frekvensITimer < 1 || slettEldreEnnMaaneder < 0 ){
+            log.info("startautoclean forsøkt startet med ugyldige parametre.")
+            return
+        }
+
+
+        val autocleanjobber = bakgrunnsjobbRepository.findAutoCleanJobs()
+
+        if(autocleanjobber.size == 0) {
+            val autoCleanJobb = AutoCleanJobb(interval = frekvensITimer, slettEldre = slettEldreEnnMaaneder)
+                bakgrunnsjobbRepository.save(
+                        Bakgrunnsjobb(
+                                kjoeretid = LocalDateTime.now().plusHours(frekvensITimer.toLong()),
+                                maksAntallForsoek = 10,
+                                data = om.writeValueAsString(AutoCleanJobbProcessor.JobbData(autoCleanJobb.id)),
+                                type = JOB_TYPE
+                        )
+                )
+            }
+        else {
+            val ekisterendeAutoCleanJobb = autocleanjobber.get(0)
+            bakgrunnsjobbRepository.delete(ekisterendeAutoCleanJobb.uuid)
+            startAutoClean(frekvensITimer, slettEldreEnnMaaneder)
+        }
+
+    }
 
     @Deprecated("Bruk registrer(..)")
     fun leggTilBakgrunnsjobbProsesserer(type: String, prosesserer: BakgrunnsjobbProsesserer) {
@@ -108,7 +151,7 @@ class BakgrunnsjobbService(
     private fun tryGetResponseBody(jobException: Throwable): String? {
         if ( jobException is ResponseException) {
             return try {
-                runBlocking { jobException.response?.content?.readUTF8Line() }
+                runBlocking { jobException.response.content.readUTF8Line() }
             } catch (readEx: Exception) {
                 null
             }

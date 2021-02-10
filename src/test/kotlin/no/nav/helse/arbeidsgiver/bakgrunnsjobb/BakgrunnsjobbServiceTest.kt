@@ -1,6 +1,8 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.test.TestCoroutineScope
+import no.nav.helse.arbeidsgiver.processing.AutoCleanJobb
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -55,6 +57,33 @@ internal class BakgrunnsjobbServiceTest {
                 .hasSize(1)
 
         assertThat(eksempelProsesserer.bleStoppet).isTrue()
+    }
+
+    @Test
+    fun `autoClean opprettes med riktig kjøretid`() {
+        service.startAutoClean(2, 3)
+        assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
+        assert(repoMock.findAutoCleanJobs().get(0).kjoeretid > now.plusHours(1) &&
+                repoMock.findAutoCleanJobs().get(0).kjoeretid < now.plusHours(3)
+        )
+    }
+
+    @Test
+    fun `autoClean blir ikke opprettet hvis frekvens er 0`() {
+        service.startAutoClean(0, 3)
+        assertThat(repoMock.findAutoCleanJobs()).hasSize(0)
+    }
+
+    @Test
+    fun `autoClean opprettes med interval under 1 blir ikke lagret`() {
+        service.startAutoClean(0, 3)
+        assertThat(repoMock.findAutoCleanJobs()).hasSize(0)
+    }
+
+    @Test
+    fun `autoClean oppretter jobb med riktig antall måneder`(){
+        service.startAutoClean(2,3)
+        assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
     }
 }
 
