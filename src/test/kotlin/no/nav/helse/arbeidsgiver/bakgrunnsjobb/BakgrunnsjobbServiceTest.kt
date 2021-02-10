@@ -1,11 +1,13 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.mockk.mockk
 import kotlinx.coroutines.test.TestCoroutineScope
 import no.nav.helse.arbeidsgiver.processing.AutoCleanJobb
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.sql.Connection
 import java.time.LocalDateTime
 
 internal class BakgrunnsjobbServiceTest {
@@ -84,6 +86,18 @@ internal class BakgrunnsjobbServiceTest {
     fun `autoClean oppretter jobb med riktig antall måneder`(){
         service.startAutoClean(2,3)
         assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
+    }
+
+
+    @Test
+    fun `opprett lager korrekt jobb`(){
+        val connectionMock = mockk<Connection>()
+        service.opprettJobb<EksempelProsesserer>(data = "test", connection = connectionMock)
+        val jobber =
+            repoMock.findByKjoeretidBeforeAndStatusIn(LocalDateTime.MAX, setOf(BakgrunnsjobbStatus.OPPRETTET))
+        assertThat(jobber).hasSize(1)
+        assertThat(jobber[0].type).isEqualTo(EksempelProsesserer.JOBB_TYPE)
+        assertThat(jobber[0].data).isEqualTo("test")
     }
 }
 

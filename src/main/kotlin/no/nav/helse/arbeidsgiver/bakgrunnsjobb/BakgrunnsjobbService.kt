@@ -10,7 +10,6 @@ import io.prometheus.client.Counter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import no.nav.helse.arbeidsgiver.processing.AutoCleanJobb
 import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor.Companion.JOB_TYPE
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
@@ -27,7 +26,6 @@ class BakgrunnsjobbService(
 ) : RecurringJob(coroutineScope, delayMillis) {
 
     val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
-    private val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
     val log = LoggerFactory.getLogger(BakgrunnsjobbService::class.java)
 
     fun startAutoClean(frekvensITimer: Int, slettEldreEnnMaaneder : Long){
@@ -41,16 +39,14 @@ class BakgrunnsjobbService(
             return
         }
 
-
         val autocleanjobber = bakgrunnsjobbRepository.findAutoCleanJobs()
 
-        if(autocleanjobber.size == 0) {
-            val autoCleanJobb = AutoCleanJobb(interval = frekvensITimer, slettEldre = slettEldreEnnMaaneder)
+        if(autocleanjobber.isEmpty()) {
                 bakgrunnsjobbRepository.save(
                         Bakgrunnsjobb(
                                 kjoeretid = LocalDateTime.now().plusHours(frekvensITimer.toLong()),
                                 maksAntallForsoek = 10,
-                                data = om.writeValueAsString(AutoCleanJobbProcessor.JobbData(autoCleanJobb.id)),
+                                data = om.writeValueAsString(AutoCleanJobbProcessor.JobbData(slettEldreEnnMaaneder, frekvensITimer)),
                                 type = JOB_TYPE
                         )
                 )
