@@ -2,8 +2,11 @@ package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
 import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import java.sql.Connection
+import java.sql.Date
 import java.sql.ResultSet
 import java.sql.Timestamp
+import java.time.Instant.now
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 import javax.sql.DataSource
@@ -97,11 +100,11 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
     """.trimIndent()
 
 
-    private val selectAutoClean = """SELECT * from $tableName WHERE status IN ('OPPRETTET', 'AVBRUTT') AND type = 'auto-clean-bakgrunnsjobb'""".trimIndent()
+    private val selectAutoClean = """SELECT * from $tableName WHERE status IN ('OK') AND type = 'bakgrunnsjobb-autoclean'""".trimIndent()
 
     private val deleteStatement = "DELETE FROM $tableName where jobb_id = ?::uuid"
 
-    private val deleteOldJobsStatement = "DELETE FROM $tableName WHERE status = 'OK' AND behandlet < current_date - interval '? months'"
+    private val deleteOldJobsStatement = """DELETE FROM $tableName WHERE status = 'OK' AND behandlet < ?""".trimIndent()
 
     private val deleteAllStatement = "DELETE FROM $tableName"
 
@@ -111,7 +114,6 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
             return resultsetTilResultatliste(res).get(0)
             }
 }
-
 
     override fun save(bakgrunnsjobb: Bakgrunnsjobb) {
         dataSource.connection.use {
@@ -205,7 +207,7 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
     override fun deleteOldOkJobs(months: Long) {
         dataSource.connection.use {
             it.prepareStatement(deleteOldJobsStatement).apply {
-                setString(1, months.toString())
+                setDate(1, Date.valueOf(LocalDate.now().minusMonths(months)))
             }.executeUpdate()
         }
     }

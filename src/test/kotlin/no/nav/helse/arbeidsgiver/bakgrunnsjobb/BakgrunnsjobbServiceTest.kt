@@ -73,7 +73,7 @@ internal class BakgrunnsjobbServiceTest {
     }
 
     @Test
-    fun `autoClean oppretter jobb med riktig antall måneeder`(){
+    fun `autoClean oppretter jobb med riktig antall måneder`(){
         service.startAutoClean(2,3)
         assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
     }
