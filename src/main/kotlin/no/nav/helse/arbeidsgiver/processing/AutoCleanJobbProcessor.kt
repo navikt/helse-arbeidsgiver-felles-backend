@@ -2,6 +2,7 @@ package no.nav.helse.arbeidsgiver.processing
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
@@ -16,11 +17,16 @@ class AutoCleanJobbProcessor (
         val JOB_TYPE = "bakgrunnsjobb-autoclean"
     }
 
-    override fun prosesser(jobbDataString: String) {
-        val autocleanrequest: AutoCleanJobb = om.readValue(jobbDataString, AutoCleanJobb::class.java)
+    override val type: String get() = JOB_TYPE
+
+    override fun prosesser(jobb: Bakgrunnsjobb) {
+        val autocleanrequest = om.readValue<JobbData>(jobb.data)
         bakgrunnsjobbRepository.deleteOldOkJobs(autocleanrequest.slettEldre);
-        bakgrunnsjobbService.startAutoClean(autocleanrequest.interval,autocleanrequest.slettEldre)
+        bakgrunnsjobbService.startAutoClean(autocleanrequest.interval, autocleanrequest.slettEldre)
     }
 
-    data class JobbData(val id: UUID)
+    data class JobbData(
+        val slettEldre: Long,
+        var interval: Int,
+    )
 }

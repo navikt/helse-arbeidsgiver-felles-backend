@@ -1,5 +1,6 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
+import io.mockk.mockk
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.test.TestCoroutineScope
 import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
@@ -16,11 +17,11 @@ internal class BakgrunnsjobbServiceTest {
     val service = BakgrunnsjobbService(repoMock, 1, testCoroutineScope)
 
     val now = LocalDateTime.now()
-
+    private val eksempelProsesserer = EksempelProsesserer()
 
     @BeforeEach
     internal fun setup() {
-        service.leggTilBakgrunnsjobbProsesserer("test", testProsesserer())
+        service.registrer(eksempelProsesserer)
         repoMock.deleteAll()
         service.startAsync(true)
     }
@@ -28,10 +29,9 @@ internal class BakgrunnsjobbServiceTest {
     @Test
     fun `sett jobb til ok hvis ingen feil `() {
         val testJobb = Bakgrunnsjobb(
-                type = "test",
+                type = EksempelProsesserer.JOBB_TYPE,
                 data = "ok"
         )
-        val it : Connection? = null
         repoMock.save(testJobb)
         testCoroutineScope.advanceTimeBy(1)
 
@@ -44,9 +44,9 @@ internal class BakgrunnsjobbServiceTest {
     }
 
     @Test
-    fun `sett jobb til stoppet hvis feiler for mye `() {
+    fun `sett jobb til stoppet og kjør stoppet-funksjonen hvis feiler for mye `() {
         val testJobb = Bakgrunnsjobb(
-                type = "test",
+                type = EksempelProsesserer.JOBB_TYPE,
                 opprettet = now.minusHours(1),
                 maksAntallForsoek = 3,
                 data = "fail"
@@ -57,6 +57,8 @@ internal class BakgrunnsjobbServiceTest {
         //Den går rett til stoppet i denne testen
         assertThat(repoMock.findByKjoeretidBeforeAndStatusIn(now.plusMinutes(1), setOf(BakgrunnsjobbStatus.STOPPET)))
                 .hasSize(1)
+
+        assertThat(eksempelProsesserer.bleStoppet).isTrue()
     }
 
     @Test
@@ -86,14 +88,37 @@ internal class BakgrunnsjobbServiceTest {
         assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
     }
 
+
+    @Test
+    fun `opprett lager korrekt jobb`(){
+        val connectionMock = mockk<Connection>()
+        service.opprettJobb<EksempelProsesserer>(data = "test", connection = connectionMock)
+        val jobber =
+            repoMock.findByKjoeretidBeforeAndStatusIn(LocalDateTime.MAX, setOf(BakgrunnsjobbStatus.OPPRETTET))
+        assertThat(jobber).hasSize(1)
+        assertThat(jobber[0].type).isEqualTo(EksempelProsesserer.JOBB_TYPE)
+        assertThat(jobber[0].data).isEqualTo("test")
+    }
 }
 
 
-class testProsesserer : BakgrunnsjobbProsesserer {
-    override fun prosesser(jobbData: String) {
-        if (jobbData == "fail")
-            throw RuntimeException()
+class EksempelProsesserer : BakgrunnsjobbProsesserer {
+    companion object {
+        val JOBB_TYPE: String = "TEST_TYPE"
+    }
 
+    var bleStoppet: Boolean = false
+
+    override val type = JOBB_TYPE
+
+    override fun prosesser(jobb: Bakgrunnsjobb) {
+        if (jobb.data == "fail")
+            throw RuntimeException()
+    }
+
+    override fun stoppet(jobb: Bakgrunnsjobb) {
+        bleStoppet = true
+        throw RuntimeException()
     }
 
     override fun nesteForsoek(forsoek: Int, forrigeForsoek: LocalDateTime): LocalDateTime {

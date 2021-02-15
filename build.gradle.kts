@@ -3,7 +3,7 @@ import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
 
-val kotlinVersion = "1.4.0"
+val kotlinVersion = "1.4.10"
 
 val logbackVersion = "1.2.1"
 val logbackContribVersion = "0.1.5"
@@ -14,7 +14,7 @@ val vaultJdbcVersion = "1.3.7"
 val junitJupiterVersion = "5.5.0-RC2"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
-val ktorVersion = "1.4.1"
+val ktorVersion = "1.4.3"
 val valiktorVersion = "0.12.0"
 val prometheusVersion = "0.6.0"
 
@@ -29,7 +29,7 @@ version = "${dateFormat.format(Date())}-$gitHash"
 
 
 plugins {
-    kotlin("jvm") version "1.4.0"
+    kotlin("jvm") version "1.4.10"
     id("org.sonarqube") version "2.8"
     id("com.github.ben-manes.versions") version "0.27.0"
     id("maven-publish")

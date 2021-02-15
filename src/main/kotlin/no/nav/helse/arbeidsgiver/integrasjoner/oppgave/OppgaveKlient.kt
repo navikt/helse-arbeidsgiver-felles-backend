@@ -30,7 +30,6 @@ class OppgaveKlientImpl(
     companion object {
         private val log = LoggerFactory.getLogger(OppgaveKlientImpl::class.java)
     }
-
 }
 
 data class OpprettOppgaveRequest(
@@ -66,3 +65,21 @@ data class OppgaveResultat(
         val duplikat: Boolean
 )
 
+const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"
+fun createForedlingsOppgaveRequest(
+    journalpostId: String,
+    beskrivelse: String,
+    behandlingstype: String,
+    frist: LocalDate,
+    behandlesAvApplikasjon: String
+) = OpprettOppgaveRequest(
+    journalpostId = journalpostId,
+    behandlesAvApplikasjon = behandlesAvApplikasjon,
+    beskrivelse = beskrivelse,
+    tema = "SYK",
+    oppgavetype = OPPGAVETYPE_FORDELINGSOPPGAVE,
+    behandlingstype = behandlingstype,
+    aktivDato = LocalDate.now(),
+    fristFerdigstillelse = frist,
+    prioritet = "NORM"
+)
