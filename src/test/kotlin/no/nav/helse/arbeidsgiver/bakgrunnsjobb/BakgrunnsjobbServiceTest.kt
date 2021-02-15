@@ -1,7 +1,9 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
 import io.mockk.mockk
+import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.test.TestCoroutineScope
+import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
