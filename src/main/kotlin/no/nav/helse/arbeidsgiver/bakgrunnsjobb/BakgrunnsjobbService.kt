@@ -130,6 +130,12 @@ class BakgrunnsjobbService(
         }
     }
 
+    fun neste(jobb: Bakgrunnsjobb){
+        val prossessorForType = prossesserere[jobb.type]
+
+
+    }
+
     private fun tryGetResponseBody(jobException: Exception, jobId: UUID): String? {
         if ( jobException is ResponseException) {
             return try {

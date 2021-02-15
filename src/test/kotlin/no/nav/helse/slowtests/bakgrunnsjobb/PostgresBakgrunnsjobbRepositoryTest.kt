@@ -5,6 +5,7 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbStatus
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.PostgresBakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.createLocalHikariConfig
+import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -75,6 +76,34 @@ internal class PostgresBakgrunnsjobbRepositoryTest {
         assertThat(noJobs).isEmpty()
 
     }
+
+    @Test
+    fun `find autoclean jobs`(){
+        val uuid = UUID.randomUUID()
+        val bakgrunnsjobb = Bakgrunnsjobb(
+                uuid,
+                AutoCleanJobbProcessor.JOB_TYPE,
+                now,
+                now,
+                BakgrunnsjobbStatus.OPPRETTET,
+                now,
+                0,
+                3,
+                "{}"
+        )
+        assertThat(repo.findAutoCleanJobs()).hasSize(0)
+        repo.save(bakgrunnsjobb)
+        assertThat(repo.findAutoCleanJobs()).hasSize(1)
+        assertThat(repo.getById(uuid)).isNotNull
+    }
+
+    @Test
+    fun `get by id expect null`(){
+        val uuid = UUID.randomUUID()
+        assertThat(repo.getById(uuid)).isNull()
+    }
+
+
 
     @Test
     fun `håndter null`() {

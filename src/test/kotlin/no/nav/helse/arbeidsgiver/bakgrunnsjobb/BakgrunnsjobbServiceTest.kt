@@ -1,11 +1,12 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.test.TestCoroutineScope
-import no.nav.helse.arbeidsgiver.processing.AutoCleanJobb
+import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.sql.Connection
 import java.time.LocalDateTime
 
 internal class BakgrunnsjobbServiceTest {
@@ -30,6 +31,7 @@ internal class BakgrunnsjobbServiceTest {
                 type = "test",
                 data = "ok"
         )
+        val it : Connection? = null
         repoMock.save(testJobb)
         testCoroutineScope.advanceTimeBy(1)
 
@@ -83,6 +85,7 @@ internal class BakgrunnsjobbServiceTest {
         service.startAutoClean(2,3)
         assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
     }
+
 }
 
 
