@@ -34,7 +34,7 @@ class MockBakgrunnsjobbRepository() : BakgrunnsjobbRepository {
     }
 
     override fun save(bakgrunnsjobb: Bakgrunnsjobb) {
-        save(bakgrunnsjobb)
+        jobs.add(bakgrunnsjobb)
     }
 
     override fun save(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection) {
