@@ -14,7 +14,7 @@ val vaultJdbcVersion = "1.3.1"
 val junitJupiterVersion = "5.5.0-RC2"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
-val ktorVersion = "1.4.1"
+val ktorVersion = "1.5.1"
 val valiktorVersion = "0.12.0"
 val prometheusVersion = "0.6.0"
 
@@ -33,6 +33,7 @@ plugins {
     id("org.sonarqube") version "2.8"
     id("com.github.ben-manes.versions") version "0.27.0"
     id("maven-publish")
+    id("com.autonomousapps.dependency-analysis") version "0.71.0"
     jacoco
 }
 
@@ -62,6 +63,20 @@ buildscript {
 }
 
 dependencies {
+    constraints {
+        implementation("org.apache.httpcomponents:httpclient") {
+            version {
+                strictly("4.5.13")
+            }
+            because("snyk control")
+        }
+        implementation("commons-codec:commons-codec") {
+            version {
+                strictly("1.15")
+            }
+            because("snyk control")
+        }
+    }
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
     implementation(kotlin("stdlib-jdk8", kotlinVersion))
