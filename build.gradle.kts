@@ -14,7 +14,7 @@ val vaultJdbcVersion = "1.3.1"
 val junitJupiterVersion = "5.5.0-RC2"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
-val ktorVersion = "1.5.1"
+val ktorVersion = "1.4.1"
 val valiktorVersion = "0.12.0"
 val prometheusVersion = "0.6.0"
 
@@ -82,32 +82,28 @@ dependencies {
     implementation(kotlin("stdlib-jdk8", kotlinVersion))
     implementation(kotlin("reflect", kotlinVersion))
 
-    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    api("io.ktor:ktor-server-core:$ktorVersion")
 
-    implementation("org.slf4j:slf4j-api:1.7.30")
+    api("org.slf4j:slf4j-api:1.7.30")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
-    implementation("ch.qos.logback.contrib:logback-jackson:$logbackContribVersion")
-    implementation("ch.qos.logback.contrib:logback-json-classic:$logbackContribVersion")
-    implementation("net.logstash.logback:logstash-logback-encoder:4.9")
 
     implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+    api("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
+    testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
 
     implementation("org.valiktor:valiktor-core:$valiktorVersion")
     implementation("org.valiktor:valiktor-javatime:$valiktorVersion")
 
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
-    implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("org.postgresql:postgresql:42.2.13")
     implementation("com.nimbusds:nimbus-jose-jwt:8.15")
-    implementation("no.nav.security:token-client-core:1.3.1")
+    api("no.nav.security:token-client-core:1.3.1")
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
     testImplementation("io.mockk:mockk:$mockKVersion")
@@ -119,6 +115,16 @@ dependencies {
 
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+
+    //Transitively used dependencies that should be declared directly as indicated:
+    api("io.ktor:ktor-utils-jvm:$ktorVersion")
+    api("io.prometheus:simpleclient:$prometheusVersion")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$coroutinesVersion")
+    api("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    implementation("io.ktor:ktor-client-json-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-io-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-http-jvm:$ktorVersion")
+
 }
 
 tasks.named<KotlinCompile>("compileKotlin")
