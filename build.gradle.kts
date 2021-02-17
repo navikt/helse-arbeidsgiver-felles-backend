@@ -124,7 +124,7 @@ dependencies {
     implementation("io.ktor:ktor-client-json-jvm:$ktorVersion")
     implementation("io.ktor:ktor-io-jvm:$ktorVersion")
     implementation("io.ktor:ktor-http-jvm:$ktorVersion")
-
+    implementation("org.apache.logging.log4j:log4j-api:2.14.0")
 }
 
 tasks.named<KotlinCompile>("compileKotlin")
@@ -189,7 +189,7 @@ task<Test>("slowTests") {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "6.5.1"
+    gradleVersion = "6.8.2"
 }
 
 configure<PublishingExtension> {
