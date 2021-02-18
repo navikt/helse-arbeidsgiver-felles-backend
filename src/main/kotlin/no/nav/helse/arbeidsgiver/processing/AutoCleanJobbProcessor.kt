@@ -21,7 +21,6 @@ class AutoCleanJobbProcessor (
 
     override fun prosesser(jobb: Bakgrunnsjobb) {
         assert(jobb.data.isNotEmpty())
-        om.registerModule(KotlinModule())
         val autocleanrequest = om.readValue<JobbData>(jobb.data)
         bakgrunnsjobbRepository.deleteOldOkJobs(autocleanrequest.slettEldre)
         bakgrunnsjobbService.startAutoClean(autocleanrequest.interval, autocleanrequest.slettEldre)
