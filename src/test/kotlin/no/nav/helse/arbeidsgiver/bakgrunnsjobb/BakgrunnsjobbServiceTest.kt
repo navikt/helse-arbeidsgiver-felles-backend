@@ -1,14 +1,16 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
 import io.mockk.mockk
-import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.test.TestCoroutineScope
-import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
+import java.lang.IllegalArgumentException
 import java.sql.Connection
 import java.time.LocalDateTime
+
 
 internal class BakgrunnsjobbServiceTest {
 
@@ -18,6 +20,7 @@ internal class BakgrunnsjobbServiceTest {
 
     val now = LocalDateTime.now()
     private val eksempelProsesserer = EksempelProsesserer()
+    var log = LoggerFactory.getLogger(BakgrunnsjobbService::class.java)
 
     @BeforeEach
     internal fun setup() {
@@ -60,6 +63,16 @@ internal class BakgrunnsjobbServiceTest {
 
         assertThat(eksempelProsesserer.bleStoppet).isTrue()
     }
+
+    @Test
+    fun `autoClean opprettes feil parametre`() {
+        val exception = Assertions.assertThrows(IllegalArgumentException::class.java) {
+            service.startAutoClean(-1, 3)
+        }
+        Assertions.assertEquals("start autoclean må ha en frekvens støtte enn 1 og slettEldreEnnMaander større enn 0", exception.message)
+        assertThat(repoMock.findAutoCleanJobs()).hasSize(0)
+    }
+
 
     @Test
     fun `autoClean opprettes med riktig kjøretid`() {
