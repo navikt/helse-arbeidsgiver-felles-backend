@@ -66,8 +66,12 @@ internal class BakgrunnsjobbServiceTest {
 
     @Test
     fun `autoClean opprettes feil parametre`() {
-        val exception = Assertions.assertThrows(IllegalArgumentException::class.java) {
+        var exception = Assertions.assertThrows(IllegalArgumentException::class.java) {
             service.startAutoClean(-1, 3)
+        }
+        Assertions.assertEquals("start autoclean må ha en frekvens støtte enn 1 og slettEldreEnnMaander større enn 0", exception.message)
+        exception = Assertions.assertThrows(IllegalArgumentException::class.java) {
+            service.startAutoClean(1, -1)
         }
         Assertions.assertEquals("start autoclean må ha en frekvens støtte enn 1 og slettEldreEnnMaander større enn 0", exception.message)
         assertThat(repoMock.findAutoCleanJobs()).hasSize(0)
@@ -81,18 +85,6 @@ internal class BakgrunnsjobbServiceTest {
         assert(repoMock.findAutoCleanJobs().get(0).kjoeretid > now.plusHours(1) &&
                 repoMock.findAutoCleanJobs().get(0).kjoeretid < now.plusHours(3)
         )
-    }
-
-    @Test
-    fun `autoClean blir ikke opprettet hvis frekvens er 0`() {
-        service.startAutoClean(0, 3)
-        assertThat(repoMock.findAutoCleanJobs()).hasSize(0)
-    }
-
-    @Test
-    fun `autoClean opprettes med interval under 1 blir ikke lagret`() {
-        service.startAutoClean(0, 3)
-        assertThat(repoMock.findAutoCleanJobs()).hasSize(0)
     }
 
     @Test
