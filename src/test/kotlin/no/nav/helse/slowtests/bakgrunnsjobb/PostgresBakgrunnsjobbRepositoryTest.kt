@@ -94,7 +94,6 @@ internal class PostgresBakgrunnsjobbRepositoryTest {
         assertThat(repo.findAutoCleanJobs()).hasSize(0)
         repo.save(bakgrunnsjobb)
         assertThat(repo.findAutoCleanJobs()).hasSize(1)
-
     }
 
     @Test
@@ -102,9 +101,6 @@ internal class PostgresBakgrunnsjobbRepositoryTest {
         val uuid = UUID.randomUUID()
         assertThat(repo.getById(uuid)).isNull()
     }
-
-
-
 
     @Test
     fun `håndter null`() {

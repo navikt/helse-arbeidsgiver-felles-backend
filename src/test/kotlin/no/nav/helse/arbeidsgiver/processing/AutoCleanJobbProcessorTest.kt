@@ -80,6 +80,4 @@ internal class AutoCleanJobbProcessorTest {
         autoCleanJobbProcessor.prosesser(bakgrunnsjobbSlettEldreEnn2)
         assertThat(bakgrunnsjobb3mndGammel.uuid == (bakgrunnsjobbRepository.getById(bakgrunnsjobb3mndGammel.uuid))?.uuid).isFalse()
     }
-
-
 }

@@ -35,7 +35,6 @@ internal class CustomValiktorConstraintsKtTest {
         }
     }
 
-
     @Test
     fun isValidOrganisasjonsnummer_OK() {
         validate(ValidationData(TestData.validOrgNr)) {

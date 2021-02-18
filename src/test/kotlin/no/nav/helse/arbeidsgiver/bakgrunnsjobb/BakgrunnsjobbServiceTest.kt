@@ -11,7 +11,6 @@ import java.lang.IllegalArgumentException
 import java.sql.Connection
 import java.time.LocalDateTime
 
-
 internal class BakgrunnsjobbServiceTest {
 
     val repoMock = MockBakgrunnsjobbRepository()
@@ -93,7 +92,6 @@ internal class BakgrunnsjobbServiceTest {
         assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
     }
 
-
     @Test
     fun `opprett lager korrekt jobb`(){
         val connectionMock = mockk<Connection>()
@@ -105,7 +103,6 @@ internal class BakgrunnsjobbServiceTest {
         assertThat(jobber[0].data).isEqualTo("test")
     }
 }
-
 
 class EksempelProsesserer : BakgrunnsjobbProsesserer {
     companion object {

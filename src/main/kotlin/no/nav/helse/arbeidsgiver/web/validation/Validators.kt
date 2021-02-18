@@ -1,5 +1,3 @@
-@file:Suppress("DuplicatedCode")
-
 package no.nav.helse.arbeidsgiver.web.validation
 
 import no.nav.helse.arbeidsgiver.web.validation.FoedselsNrValidator.Companion.tabeller.kontrollsiffer1
@@ -64,7 +62,6 @@ class FoedselsNrValidator(input: String?) {
  * Sjekker at strengen er et gydlig org nummer ifølge:
  * https://www.brreg.no/om-oss/oppgavene-vare/alle-registrene-vare/om-enhetsregisteret/organisasjonsnummeret/
  */
-
 class OrganisasjonsnummerValidator(input: String?) {
     private val asString: String
 
