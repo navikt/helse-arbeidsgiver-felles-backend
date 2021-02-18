@@ -1,6 +1,7 @@
 package no.nav.helse.arbeidsgiver.processing
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import kotlinx.coroutines.test.TestCoroutineScope
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.*
 import org.assertj.core.api.Assertions.assertThat
@@ -57,6 +58,7 @@ internal class AutoCleanJobbProcessorTest {
         val testCoroutineScope = TestCoroutineScope()
         val bakgrunnsjobbService = BakgrunnsjobbService(bakgrunnsjobbRepository, 1,testCoroutineScope)
         val objectMapper = ObjectMapper()
+        objectMapper.registerModule(KotlinModule())
         autoCleanJobbProcessor = AutoCleanJobbProcessor(bakgrunnsjobbRepository,bakgrunnsjobbService,objectMapper)
     }
 

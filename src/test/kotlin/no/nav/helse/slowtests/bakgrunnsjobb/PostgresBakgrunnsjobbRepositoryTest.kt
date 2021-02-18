@@ -74,7 +74,6 @@ internal class PostgresBakgrunnsjobbRepositoryTest {
 
         val noJobs = repo.findByKjoeretidBeforeAndStatusIn(now.plusHours(1), setOf(BakgrunnsjobbStatus.FEILET))
         assertThat(noJobs).isEmpty()
-
     }
 
     @Test
