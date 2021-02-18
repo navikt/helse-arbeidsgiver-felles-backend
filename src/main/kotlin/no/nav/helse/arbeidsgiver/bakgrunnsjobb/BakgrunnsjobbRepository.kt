@@ -28,7 +28,6 @@ class MockBakgrunnsjobbRepository() : BakgrunnsjobbRepository {
 
     private val jobs = mutableListOf<Bakgrunnsjobb>()
 
-
     override fun getById(id: UUID): Bakgrunnsjobb? {
         if(jobs.filter{it.uuid.equals(id)}.size.equals(1))
             return jobs.filter{it.uuid.equals(id)}.get(0)
