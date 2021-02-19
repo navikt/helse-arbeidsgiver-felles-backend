@@ -42,7 +42,7 @@ jobs:
           ${{ runner.os }}-gradle-cache-
 
     - name: test and build
-      run: ./gradlew --console=plain build test --tests no.nav.helse.arbeidsgiver.${{matrix.dir}}
+      run: ./gradlew --console=plain build test --tests no.nav.helse.arbeidsgiver${{matrix.dir}}
       env:
         ORG_GRADLE_PROJECT_githubUser: x-access-token
         ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
