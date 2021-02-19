@@ -6,7 +6,7 @@ jobs:
   directories:
     runs-on: ubuntu-latest
     outputs:
-      dir: ${{ steps.set-dirs.outputs.dir }/src/test}
+      dir: ${{ steps.set-dirs.outputs.dir }}
     steps:
       - uses: actions/checkout@v2
       - id: set-dirs
