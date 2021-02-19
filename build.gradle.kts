@@ -167,7 +167,7 @@ tasks.withType<Test> {
 tasks.named<Test>("test") {
     include("no/nav/helse/arbeidsgiver/**")
 }
-tasks.named<Test>("test-bakgrunn") {
+tasks.named<Test>("testbakgrunn") {
     include("no/nav/helse/arbeidsgiver/bakgrunn/**")
 }
 task<Test>("slowTests") {
