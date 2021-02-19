@@ -165,11 +165,9 @@ tasks.withType<Test> {
 }
 
 tasks.named<Test>("test") {
-    include("no/nav/helse/arbeidsgiver/**")
-}
-tasks.named<Test>("testbakgrunn") {
     include("no/nav/helse/arbeidsgiver/bakgrunn/**")
 }
+
 task<Test>("slowTests") {
     include("no/nav/helse/slowtests/**")
     outputs.upToDateWhen { false }
