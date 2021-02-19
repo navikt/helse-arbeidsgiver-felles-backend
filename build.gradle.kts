@@ -165,9 +165,7 @@ tasks.withType<Test> {
 }
 
 tasks.named<Test>("test") {
-    maxParallelForks = Runtime.getRuntime().availableProcessors()
-    include("no/nav/helse/**")
-    exclude("no/nav/helse/slowtests/**")
+    include("no/nav/helse/arbeidsgiver/**")
 }
 
 task<Test>("slowTests") {
