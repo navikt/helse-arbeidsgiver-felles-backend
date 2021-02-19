@@ -3,6 +3,15 @@ name: Pull request
 on: [pull_request]
 
 jobs:
+  directories:
+    runs-on: ubuntu-latest
+    outputs:
+      dir: ${{ steps.set-dirs.outputs.dir }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-dirs
+        run: echo "::set-output name=dir::$(ls -d */ | jq -R -s -c 'split("\n")[:-1]')"
+
   buildAndTest:
     runs-on: ubuntu-latest
     steps:
