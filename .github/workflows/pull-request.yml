@@ -6,11 +6,11 @@ jobs:
   directories:
     runs-on: ubuntu-latest
     outputs:
-      dir: ${{ steps.set-dirs.outputs.dir }}
+      dir: ${{ steps.set-dirs.outputs.dir }/src/test}
     steps:
       - uses: actions/checkout@v2
       - id: set-dirs
-        run: echo "::set-output name=dir::$(ls -d */ | jq -R -s -c 'split("\n")[:-1]')"
+        run: echo "::set-output name=dir::$(ls -d src/test/kotlin/no/nav/helse/arbeidsgiver/*/ | jq -R -s -c 'split("\n")[:-1]')"
 
   loop:
     runs-on: ubuntu-latest
