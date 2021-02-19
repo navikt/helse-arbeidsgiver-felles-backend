@@ -1,3 +1,4 @@
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.text.SimpleDateFormat
 import java.time.ZoneId
@@ -164,6 +165,7 @@ tasks.withType<Test> {
 }
 
 tasks.named<Test>("test") {
+    maxParallelForks = Runtime.getRuntime().availableProcessors()
     include("no/nav/helse/**")
     exclude("no/nav/helse/slowtests/**")
 }
