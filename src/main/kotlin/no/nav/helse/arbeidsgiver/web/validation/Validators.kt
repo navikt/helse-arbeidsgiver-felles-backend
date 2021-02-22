@@ -4,9 +4,8 @@ import no.nav.helse.arbeidsgiver.web.validation.FoedselsNrValidator.Companion.ta
 import no.nav.helse.arbeidsgiver.web.validation.FoedselsNrValidator.Companion.tabeller.kontrollsiffer2
 import no.nav.helse.arbeidsgiver.web.validation.OrganisasjonsnummerValidator.Companion.tabeller.weights
 
-
 class FoedselsNrValidator(input: String?) {
-    val asString: String
+    private val asString: String
 
     init {
         require(input != null)
@@ -64,7 +63,7 @@ class FoedselsNrValidator(input: String?) {
  * https://www.brreg.no/om-oss/oppgavene-vare/alle-registrene-vare/om-enhetsregisteret/organisasjonsnummeret/
  */
 class OrganisasjonsnummerValidator(input: String?) {
-    val asString: String
+    private val asString: String
 
     init {
         require(input != null)

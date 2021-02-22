@@ -27,6 +27,15 @@ internal class CustomValiktorConstraintsKtTest {
     }
 
     @Test
+    fun isValidIdentitetsnummer_Invalid_2checksum() {
+        assertThrows<ConstraintViolationException> {
+            validate(ValidationData(TestData.notValidIdentitetsnummerInvalidCheckSum2)) {
+                validate(ValidationData::value).isValidIdentitetsnummer()
+            }
+        }
+    }
+
+    @Test
     fun isValidOrganisasjonsnummer_OK() {
         validate(ValidationData(TestData.validOrgNr)) {
             validate(ValidationData::value).isValidOrganisasjonsnummer()

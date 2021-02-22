@@ -5,8 +5,11 @@ import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.test.TestCoroutineScope
 import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
+import java.lang.IllegalArgumentException
 import java.sql.Connection
 import java.time.LocalDateTime
 
@@ -18,6 +21,7 @@ internal class BakgrunnsjobbServiceTest {
 
     val now = LocalDateTime.now()
     private val eksempelProsesserer = EksempelProsesserer()
+    var log = LoggerFactory.getLogger(BakgrunnsjobbService::class.java)
 
     @BeforeEach
     internal fun setup() {
@@ -62,6 +66,20 @@ internal class BakgrunnsjobbServiceTest {
     }
 
     @Test
+    fun `autoClean opprettes feil parametre`() {
+        var exception = Assertions.assertThrows(IllegalArgumentException::class.java) {
+            service.startAutoClean(-1, 3)
+        }
+        Assertions.assertEquals("start autoclean må ha en frekvens støtte enn 1 og slettEldreEnnMaander større enn 0", exception.message)
+        exception = Assertions.assertThrows(IllegalArgumentException::class.java) {
+            service.startAutoClean(1, -1)
+        }
+        Assertions.assertEquals("start autoclean må ha en frekvens støtte enn 1 og slettEldreEnnMaander større enn 0", exception.message)
+        assertThat(repoMock.findAutoCleanJobs()).hasSize(0)
+    }
+
+
+    @Test
     fun `autoClean opprettes med riktig kjøretid`() {
         service.startAutoClean(2, 3)
         assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
@@ -71,23 +89,10 @@ internal class BakgrunnsjobbServiceTest {
     }
 
     @Test
-    fun `autoClean blir ikke opprettet hvis frekvens er 0`() {
-        service.startAutoClean(0, 3)
-        assertThat(repoMock.findAutoCleanJobs()).hasSize(0)
-    }
-
-    @Test
-    fun `autoClean opprettes med interval under 1 blir ikke lagret`() {
-        service.startAutoClean(0, 3)
-        assertThat(repoMock.findAutoCleanJobs()).hasSize(0)
-    }
-
-    @Test
     fun `autoClean oppretter jobb med riktig antall måneder`(){
         service.startAutoClean(2,3)
         assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
     }
-
 
     @Test
     fun `opprett lager korrekt jobb`(){
@@ -100,7 +105,6 @@ internal class BakgrunnsjobbServiceTest {
         assertThat(jobber[0].data).isEqualTo("test")
     }
 }
-
 
 class EksempelProsesserer : BakgrunnsjobbProsesserer {
     companion object {

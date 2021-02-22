@@ -29,5 +29,4 @@ internal class HikariConfigKtTest {
         Assertions.assertNotEquals("feilbruker",localHiariConfig.username)
         Assertions.assertEquals("harbeidsgiverbackend",localHiariConfig.password)
     }
-
 }
