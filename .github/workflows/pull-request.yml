@@ -63,7 +63,7 @@ jobs:
         run: cd docker/local && docker-compose up -d && sleep 10
 
       - name: test and build
-        run: ./gradlew --console=plain build slowTests jacocoTestReport sonarqube
+        run: ./gradlew --console=plain build slowTests
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
@@ -94,11 +94,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
 
-      - name: compose up
-        run: cd docker/local && docker-compose up -d && sleep 10
-
       - name: test and build
-        run: ./gradlew --console=plain build jacocoTestReport sonarqube
+        run: ./gradlew --console=plain jacocoTestReport sonarqube
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
