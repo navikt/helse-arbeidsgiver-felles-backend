@@ -1,3 +1,4 @@
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.text.SimpleDateFormat
 import java.time.ZoneId
@@ -164,8 +165,7 @@ tasks.withType<Test> {
 }
 
 tasks.named<Test>("test") {
-    include("no/nav/helse/**")
-    exclude("no/nav/helse/slowtests/**")
+    include("no/nav/helse/arbeidsgiver/bakgrunn/**")
 }
 
 task<Test>("slowTests") {
