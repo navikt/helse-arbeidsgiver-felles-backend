@@ -67,7 +67,6 @@ dependencies {
     //Snyk fikses
     implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 gjennom ktor-client-apache
     implementation("commons-codec:commons-codec:1.13") // overstyrer transiente 1.10
-    implementation("com.github.waffle:waffle-jna:3.0.0") //overstyrer no.nav.vault
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
