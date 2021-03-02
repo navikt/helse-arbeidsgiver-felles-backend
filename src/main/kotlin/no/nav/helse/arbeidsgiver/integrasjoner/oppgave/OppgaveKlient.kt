@@ -3,11 +3,11 @@ package no.nav.helse.arbeidsgiver.integrasjoner.oppgave
 import io.ktor.client.HttpClient
 import io.ktor.client.request.header
 import io.ktor.client.request.post
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
+import io.ktor.http.*
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
+import kotlin.text.charset
 
 interface OppgaveKlient {
     suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, callId: String): OpprettOppgaveResponse
@@ -20,7 +20,7 @@ class OppgaveKlientImpl(
     override suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, callId: String): OpprettOppgaveResponse {
         val stsToken = stsClient.getToken()
         return httpClient.post(url) {
-            contentType(ContentType.Application.Json)
+            contentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
             this.header("Authorization", "Bearer $stsToken")
             this.header("X-Correlation-ID", callId)
             body = opprettOppgaveRequest

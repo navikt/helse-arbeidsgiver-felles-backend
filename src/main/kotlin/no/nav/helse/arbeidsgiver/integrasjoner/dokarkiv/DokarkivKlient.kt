@@ -3,7 +3,7 @@ package no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.url
-import io.ktor.http.contentType
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import org.slf4j.LoggerFactory
@@ -32,9 +32,9 @@ class DokarkivKlientImpl(
         val response = runBlocking {
             httpClient.post<JournalpostResponse> {
                 url(url)
+                contentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
                 headers.append("Authorization", "Bearer " + accessTokenProvider.getToken())
                 headers.append("Nav-Call-Id", callId)
-                contentType(io.ktor.http.ContentType.Application.Json)
                 body = journalpost
             }
         }
