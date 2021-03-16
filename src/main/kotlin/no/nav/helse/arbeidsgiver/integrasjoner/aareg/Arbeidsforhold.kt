@@ -5,12 +5,18 @@ import java.time.LocalDate
 data class Arbeidsforhold(
     val arbeidsgiver: Arbeidsgiver,
     val opplysningspliktig: Opplysningspliktig,
-    val arbeidsavtaler: List<Arbeidsavtale>
+    val arbeidsavtaler: List<Arbeidsavtale>,
+    val ansettelsesperiode: Ansettelsesperiode
 )
 
 class Arbeidsavtale(
     val stillingsprosent: Double,
-    val gyldighetsperiode: Gyldighetsperiode
+    val gyldighetsperiode: Periode
+)
+
+class Ansettelsesperiode(
+    periode: Periode,
+    bruksperiode: Periode?
 )
 
 data class Arbeidsgiver(
@@ -18,7 +24,7 @@ data class Arbeidsgiver(
     val organisasjonsnummer: String?
 )
 
-data class Gyldighetsperiode(
+data class Periode(
     val fom: LocalDate?,
     val tom: LocalDate?
 )
