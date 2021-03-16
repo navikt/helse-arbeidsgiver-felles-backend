@@ -15,8 +15,7 @@ class Arbeidsavtale(
 )
 
 class Ansettelsesperiode(
-    periode: Periode,
-    bruksperiode: Periode?
+    val periode: Periode
 )
 
 data class Arbeidsgiver(
