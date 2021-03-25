@@ -74,5 +74,5 @@ class PdlClientImpl(
         private val LOG = LoggerFactory.getLogger(PdlClient::class.java)
     }
 
-    class PdlException(val pdlErrors: List<PdlError>?) : Exception()
+    class PdlException(val pdlErrors: List<PdlError>?) : RuntimeException()
 }
