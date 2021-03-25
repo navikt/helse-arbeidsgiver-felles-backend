@@ -36,7 +36,7 @@ class AaregArbeidsforholdClientImplTest {
     )
 
     @Test
-    //@Disabled
+    @Disabled
     fun CanDeserialize() {
         val arbeidsforhold = runBlocking {
             client.hentArbeidsforhold("26077025269", "test")
