@@ -8,7 +8,13 @@ query($ident: ID!) {
             fornavn mellomnavn etternavn
             metadata {  master }
         }
-
+        bostedsadresse(historikk: false) {
+            gyldigTilOgMed
+            vegadresse {kommunenummer}
+            matrikkeladresse{kommunenummer}
+            ukjentBosted{bostedskommune}
+        }
+        statsborgerskap { land }
         foedsel {foedselsdato}
         doedsfall {doedsdato}
         adressebeskyttelse {gradering}

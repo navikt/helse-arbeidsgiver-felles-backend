@@ -1,6 +1,8 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.pdl
 
+import com.fasterxml.jackson.databind.JsonNode
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * Tilsvarer graphql-spørringen hentPersonNavn.graphql
@@ -34,10 +36,12 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
         }
 
         data class PdlFullPersonliste(
-                val navn: List<PdlFullPerson>,
+                val navn: List<PdlNavn>,
                 val foedsel: List<PdlFoedsel>,
                 val doedsfall: List<PdlDoedsfall>,
                 val adressebeskyttelse: List<PdlAdressebeskyttelse>,
+                val statsborgerskap: List<PdlStatsborgerskap>,
+                val bostedsadresse: List<PdlBostedsadresse>,
                 val kjoenn: List<PdlKjoenn>) {
 
                 fun trekkUtFulltNavn() = navn.map { "${it.fornavn} ${it.mellomnavn ?: ""} ${it.etternavn}".replace("  ", " ") }.firstOrNull()
@@ -46,7 +50,7 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
                 fun trekkUtFoedselsdato() = foedsel.firstOrNull()?.foedselsdato
                 fun trekkUtDiskresjonskode() = adressebeskyttelse.firstOrNull()?.gradering
 
-                data class PdlFullPerson(
+                data class PdlNavn(
                         val fornavn: String,
                         val mellomnavn: String?,
                         val etternavn: String,
@@ -57,8 +61,19 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
                 data class PdlAdressebeskyttelse(val gradering: String)
                 data class PdlFoedsel(val foedselsdato: LocalDate)
                 data class PdlDoedsfall(val doedsdato: LocalDate)
+                data class PdlStatsborgerskap(val land: String)
+                data class PdlBostedsadresse(
+                        val gyldigTilOgMed: LocalDateTime?,
+                        // For å hente ut om man er bosatt i norge hentes det ut om disse addressene finnes
+                        // dersom noden er null finnes ikke addressen
+                        val vegadresse: JsonNode?,
+                        val matrikkeladresse: JsonNode?,
+                        val ukjentBosted: JsonNode?
+                )
         }
 }
+
+
 
 data class PdlIdent(val ident: String, val gruppe: PdlIdentGruppe) {
         enum class PdlIdentGruppe { AKTORID, FOLKEREGISTERIDENT, NPID }

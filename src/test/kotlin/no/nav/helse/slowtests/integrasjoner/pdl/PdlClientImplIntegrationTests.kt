@@ -37,7 +37,7 @@ internal class PdlClientImplIntegrationTests {
 
     @Test
     internal fun invokePersonName() {
-        val person = pdlKlient.personNavn("2649500819544")
+        val person = pdlKlient.personNavn("09127821914")
         assertThat(person).isNotNull()
     }
 
