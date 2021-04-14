@@ -1,12 +1,14 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.aareg
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class Arbeidsforhold(
     val arbeidsgiver: Arbeidsgiver,
     val opplysningspliktig: Opplysningspliktig,
     val arbeidsavtaler: List<Arbeidsavtale>,
-    val ansettelsesperiode: Ansettelsesperiode
+    val ansettelsesperiode: Ansettelsesperiode,
+    val registrert: LocalDateTime
 )
 
 class Arbeidsavtale(

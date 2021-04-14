@@ -43,5 +43,6 @@ class AaregArbeidsforholdClientImplTest {
         }
 
         assertThat(arbeidsforhold).isNotNull
+        assertThat(arbeidsforhold[0].registrert).isNotNull
     }
 }
