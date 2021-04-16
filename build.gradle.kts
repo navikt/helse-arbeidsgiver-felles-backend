@@ -15,7 +15,7 @@ val vaultJdbcVersion = "1.3.7"
 val junitJupiterVersion = "5.5.0-RC2"
 val assertJVersion = "3.12.2"
 val mockKVersion = "1.9.3"
-val ktorVersion = "1.4.3"
+val ktorVersion = "1.5.3"
 val valiktorVersion = "0.12.0"
 val prometheusVersion = "0.6.0"
 
