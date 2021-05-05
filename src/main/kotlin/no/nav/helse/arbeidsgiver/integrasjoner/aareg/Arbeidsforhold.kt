@@ -11,12 +11,12 @@ data class Arbeidsforhold(
     val registrert: LocalDateTime
 )
 
-class Arbeidsavtale(
+data class Arbeidsavtale(
     val stillingsprosent: Double,
     val gyldighetsperiode: Periode
 )
 
-class Ansettelsesperiode(
+data class Ansettelsesperiode(
     val periode: Periode
 )
 
