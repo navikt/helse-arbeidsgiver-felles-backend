@@ -63,6 +63,7 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
                 data class PdlDoedsfall(val doedsdato: LocalDate)
                 data class PdlStatsborgerskap(val land: String)
                 data class PdlBostedsadresse(
+                        val gyldigFraOgMed: LocalDateTime?,
                         val gyldigTilOgMed: LocalDateTime?,
                         // For å hente ut om man er bosatt i norge hentes det ut om disse addressene finnes
                         // dersom noden er null finnes ikke addressen

@@ -10,6 +10,7 @@ query($ident: ID!) {
         }
         bostedsadresse(historikk: false) {
             gyldigTilOgMed
+            gyldigFraOgMed
             vegadresse {kommunenummer}
             matrikkeladresse{kommunenummer}
             ukjentBosted{bostedskommune}
