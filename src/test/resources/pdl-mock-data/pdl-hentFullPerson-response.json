@@ -47,7 +47,13 @@
         {
           "kjoenn": "MANN"
         }
-      ]
+      ],
+      "statsborgerskap": [
+        {
+          "land": "NOR"
+        }
+      ],
+      "bostedsadresse": []
     }
   }
 }
