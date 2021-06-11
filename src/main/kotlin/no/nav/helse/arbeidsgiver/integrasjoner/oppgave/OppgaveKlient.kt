@@ -7,7 +7,6 @@ import io.ktor.http.*
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
-import kotlin.text.charset
 
 interface OppgaveKlient {
     suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, callId: String): OpprettOppgaveResponse
@@ -56,9 +55,20 @@ data class OpprettOppgaveRequest(
         val prioritet: String
 )
 
+// https://oppgave.dev.adeo.no/#/Oppgave/opprettOppgave
 data class OpprettOppgaveResponse(
-        val id: Int
+    val id: Int,
+    val tildeltEnhetsnrval : String,
+    val tema: String,
+    val oppgavetype: String,
+    val versjon: Integer,
+    val aktivDato: LocalDate,
+    val prioritet: Prioritet,
+    val status: Status
 )
+
+enum class Status { OPPRETTET, AAPNET, UNDER_BEHANDLING, FERDIGSTILT, FEILREGISTRERT }
+enum class Prioritet { HOY, NORM, LAV }
 
 data class OppgaveResultat(
         val oppgaveId: Int,
@@ -81,5 +91,5 @@ fun createForedlingsOppgaveRequest(
     behandlingstype = behandlingstype,
     aktivDato = LocalDate.now(),
     fristFerdigstillelse = frist,
-    prioritet = "NORM"
+    prioritet = Prioritet.NORM.name
 )
