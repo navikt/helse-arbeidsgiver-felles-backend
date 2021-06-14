@@ -58,7 +58,7 @@ data class OpprettOppgaveRequest(
 // https://oppgave.dev.adeo.no/#/Oppgave/opprettOppgave
 data class OpprettOppgaveResponse(
     val id: Int,
-    val tildeltEnhetsnrval : String,
+    val tildeltEnhetsnr : String,
     val tema: String,
     val oppgavetype: String,
     val versjon: Int,
