@@ -61,7 +61,7 @@ data class OpprettOppgaveResponse(
     val tildeltEnhetsnrval : String,
     val tema: String,
     val oppgavetype: String,
-    val versjon: Integer,
+    val versjon: Int,
     val aktivDato: LocalDate,
     val prioritet: Prioritet,
     val status: Status
