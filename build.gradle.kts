@@ -67,6 +67,7 @@ dependencies {
     //Snyk fikses
     implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 gjennom ktor-client-apache
     implementation("commons-codec:commons-codec:1.13") // overstyrer transiente 1.10
+    implementation("net.minidev:json-smart:2.4.7") // overstyrer transiente 2.4.2
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
@@ -97,8 +98,8 @@ dependencies {
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("org.postgresql:postgresql:42.2.13")
-    implementation("com.nimbusds:nimbus-jose-jwt:8.15")
-    implementation("no.nav.security:token-client-core:1.3.1")
+    implementation("com.nimbusds:nimbus-jose-jwt:8.21.1")
+    implementation("no.nav.security:token-client-core:1.3.7")
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
     testImplementation("io.mockk:mockk:$mockKVersion")

@@ -48,7 +48,7 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
                 fun trekkUtKjoenn() = kjoenn.firstOrNull()?.kjoenn
                 fun trekkUtDoedsfalldato() = doedsfall.firstOrNull()?.doedsdato
                 fun trekkUtFoedselsdato() = foedsel.firstOrNull()?.foedselsdato
-                fun trekkUtDiskresjonskode() = adressebeskyttelse.firstOrNull()?.gradering
+                fun trekkUtDiskresjonskode() = adressebeskyttelse.firstOrNull()?.getKodeverkDiskresjonskode()
 
                 data class PdlNavn(
                         val fornavn: String,
@@ -58,7 +58,15 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
                 )
 
                 data class PdlKjoenn(val kjoenn: String)
-                data class PdlAdressebeskyttelse(val gradering: String)
+                data class PdlAdressebeskyttelse(val gradering: String) {
+                        fun getKodeverkDiskresjonskode(): String? {
+                                return when (gradering) {
+                                        "STRENGT_FORTROLIG" -> "SPSF"
+                                        "FORTROLIG" -> "SPFO"
+                                        else -> null
+                                }
+                        }
+                }
                 data class PdlFoedsel(val foedselsdato: LocalDate)
                 data class PdlDoedsfall(val doedsdato: LocalDate)
                 data class PdlStatsborgerskap(val land: String)
