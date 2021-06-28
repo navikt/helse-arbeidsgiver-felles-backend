@@ -1,0 +1,4 @@
+{
+  "name": "JournalPost Schema",
+  "schemaPath": "saf-api-sdl.graphqls"
+}

@@ -1,0 +1,4 @@
+query($journalPostId: String!) {
+     journalpost($journalPostId)
+}
+
