@@ -9,6 +9,7 @@ query($ident: ID!) {
             metadata {  master }
         }
         bostedsadresse(historikk: false) {
+            angittFlyttedato
             gyldigTilOgMed
             gyldigFraOgMed
             vegadresse {kommunenummer}

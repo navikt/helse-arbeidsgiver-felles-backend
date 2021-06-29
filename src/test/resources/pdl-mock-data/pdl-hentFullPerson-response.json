@@ -14,38 +14,89 @@
     },
 
     "hentGeografiskTilknytning": {
-        "gtType": "KOMMUNE",
-        "gtKommune": "1851",
-        "gtBydel": null,
-        "gtLand": null
+      "gtType": "KOMMUNE",
+      "gtKommune": "1851",
+      "gtBydel": null,
+      "gtLand": null
     },
 
     "hentPerson": {
       "navn": [
         {
-          "fornavn": "TREIG",
+          "fornavn": "NILS",
           "mellomnavn": null,
-          "etternavn": "KONSOLL",
+          "etternavn": "FALSKESEN",
           "metadata": {
             "master": "Freg"
           }
         }
       ],
-
-      "foedsel": [
+      "bostedsadresse": [
         {
-          "foedselsdato": "1978-12-09"
-        }
-      ],
-      "doedsfall": [],
-      "adressebeskyttelse": [
+          "gyldigFraOgMed": "2014-07-29T00:00",
+          "angittFlyttedato": "2014-07-29",
+          "gyldigTilOgMed": null,
+          "vegadresse": {
+            "kommunenummer": "1221"
+          },
+          "matrikkeladresse": null,
+          "ukjentBosted": null,
+          "utenlandskAdresse": null
+        },
         {
-          "gradering": "UGRADERT"
-        }
-      ],
-      "kjoenn": [
+          "gyldigFraOgMed": "2016-02-05T00:00",
+          "angittFlyttedato": "2016-01-26",
+          "gyldigTilOgMed": null,
+          "vegadresse": {
+            "kommunenummer": "1106"
+          },
+          "matrikkeladresse": null,
+          "ukjentBosted": null,
+          "utenlandskAdresse": null
+        },
         {
-          "kjoenn": "MANN"
+          "gyldigFraOgMed": "2014-02-05T00:00",
+          "angittFlyttedato": "2014-02-02",
+          "gyldigTilOgMed": null,
+          "vegadresse": {
+            "kommunenummer": "1106"
+          },
+          "matrikkeladresse": null,
+          "ukjentBosted": null,
+          "utenlandskAdresse": null
+        },
+        {
+          "gyldigFraOgMed": "2017-05-03T00:00",
+          "angittFlyttedato": "2017-05-03",
+          "gyldigTilOgMed": null,
+          "vegadresse": null,
+          "matrikkeladresse": null,
+          "ukjentBosted": {
+            "bostedskommune": "1106"
+          },
+          "utenlandskAdresse": null
+        },
+        {
+          "gyldigFraOgMed": "2014-05-09T00:00",
+          "angittFlyttedato": "2014-05-08",
+          "gyldigTilOgMed": null,
+          "vegadresse": {
+            "kommunenummer": "1221"
+          },
+          "matrikkeladresse": null,
+          "ukjentBosted": null,
+          "utenlandskAdresse": null
+        },
+        {
+          "gyldigFraOgMed": "2015-08-13T00:00",
+          "angittFlyttedato": "2015-08-13",
+          "gyldigTilOgMed": null,
+          "vegadresse": {
+            "kommunenummer": "0626"
+          },
+          "matrikkeladresse": null,
+          "ukjentBosted": null,
+          "utenlandskAdresse": null
         }
       ],
       "statsborgerskap": [
@@ -53,7 +104,18 @@
           "land": "NOR"
         }
       ],
-      "bostedsadresse": []
+      "foedsel": [
+        {
+          "foedselsdato": "1984-01-31"
+        }
+      ],
+      "doedsfall": [],
+      "adressebeskyttelse": [],
+      "kjoenn": [
+        {
+          "kjoenn": "MANN"
+        }
+      ]
     }
   }
 }

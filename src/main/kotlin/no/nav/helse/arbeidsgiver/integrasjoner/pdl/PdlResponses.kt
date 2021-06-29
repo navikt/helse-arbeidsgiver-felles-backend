@@ -77,7 +77,8 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
                         // dersom noden er null finnes ikke addressen
                         val vegadresse: JsonNode?,
                         val matrikkeladresse: JsonNode?,
-                        val ukjentBosted: JsonNode?
+                        val ukjentBosted: JsonNode?,
+                        val angittFlyttedato: LocalDate? = null
                 )
         }
 }
