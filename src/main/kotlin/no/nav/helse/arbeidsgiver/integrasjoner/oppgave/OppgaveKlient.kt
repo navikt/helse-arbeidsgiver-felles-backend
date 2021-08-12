@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.http.*
+import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
@@ -12,9 +13,13 @@ interface OppgaveKlient {
     suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, callId: String): OpprettOppgaveResponse
 }
 
+interface SyncOppgaveKlient {
+    fun opprettOppgaveSync(opprettOppgaveRequest: OpprettOppgaveRequest, callId: String): OpprettOppgaveResponse
+}
+
 class OppgaveKlientImpl(
         private val url: String, private val stsClient: AccessTokenProvider, private val httpClient: HttpClient
-) : OppgaveKlient {
+) : OppgaveKlient, SyncOppgaveKlient {
 
     override suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, callId: String): OpprettOppgaveResponse {
         val stsToken = stsClient.getToken()
@@ -29,16 +34,28 @@ class OppgaveKlientImpl(
     companion object {
         private val log = LoggerFactory.getLogger(OppgaveKlientImpl::class.java)
     }
+
+    override fun opprettOppgaveSync(
+        opprettOppgaveRequest: OpprettOppgaveRequest,
+        callId: String
+    ): OpprettOppgaveResponse {
+        return runBlocking {  opprettOppgave(opprettOppgaveRequest, callId) }
+    }
 }
 
 data class OpprettOppgaveRequest(
         val tildeltEnhetsnr: String? = null,
         val aktoerId: String? = null,
+        val orgnr: String? = null,
         val journalpostId: String? = null,
+        val journalpostkilde: String? = null,
         val behandlesAvApplikasjon: String? = null,
+        val tilordnetRessurs: String? = null,
+
         val saksreferanse: String? = null,
         val beskrivelse: String? = null,
-        val tema: String? = null,
+        val temagruppe: String? = null,
+        val tema: String,
         val oppgavetype: String,
 
         /**
