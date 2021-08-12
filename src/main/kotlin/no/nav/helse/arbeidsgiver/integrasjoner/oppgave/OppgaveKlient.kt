@@ -45,6 +45,7 @@ class OppgaveKlientImpl(
 
 data class OpprettOppgaveRequest(
         val tildeltEnhetsnr: String? = null,
+        val opprettetAvEnhetsnr: String? = null,
         val aktoerId: String? = null,
         val orgnr: String? = null,
         val journalpostId: String? = null,
