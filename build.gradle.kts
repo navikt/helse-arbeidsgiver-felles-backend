@@ -4,11 +4,11 @@ import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
 
-val kotlinVersion = "1.4.10"
+val kotlinVersion = "1.5.30"
 
 val logbackVersion = "1.2.1"
 val logbackContribVersion = "0.1.5"
-val coroutinesVersion = "1.3.9"
+val coroutinesVersion = "1.5.1"
 val jacksonVersion = "2.11.2"
 val hikariVersion = "3.3.1"
 val vaultJdbcVersion = "1.3.7"
