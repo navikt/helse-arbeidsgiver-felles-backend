@@ -160,12 +160,3 @@ fun createForedlingsOppgaveRequest(
     fristFerdigstillelse = frist,
     prioritet = Prioritet.NORM.name
 )
-
-
-
-
-
-
-
-
-
