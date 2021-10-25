@@ -84,4 +84,11 @@ internal class OppgaveKlientImplTest {
         }
     }
 
+    @Test
+    fun `Returnerer responsobjekt ved suksess`() {
+        val response = runBlocking { dokarkivKlient.hentOppgave(1,  "call-id") }
+        Assertions.assertThat(response).isNotNull
+        Assertions.assertThat(response.id).isGreaterThan(0)
+    }
+
 }

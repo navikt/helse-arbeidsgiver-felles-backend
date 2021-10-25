@@ -41,6 +41,7 @@ class BakgrunnsjobbService(
 
         val autocleanjobber = bakgrunnsjobbRepository.findAutoCleanJobs()
 
+
         if(autocleanjobber.isEmpty()) {
                 bakgrunnsjobbRepository.save(
                         Bakgrunnsjobb(
