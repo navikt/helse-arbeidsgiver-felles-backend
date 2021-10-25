@@ -48,8 +48,8 @@ class OppgaveKlientImpl(
     override suspend fun hentOppgave(oppgaveId: Int, callId: String): OppgaveResponse {
         val httpResponse = httpClient.get<HttpStatement>("$url/$oppgaveId") {
             contentType(ContentType.Application.Json)
-            val oidcToken = stsClient.getToken()
-            header("Authorization", "Bearer ${oidcToken}")
+            val stsToken = stsClient.getToken()
+            header("Authorization", "Bearer ${stsToken}")
             header("X-Correlation-ID", callId)
         }.execute()
         return when (httpResponse.status) {
