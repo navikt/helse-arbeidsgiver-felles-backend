@@ -1,0 +1,12 @@
+package no.nav.helse.arbeidsgiver.integrasjoner.oppgave
+
+import io.ktor.http.HttpStatusCode
+
+class HentOppgaveUnauthorizedException(oppgaveId: Int, status: HttpStatusCode) :
+    RuntimeException("Klarte ikke hente oppgave $oppgaveId - fikk status $status")
+
+class OpprettOppgaveUnauthorizedException(opprettOppgaveRequest: OpprettOppgaveRequest, status: HttpStatusCode) :
+    RuntimeException(
+        "Klarte ikke hente oprette oppgave for journalpost ${opprettOppgaveRequest.journalpostId} " +
+            "med saksreferanse ${opprettOppgaveRequest.saksreferanse} - fikk status $status"
+    )
