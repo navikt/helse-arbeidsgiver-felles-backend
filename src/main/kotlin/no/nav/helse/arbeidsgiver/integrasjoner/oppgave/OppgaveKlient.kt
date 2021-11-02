@@ -30,11 +30,19 @@ class OppgaveKlientImpl(
 
     override suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, callId: String): OpprettOppgaveResponse {
         val stsToken = stsClient.getToken()
-        return httpClient.post(url) {
+        val httpResponse = httpClient.post<HttpStatement>(url) {
             contentType(ContentType.Application.Json.withCharset(Charsets.UTF_8))
             this.header("Authorization", "Bearer $stsToken")
             this.header("X-Correlation-ID", callId)
             body = opprettOppgaveRequest
+        }.execute()
+        return when (httpResponse.status) {
+            HttpStatusCode.OK -> {
+                httpResponse.call.response.receive()
+            }
+            else -> {
+                throw OpprettOppgaveUnauthorizedException(opprettOppgaveRequest, httpResponse.status)
+            }
         }
     }
 
@@ -42,7 +50,7 @@ class OppgaveKlientImpl(
         opprettOppgaveRequest: OpprettOppgaveRequest,
         callId: String
     ): OpprettOppgaveResponse {
-        return runBlocking {  opprettOppgave(opprettOppgaveRequest, callId) }
+        return runBlocking { opprettOppgave(opprettOppgaveRequest, callId) }
     }
 
     override suspend fun hentOppgave(oppgaveId: Int, callId: String): OppgaveResponse {
@@ -57,8 +65,7 @@ class OppgaveKlientImpl(
                 httpResponse.call.response.receive()
             }
             else -> {
-                val msg = "OppgaveClient hentOppgave kastet feil ${httpResponse.status} ved hentOppgave av oppgave, response: ${httpResponse.call.response.receive<String>()}"
-                throw RuntimeException(msg)
+                throw HentOppgaveUnauthorizedException(oppgaveId, httpResponse.status)
             }
         }
     }
