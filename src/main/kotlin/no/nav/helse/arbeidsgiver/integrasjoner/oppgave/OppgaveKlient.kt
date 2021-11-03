@@ -44,7 +44,6 @@ class OppgaveKlientImpl(
                 httpResponse.call.response.receive()
             }
             else -> {
-                log.info("OppgaveKlient: Token som gir 401: $stsToken")
                 throw OpprettOppgaveUnauthorizedException(opprettOppgaveRequest, httpResponse.status)
             }
         }
@@ -69,7 +68,6 @@ class OppgaveKlientImpl(
                 httpResponse.call.response.receive()
             }
             else -> {
-                log.info("OppgaveKlient: Token for oppgave $oppgaveId som gir 401: $stsToken")
                 throw HentOppgaveUnauthorizedException(oppgaveId, httpResponse.status)
             }
         }
