@@ -44,6 +44,7 @@ class OppgaveKlientImpl(
                 httpResponse.call.response.receive()
             }
             else -> {
+                log.info("OppgaveKlient: Token som gir 401: $stsToken")
                 throw OpprettOppgaveUnauthorizedException(opprettOppgaveRequest, httpResponse.status)
             }
         }
@@ -57,10 +58,10 @@ class OppgaveKlientImpl(
     }
 
     override suspend fun hentOppgave(oppgaveId: Int, callId: String): OppgaveResponse {
+        val stsToken = stsClient.getToken()
         val httpResponse = httpClient.get<HttpStatement>("$url/$oppgaveId") {
             contentType(ContentType.Application.Json)
-            val stsToken = stsClient.getToken()
-            header("Authorization", "Bearer ${stsToken}")
+            header("Authorization", "Bearer $stsToken")
             header("X-Correlation-ID", callId)
         }.execute()
         return when (httpResponse.status) {
@@ -68,6 +69,7 @@ class OppgaveKlientImpl(
                 httpResponse.call.response.receive()
             }
             else -> {
+                log.info("OppgaveKlient: Token for oppgave $oppgaveId som gir 401: $stsToken")
                 throw HentOppgaveUnauthorizedException(oppgaveId, httpResponse.status)
             }
         }
