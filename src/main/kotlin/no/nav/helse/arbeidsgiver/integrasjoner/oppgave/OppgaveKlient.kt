@@ -40,6 +40,9 @@ class OppgaveKlientImpl(
             HttpStatusCode.OK -> {
                 httpResponse.call.response.receive()
             }
+            HttpStatusCode.Created -> {
+                httpResponse.call.response.receive()
+            }
             else -> {
                 throw OpprettOppgaveUnauthorizedException(opprettOppgaveRequest, httpResponse.status)
             }

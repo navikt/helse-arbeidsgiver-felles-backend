@@ -7,6 +7,6 @@ class HentOppgaveUnauthorizedException(oppgaveId: Int, status: HttpStatusCode) :
 
 class OpprettOppgaveUnauthorizedException(opprettOppgaveRequest: OpprettOppgaveRequest, status: HttpStatusCode) :
     RuntimeException(
-        "Klarte ikke hente oprette oppgave for journalpost ${opprettOppgaveRequest.journalpostId} " +
+        "Klarte ikke oprette oppgave for journalpost ${opprettOppgaveRequest.journalpostId} " +
             "med saksreferanse ${opprettOppgaveRequest.saksreferanse} - fikk status $status"
     )
