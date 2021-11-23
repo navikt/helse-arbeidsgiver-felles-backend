@@ -159,7 +159,7 @@ task<Test>("slowTests") {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "6.5.1"
+    gradleVersion = "7.2"
 }
 
 configure<PublishingExtension> {
