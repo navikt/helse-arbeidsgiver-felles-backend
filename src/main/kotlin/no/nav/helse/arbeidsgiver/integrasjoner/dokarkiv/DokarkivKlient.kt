@@ -9,7 +9,11 @@ import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import org.slf4j.LoggerFactory
 
 interface DokarkivKlient {
-    fun journalførDokument(journalpost: JournalpostRequest, forsoekFerdigstill: Boolean, callId: String): JournalpostResponse
+    fun journalførDokument(
+        journalpost: JournalpostRequest,
+        forsoekFerdigstill: Boolean,
+        callId: String
+    ): JournalpostResponse
 }
 
 /**
@@ -19,15 +23,19 @@ interface DokarkivKlient {
  * Joark tilgangskontroll-dok: https://confluence.adeo.no/pages/viewpage.action?pageId=315962195
  */
 class DokarkivKlientImpl(
-        private val dokarkivBaseUrl: String,
-        private val httpClient: HttpClient,
-        private val accessTokenProvider: AccessTokenProvider) : DokarkivKlient {
+    private val dokarkivBaseUrl: String,
+    private val httpClient: HttpClient,
+    private val accessTokenProvider: AccessTokenProvider
+) : DokarkivKlient {
 
     private val logger: org.slf4j.Logger = LoggerFactory.getLogger("DokarkivClient")
 
-
-    override fun journalførDokument(journalpost: JournalpostRequest, forsoekFerdigstill: Boolean, callId: String): JournalpostResponse {
-        logger.debug("Journalfører dokument");
+    override fun journalførDokument(
+        journalpost: JournalpostRequest,
+        forsoekFerdigstill: Boolean,
+        callId: String
+    ): JournalpostResponse {
+        logger.debug("Journalfører dokument")
         val url = "$dokarkivBaseUrl/rest/journalpostapi/v1/journalpost?forsoekFerdigstill=$forsoekFerdigstill"
         val response = runBlocking {
             httpClient.post<JournalpostResponse> {
@@ -38,7 +46,7 @@ class DokarkivKlientImpl(
                 body = journalpost
             }
         }
-        if ( forsoekFerdigstill && !response.journalpostFerdigstilt) {
+        if (forsoekFerdigstill && !response.journalpostFerdigstilt) {
             throw FerdigstillingFeiletException(response.journalpostId, response.melding)
         }
 
@@ -46,8 +54,7 @@ class DokarkivKlientImpl(
     }
 
     class FerdigstillingFeiletException(
-            val journalpostId: String,
-            feilmelding: String?
+        val journalpostId: String,
+        feilmelding: String?
     ) : Exception("Ferdigstillelse av journalposten feilet: $feilmelding")
 }
-
