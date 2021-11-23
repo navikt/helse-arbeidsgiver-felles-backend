@@ -35,6 +35,14 @@ plugins {
 }
 
 sonarqube {
+    properties {
+        property("sonar.projectKey", "navikt_helse-arbeidsgiver-felles-backend")
+        property("sonar.organization", "navit")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.login", System.getenv("SONAR_TOKEN"))
+        property("sonar.exclusions", "**Mock**,**/App**")
+        property("sonar.sources", "src/main/kotlin")
+    }
 }
 
 tasks.jacocoTestReport {
@@ -52,44 +60,34 @@ buildscript {
 }
 
 dependencies {
-
     // Snyk fikses
     implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 gjennom ktor-client-apache
     implementation("commons-codec:commons-codec:1.13") // overstyrer transiente 1.10
     implementation("net.minidev:json-smart:2.4.7") // overstyrer transiente 2.4.2
-
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-
     implementation(kotlin("stdlib-jdk8", kotlinVersion))
     implementation(kotlin("reflect", kotlinVersion))
-
     implementation("io.ktor:ktor-server-core:$ktorVersion")
-
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("ch.qos.logback.contrib:logback-jackson:$logbackContribVersion")
     implementation("ch.qos.logback.contrib:logback-json-classic:$logbackContribVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:4.9")
-
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
     implementation("io.ktor:ktor-client-jackson:$ktorVersion")
-
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-
     implementation("org.valiktor:valiktor-core:$valiktorVersion")
     implementation("org.valiktor:valiktor-javatime:$valiktorVersion")
-
     implementation("io.prometheus:simpleclient_common:$prometheusVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
     implementation("org.postgresql:postgresql:42.2.13")
     implementation("com.nimbusds:nimbus-jose-jwt:8.21.1")
     implementation("no.nav.security:token-client-core:1.3.7")
-
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
     testImplementation("io.mockk:mockk:$mockKVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
@@ -97,7 +95,6 @@ dependencies {
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-client-apache:$ktorVersion") // Brukes i integrasjonstester
-
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }
 
