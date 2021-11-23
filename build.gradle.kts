@@ -1,8 +1,8 @@
-
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.text.SimpleDateFormat
 import java.time.ZoneId
-import java.util.*
+import java.util.Date
+import java.util.TimeZone
 
 val kotlinVersion = "1.5.30"
 
@@ -19,7 +19,6 @@ val ktorVersion = "1.5.3"
 val valiktorVersion = "0.12.0"
 val prometheusVersion = "0.6.0"
 
-
 // Versjonering av artifakten
 val dateFormat = SimpleDateFormat("yyyy.MM.dd-HH-mm")
 dateFormat.timeZone = TimeZone.getTimeZone(ZoneId.of("Europe/Oslo"))
@@ -27,7 +26,6 @@ val gitHash = System.getenv("GITHUB_SHA")?.takeLast(5) ?: "local-build"
 group = "no.nav.helsearbeidsgiver"
 version = "${dateFormat.format(Date())}-$gitHash"
 // -- Versjonering
-
 
 plugins {
     kotlin("jvm") version "1.5.30"
@@ -55,7 +53,6 @@ tasks.jacocoTestReport {
     }
 }
 
-
 buildscript {
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
@@ -64,7 +61,7 @@ buildscript {
 
 dependencies {
 
-    //Snyk fikses
+    // Snyk fikses
     implementation("org.apache.httpcomponents:httpclient:4.5.13") // overstyrer transiente 4.5.6 gjennom ktor-client-apache
     implementation("commons-codec:commons-codec:1.13") // overstyrer transiente 1.10
     implementation("net.minidev:json-smart:2.4.7") // overstyrer transiente 2.4.2
@@ -108,7 +105,6 @@ dependencies {
     testImplementation("org.assertj:assertj-core:$assertJVersion")
     testImplementation("io.ktor:ktor-client-mock-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-client-apache:$ktorVersion") // Brukes i integrasjonstester
-
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }
