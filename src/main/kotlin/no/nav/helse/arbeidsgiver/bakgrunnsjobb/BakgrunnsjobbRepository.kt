@@ -7,7 +7,7 @@ import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 import javax.sql.DataSource
 
 interface BakgrunnsjobbRepository {
@@ -24,7 +24,7 @@ interface BakgrunnsjobbRepository {
     fun update(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection)
 }
 
-class MockBakgrunnsjobbRepository() : BakgrunnsjobbRepository {
+class MockBakgrunnsjobbRepository : BakgrunnsjobbRepository {
 
     private val jobs = mutableListOf<Bakgrunnsjobb>()
 
@@ -42,6 +42,7 @@ class MockBakgrunnsjobbRepository() : BakgrunnsjobbRepository {
     override fun save(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection) {
         jobs.add(bakgrunnsjobb)
     }
+
     override fun findAutoCleanJobs(): List<Bakgrunnsjobb> {
         return jobs.filter { it.type.equals(AutoCleanJobbProcessor.JOB_TYPE) }
     }
@@ -49,6 +50,7 @@ class MockBakgrunnsjobbRepository() : BakgrunnsjobbRepository {
     override fun findOkAutoCleanJobs(): List<Bakgrunnsjobb> {
         return jobs.filter { it.type.equals(AutoCleanJobbProcessor.JOB_TYPE) }
     }
+
     override fun findByKjoeretidBeforeAndStatusIn(timeout: LocalDateTime, tilstander: Set<BakgrunnsjobbStatus>): List<Bakgrunnsjobb> {
         return jobs.filter { tilstander.contains(it.status) }
             .filter { it.kjoeretid.isBefore(timeout) }
@@ -80,7 +82,8 @@ class MockBakgrunnsjobbRepository() : BakgrunnsjobbRepository {
 class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : BakgrunnsjobbRepository {
     private val tableName = "bakgrunnsjobb"
 
-    private val insertStatement = """INSERT INTO $tableName (jobb_id, type, behandlet, opprettet, status, kjoeretid, forsoek, maks_forsoek, data) VALUES (?::uuid,?,?,?,?,?,?,?,?::json)""".trimIndent()
+    private val insertStatement =
+        """INSERT INTO $tableName (jobb_id, type, behandlet, opprettet, status, kjoeretid, forsoek, maks_forsoek, data) VALUES (?::uuid,?,?,?,?,?,?,?,?::json)""".trimIndent()
 
     private val updateStatement = """UPDATE $tableName
         SET behandlet = ?
@@ -97,9 +100,11 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
 
     private val selectByIdStatement = """select * from $tableName where jobb_id = ?""".trimIndent()
 
-    private val selectAutoClean = """SELECT * from $tableName WHERE status IN ('${BakgrunnsjobbStatus.OPPRETTET}','${BakgrunnsjobbStatus.FEILET}') AND type = '${AutoCleanJobbProcessor.JOB_TYPE}'""".trimIndent()
+    private val selectAutoClean =
+        """SELECT * from $tableName WHERE status IN ('${BakgrunnsjobbStatus.OPPRETTET}','${BakgrunnsjobbStatus.FEILET}') AND type = '${AutoCleanJobbProcessor.JOB_TYPE}'""".trimIndent()
 
-    private val selectOkAutoClean = """SELECT * from $tableName WHERE status = '${BakgrunnsjobbStatus.OK}' AND type = '${AutoCleanJobbProcessor.JOB_TYPE}'""".trimIndent()
+    private val selectOkAutoClean =
+        """SELECT * from $tableName WHERE status = '${BakgrunnsjobbStatus.OK}' AND type = '${AutoCleanJobbProcessor.JOB_TYPE}'""".trimIndent()
 
     private val deleteStatement = "DELETE FROM $tableName where jobb_id = ?::uuid"
 
@@ -176,6 +181,7 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
             return resultsetTilResultatliste(res)
         }
     }
+
     override fun findByKjoeretidBeforeAndStatusIn(timeout: LocalDateTime, tilstander: Set<BakgrunnsjobbStatus>): List<Bakgrunnsjobb> {
         dataSource.connection.use {
             val res = it.prepareStatement(selectStatement).apply {

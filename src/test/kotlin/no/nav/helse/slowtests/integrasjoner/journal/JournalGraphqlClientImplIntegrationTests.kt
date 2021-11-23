@@ -3,7 +3,6 @@ package no.nav.helse.slowtests.integrasjoner.journal
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.graphql.DokarkivGraphQLClientImpl
 import no.nav.helse.slowtests.TestUtils
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -27,12 +26,12 @@ import org.junit.jupiter.api.Test
 internal class JournalGraphqlClientImplIntegrationTests {
 
     val journalKlient = DokarkivGraphQLClientImpl(
-            "https://saf-q1.nais.preprod.local/graphiql",
-            object: AccessTokenProvider {
-                override fun getToken() = "" // Sett inn token fra STS
-            },
-            TestUtils.commonHttpClient(),
-            TestUtils.commonObjectMapper()
+        "https://saf-q1.nais.preprod.local/graphiql",
+        object : AccessTokenProvider {
+            override fun getToken() = "" // Sett inn token fra STS
+        },
+        TestUtils.commonHttpClient(),
+        TestUtils.commonObjectMapper()
     )
 
     @Test
