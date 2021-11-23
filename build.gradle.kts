@@ -5,7 +5,7 @@ import java.util.Date
 import java.util.TimeZone
 
 val kotlinVersion = "1.5.30"
-val logbackVersion = "1.2.1"
+val logbackVersion = "1.2.7"
 val logbackContribVersion = "0.1.5"
 val coroutinesVersion = "1.5.1"
 val jacksonVersion = "2.11.2"
@@ -72,7 +72,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("ch.qos.logback.contrib:logback-jackson:$logbackContribVersion")
     implementation("ch.qos.logback.contrib:logback-json-classic:$logbackContribVersion")
-    implementation("net.logstash.logback:logstash-logback-encoder:4.9")
+    implementation("net.logstash.logback:logstash-logback-encoder:5.2")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-json:$ktorVersion")
