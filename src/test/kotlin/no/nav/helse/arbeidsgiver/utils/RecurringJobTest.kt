@@ -6,7 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.io.IOException
 
-internal class RecurringJobTests {
+internal class RecurringJobTest {
 
     private val testCoroutineDispatcher = TestCoroutineDispatcher()
 
