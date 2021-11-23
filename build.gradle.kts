@@ -5,7 +5,6 @@ import java.util.Date
 import java.util.TimeZone
 
 val kotlinVersion = "1.5.30"
-
 val logbackVersion = "1.2.1"
 val logbackContribVersion = "0.1.5"
 val coroutinesVersion = "1.5.1"
@@ -36,13 +35,6 @@ plugins {
 }
 
 sonarqube {
-    properties {
-        property("sonar.projectKey", "navikt_helse-arbeidsgiver-felles-backend")
-        property("sonar.organization", "navit")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.login", System.getenv("SONAR_TOKEN"))
-        property("sonar.exclusions", "**Mock**,**/App**")
-    }
 }
 
 tasks.jacocoTestReport {
