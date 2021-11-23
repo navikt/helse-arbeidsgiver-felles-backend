@@ -1,4 +1,4 @@
-name: Test
+name: Integrasjonstest
 
 on: [pull_request]
 
