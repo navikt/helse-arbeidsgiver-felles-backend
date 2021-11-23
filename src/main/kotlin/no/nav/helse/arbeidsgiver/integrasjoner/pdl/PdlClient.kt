@@ -38,14 +38,13 @@ interface LoggedInPdlClient {
  * Klienten vil alltid gi PDL-Temaet 'SYK', så om du trenger et annet tema må du endre denne klienten.
  */
 class PdlClientImpl(
-        private val pdlUrl: String,
-        private val stsClient: AccessTokenProvider,
-        private val httpClient: HttpClient,
-        private val om: ObjectMapper
+    private val pdlUrl: String,
+    private val stsClient: AccessTokenProvider,
+    private val httpClient: HttpClient,
+    private val om: ObjectMapper
 ) : PdlClient, LoggedInPdlClient {
     private val personNavnQuery = this::class.java.getResource("/pdl/hentPersonNavn.graphql").readText().replace(Regex("[\n\r]"), "")
     private val fullPersonQuery = this::class.java.getResource("/pdl/hentFullPerson.graphql").readText().replace(Regex("[\n\r]"), "")
-
 
     override fun personNavn(ident: String): PdlHentPersonNavn.PdlPersonNavneliste? {
         val entity = PdlQueryObject(personNavnQuery, Variables(ident))
@@ -71,14 +70,14 @@ class PdlClientImpl(
         return response
     }
 
-    private inline fun <K, reified T: PdlResponse<K>> queryPdl(graphqlQuery: PdlQueryObject, loggedInUserToken: String? = null): K? {
+    private inline fun <K, reified T : PdlResponse<K>> queryPdl(graphqlQuery: PdlQueryObject, loggedInUserToken: String? = null): K? {
         val stsToken = stsClient.getToken()
         val pdlPersonReponse = runBlocking {
             httpClient.post<T> {
                 url(pdlUrl)
                 body = TextContent(om.writeValueAsString(graphqlQuery), contentType = ContentType.Application.Json)
                 header("Tema", "SYK")
-                header("Authorization", "Bearer ${loggedInUserToken?: stsToken}")
+                header("Authorization", "Bearer ${loggedInUserToken ?: stsToken}")
                 header("Nav-Consumer-Token", "Bearer $stsToken")
             }
         }
@@ -88,7 +87,6 @@ class PdlClientImpl(
         }
 
         return pdlPersonReponse.data
-
     }
 
     companion object {

@@ -1,7 +1,5 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.graphql
 
-import java.time.LocalDateTime
-
 enum class Journalstatus {
     /**
      * Journalposten er mottatt, men ikke journalført.
@@ -202,8 +200,8 @@ enum class Kanal {
     UKJENT
 }
 
-//https://confluence.adeo.no/display/BOA/Enum:+Skjermingtype
-enum class Skjermingtype{
+// https://confluence.adeo.no/display/BOA/Enum:+Skjermingtype
+enum class Skjermingtype {
     /**
      * Indikerer at det er fattet et vedtak etter personopplysningsloven (GDPR - brukers rett til å bli glemt).
      */
@@ -215,8 +213,8 @@ enum class Skjermingtype{
     FEIL
 }
 
-//https://confluence.adeo.no/display/BOA/Enum:+Datotype
-enum class Datotype{
+// https://confluence.adeo.no/display/BOA/Enum:+Datotype
+enum class Datotype {
     /**
      * Tidspunktet dokumentene på journalposten ble sendt til print.Returneres for utgående journalposter
      */
@@ -242,8 +240,8 @@ enum class Datotype{
      */
     DATO_DOKUMENT
 }
-//https://confluence.adeo.no/display/BOA/Enum:+Dokumentstatus
-enum class Dokumentstatus{
+// https://confluence.adeo.no/display/BOA/Enum:+Dokumentstatus
+enum class Dokumentstatus {
     /**
      * Dokumentet er ferdigstilt. Benyttes for redigerbare brev.
      */
@@ -265,8 +263,8 @@ enum class Dokumentstatus{
     KASSERT
 }
 
-//https://confluence.adeo.no/display/BOA/Enum:+Variantformat
-enum class Variantformat{
+// https://confluence.adeo.no/display/BOA/Enum:+Variantformat
+enum class Variantformat {
     ARKIV, FULLVERSJON, PRODUKSJON, PRODUKSJON_DLF, SLADDET, ORIGINAL
 }
 

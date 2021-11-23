@@ -15,11 +15,11 @@ package no.nav.helse.arbeidsgiver.integrasjoner.altinn
  * SocialSecurityNumber	String	The social security number of the reportee. This is populated only if the reportee is a person.
  */
 data class AltinnOrganisasjon(
-        val name: String,
-        val type: String,
-        val parentOrganizationNumber: String? = null,
-        val organizationForm: String? = null,
-        val organizationNumber: String? = null,
-        val socialSecurityNumber: String? = null,
-        val status: String? = null
+    val name: String,
+    val type: String,
+    val parentOrganizationNumber: String? = null,
+    val organizationForm: String? = null,
+    val organizationNumber: String? = null,
+    val socialSecurityNumber: String? = null,
+    val status: String? = null
 )

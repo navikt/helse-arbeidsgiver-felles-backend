@@ -11,7 +11,7 @@ import java.util.*
 import javax.sql.DataSource
 
 interface BakgrunnsjobbRepository {
-    fun getById(id: UUID) : Bakgrunnsjobb?
+    fun getById(id: UUID): Bakgrunnsjobb?
     fun save(bakgrunnsjobb: Bakgrunnsjobb)
     fun save(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection)
     fun findAutoCleanJobs(): List<Bakgrunnsjobb>
@@ -19,7 +19,7 @@ interface BakgrunnsjobbRepository {
     fun findByKjoeretidBeforeAndStatusIn(timeout: LocalDateTime, tilstander: Set<BakgrunnsjobbStatus>): List<Bakgrunnsjobb>
     fun delete(uuid: UUID)
     fun deleteAll()
-    fun deleteOldOkJobs(months : Long)
+    fun deleteOldOkJobs(months: Long)
     fun update(bakgrunnsjobb: Bakgrunnsjobb)
     fun update(bakgrunnsjobb: Bakgrunnsjobb, connection: Connection)
 }
@@ -29,8 +29,8 @@ class MockBakgrunnsjobbRepository() : BakgrunnsjobbRepository {
     private val jobs = mutableListOf<Bakgrunnsjobb>()
 
     override fun getById(id: UUID): Bakgrunnsjobb? {
-        if(jobs.filter{it.uuid.equals(id)}.size.equals(1))
-            return jobs.filter{it.uuid.equals(id)}.get(0)
+        if (jobs.filter { it.uuid.equals(id) }.size.equals(1))
+            return jobs.filter { it.uuid.equals(id) }.get(0)
         else
             return null
     }
@@ -51,7 +51,7 @@ class MockBakgrunnsjobbRepository() : BakgrunnsjobbRepository {
     }
     override fun findByKjoeretidBeforeAndStatusIn(timeout: LocalDateTime, tilstander: Set<BakgrunnsjobbStatus>): List<Bakgrunnsjobb> {
         return jobs.filter { tilstander.contains(it.status) }
-                .filter { it.kjoeretid.isBefore(timeout) }
+            .filter { it.kjoeretid.isBefore(timeout) }
     }
 
     override fun delete(uuid: UUID) {
@@ -73,11 +73,9 @@ class MockBakgrunnsjobbRepository() : BakgrunnsjobbRepository {
 
     override fun deleteOldOkJobs(months: Long) {
         val someMonthsAgo = LocalDateTime.now().minusMonths(months)
-        jobs.removeIf{ it.behandlet?.isBefore(someMonthsAgo)!! && it.status.equals(BakgrunnsjobbStatus.OK) }
+        jobs.removeIf { it.behandlet?.isBefore(someMonthsAgo)!! && it.status.equals(BakgrunnsjobbStatus.OK) }
     }
-
 }
-
 
 class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : BakgrunnsjobbRepository {
     private val tableName = "bakgrunnsjobb"
@@ -99,7 +97,6 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
 
     private val selectByIdStatement = """select * from $tableName where jobb_id = ?""".trimIndent()
 
-
     private val selectAutoClean = """SELECT * from $tableName WHERE status IN ('${BakgrunnsjobbStatus.OPPRETTET}','${BakgrunnsjobbStatus.FEILET}') AND type = '${AutoCleanJobbProcessor.JOB_TYPE}'""".trimIndent()
 
     private val selectOkAutoClean = """SELECT * from $tableName WHERE status = '${BakgrunnsjobbStatus.OK}' AND type = '${AutoCleanJobbProcessor.JOB_TYPE}'""".trimIndent()
@@ -120,7 +117,7 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
         val statement = connection.prepareStatement("select * from $tableName where jobb_id = '$id'")
         val rs = statement.executeQuery()
         val resultList = resultsetTilResultatliste(rs)
-        if(resultList.size == 0)
+        if (resultList.size == 0)
             return null
         else
             return resultList[0]
@@ -190,11 +187,12 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
         }
     }
 
-    private fun resultsetTilResultatliste(res : ResultSet): MutableList<Bakgrunnsjobb> {
+    private fun resultsetTilResultatliste(res: ResultSet): MutableList<Bakgrunnsjobb> {
         val resultatListe = mutableListOf<Bakgrunnsjobb>()
 
         while (res.next()) {
-            resultatListe.add(Bakgrunnsjobb(
+            resultatListe.add(
+                Bakgrunnsjobb(
                     UUID.fromString(res.getString("jobb_id")),
                     res.getString("type"),
                     res.getTimestamp("behandlet")?.toLocalDateTime(),
@@ -204,7 +202,8 @@ class PostgresBakgrunnsjobbRepository(val dataSource: DataSource) : Bakgrunnsjob
                     res.getInt("forsoek"),
                     res.getInt("maks_forsoek"),
                     res.getString("data")
-            ))
+                )
+            )
         }
         return resultatListe
     }

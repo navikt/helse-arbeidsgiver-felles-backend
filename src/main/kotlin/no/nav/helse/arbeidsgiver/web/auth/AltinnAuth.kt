@@ -19,9 +19,9 @@ interface AltinnAuthorizer {
 class DefaultAltinnAuthorizer(private val authListRepo: AltinnOrganisationsRepository) : AltinnAuthorizer {
     override fun hasAccess(identitetsnummer: String, arbeidsgiverId: String): Boolean {
         return authListRepo.hentOrgMedRettigheterForPerson(identitetsnummer)
-                .any {
-                    it.organizationNumber == arbeidsgiverId && it.parentOrganizationNumber != null
-                }
+            .any {
+                it.organizationNumber == arbeidsgiverId && it.parentOrganizationNumber != null
+            }
     }
 }
 

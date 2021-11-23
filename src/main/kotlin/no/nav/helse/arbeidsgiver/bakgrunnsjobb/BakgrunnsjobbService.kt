@@ -13,8 +13,8 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor.Companion.JOB_TYPE
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
-import java.sql.Connection
 import org.slf4j.LoggerFactory
+import java.sql.Connection
 import java.time.LocalDateTime
 import kotlin.collections.HashMap
 
@@ -28,35 +28,33 @@ class BakgrunnsjobbService(
     val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
     val log = LoggerFactory.getLogger(BakgrunnsjobbService::class.java)
 
-    fun startAutoClean(frekvensITimer: Int, slettEldreEnnMaaneder : Long){
+    fun startAutoClean(frekvensITimer: Int, slettEldreEnnMaaneder: Long) {
         val om = ObjectMapper().apply {
             registerKotlinModule()
             disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             dateFormat = StdDateFormat()
         }
-        if(frekvensITimer < 1 || slettEldreEnnMaaneder < 0 ){
+        if (frekvensITimer < 1 || slettEldreEnnMaaneder < 0) {
             log.info("startautoclean forsøkt startet med ugyldige parametre.")
             throw java.lang.IllegalArgumentException("start autoclean må ha en frekvens støtte enn 1 og slettEldreEnnMaander større enn 0")
         }
 
         val autocleanjobber = bakgrunnsjobbRepository.findAutoCleanJobs()
 
-        if(autocleanjobber.isEmpty()) {
-                bakgrunnsjobbRepository.save(
-                        Bakgrunnsjobb(
-                                kjoeretid = LocalDateTime.now().plusHours(frekvensITimer.toLong()),
-                                maksAntallForsoek = 10,
-                                data = om.writeValueAsString(AutoCleanJobbProcessor.JobbData(slettEldreEnnMaaneder, frekvensITimer)),
-                                type = JOB_TYPE
-                        )
+        if (autocleanjobber.isEmpty()) {
+            bakgrunnsjobbRepository.save(
+                Bakgrunnsjobb(
+                    kjoeretid = LocalDateTime.now().plusHours(frekvensITimer.toLong()),
+                    maksAntallForsoek = 10,
+                    data = om.writeValueAsString(AutoCleanJobbProcessor.JobbData(slettEldreEnnMaaneder, frekvensITimer)),
+                    type = JOB_TYPE
                 )
-            }
-        else {
+            )
+        } else {
             val ekisterendeAutoCleanJobb = autocleanjobber.get(0)
             bakgrunnsjobbRepository.delete(ekisterendeAutoCleanJobb.uuid)
             startAutoClean(frekvensITimer, slettEldreEnnMaaneder)
         }
-
     }
 
     @Deprecated("Bruk registrer(..)")
@@ -135,7 +133,6 @@ class BakgrunnsjobbService(
             setOf(BakgrunnsjobbStatus.OPPRETTET, BakgrunnsjobbStatus.FEILET)
         )
 
-
     private fun tryStopAction(prossessorForType: BakgrunnsjobbProsesserer, jobb: Bakgrunnsjobb) {
         try {
             prossessorForType.stoppet(jobb)
@@ -146,7 +143,7 @@ class BakgrunnsjobbService(
     }
 
     private fun tryGetResponseBody(jobException: Throwable): String? {
-        if ( jobException is ResponseException) {
+        if (jobException is ResponseException) {
             return try {
                 runBlocking { jobException.response.content.readUTF8Line() }
             } catch (readEx: Exception) {
@@ -173,7 +170,6 @@ interface BakgrunnsjobbProsesserer {
      * Får inn en kopi av jobben med all metadata
      */
     fun stoppet(jobb: Bakgrunnsjobb) {
-
     }
 
     /**

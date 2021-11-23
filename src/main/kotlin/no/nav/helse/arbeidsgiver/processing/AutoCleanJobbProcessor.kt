@@ -1,7 +1,6 @@
 package no.nav.helse.arbeidsgiver.processing
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.Bakgrunnsjobb
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbProsesserer
@@ -9,10 +8,10 @@ import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbRepository
 import no.nav.helse.arbeidsgiver.bakgrunnsjobb.BakgrunnsjobbService
 import java.util.*
 
-class AutoCleanJobbProcessor (
-        private val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
-        private val bakgrunnsjobbService: BakgrunnsjobbService,
-        private val om: ObjectMapper,
+class AutoCleanJobbProcessor(
+    private val bakgrunnsjobbRepository: BakgrunnsjobbRepository,
+    private val bakgrunnsjobbService: BakgrunnsjobbService,
+    private val om: ObjectMapper,
 ) : BakgrunnsjobbProsesserer {
     companion object {
         val JOB_TYPE = "bakgrunnsjobb-autoclean"

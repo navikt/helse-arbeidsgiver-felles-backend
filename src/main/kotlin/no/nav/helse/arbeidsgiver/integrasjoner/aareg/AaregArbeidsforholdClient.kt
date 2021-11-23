@@ -13,7 +13,9 @@ interface AaregArbeidsforholdClient {
  * klient for å hente ut aktive arbeidsforhold på en person
  */
 class AaregArbeidsforholdClientImpl(
-    private val url: String, private val stsClient: AccessTokenProvider, private val httpClient: HttpClient
+    private val url: String,
+    private val stsClient: AccessTokenProvider,
+    private val httpClient: HttpClient
 ) : AaregArbeidsforholdClient {
 
     override suspend fun hentArbeidsforhold(ident: String, callId: String): List<Arbeidsforhold> {

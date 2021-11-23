@@ -5,7 +5,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlin.system.measureTimeMillis
 
-
 /**
  * Håndterer komponenter som skal svare på Readyness og Liveness probes fra Kubernetes.
  *
@@ -62,11 +61,6 @@ class KubernetesProbeManager {
     }
 }
 
-
-
-
-
-
 /**
  * Markerer en komponent som en komponent som applikasjonen er avhengig av for å være klar for trafikk.
  */
@@ -91,19 +85,20 @@ interface LivenessComponent {
     suspend fun runLivenessCheck()
 }
 
-enum class ProbeState {HEALTHY, UN_HEALTHY}
+enum class ProbeState { HEALTHY, UN_HEALTHY }
 
 data class ComponentProbeResult(
-        val componentName: String,
-        val state: ProbeState,
-        val runTime: Long,
-        val error: Throwable? = null)
+    val componentName: String,
+    val state: ProbeState,
+    val runTime: Long,
+    val error: Throwable? = null
+)
 
 /**
  * Hjelpeklasse for å hente ut det samlede resultatet av set sett med sjekker
  */
 data class ProbeResult(private val resultResults: Collection<ComponentProbeResult>) {
     val healthyComponents = resultResults.filter { it.state == ProbeState.HEALTHY }
-    val unhealthyComponents  = resultResults.filter { it.state == ProbeState.UN_HEALTHY }
+    val unhealthyComponents = resultResults.filter { it.state == ProbeState.UN_HEALTHY }
     val state = if (unhealthyComponents.isEmpty()) ProbeState.HEALTHY else ProbeState.UN_HEALTHY
 }

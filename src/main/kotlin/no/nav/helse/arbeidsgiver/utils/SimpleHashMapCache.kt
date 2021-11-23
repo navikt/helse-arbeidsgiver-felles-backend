@@ -4,18 +4,16 @@ import no.nav.helse.arbeidsgiver.system.TimeProvider
 import java.time.Duration
 import java.time.LocalDateTime
 
-
-
 class SimpleHashMapCache<T>(
-        private val cacheDuration: Duration,
-        private val maxCachedItems: Int,
-        private val timeProvider: TimeProvider
+    private val cacheDuration: Duration,
+    private val maxCachedItems: Int,
+    private val timeProvider: TimeProvider
 ) {
-    constructor(cacheDuration: Duration, maxCachedItems: Int) : this(cacheDuration, maxCachedItems,  object: TimeProvider {})
+    constructor(cacheDuration: Duration, maxCachedItems: Int) : this(cacheDuration, maxCachedItems, object : TimeProvider {})
 
     private val cache = mutableMapOf<String, Entry<T>>()
     val size: Int
-        get() {return cache.size}
+        get() { return cache.size }
 
     fun hasValidCacheEntry(key: String): Boolean {
         return cache[key]?.isValid() ?: false
@@ -28,7 +26,7 @@ class SimpleHashMapCache<T>(
     fun put(key: String, value: T) {
         if (cache.keys.size >= maxCachedItems) {
             cache.filterValues { !it.isValid() }.keys
-                    .forEach { cache.remove(it) }
+                .forEach { cache.remove(it) }
         }
 
         if (cache.keys.size < maxCachedItems) {
@@ -44,4 +42,3 @@ class SimpleHashMapCache<T>(
 
     private fun Entry<T>.isValid() = this.expiryTime.isAfter(timeProvider.now())
 }
-
