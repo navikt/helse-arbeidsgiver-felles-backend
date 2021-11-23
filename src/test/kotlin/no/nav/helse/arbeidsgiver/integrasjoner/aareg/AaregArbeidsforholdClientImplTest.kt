@@ -23,9 +23,11 @@ internal class AaregArbeidsforholdClientImplTest {
 
     val client = HttpClient(MockEngine) {
 
-        install(JsonFeature) { serializer = JacksonSerializer {
-            configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-        } }
+        install(JsonFeature) {
+            serializer = JacksonSerializer {
+                configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+            }
+        }
 
         engine {
             addHandler { request ->
@@ -42,15 +44,15 @@ internal class AaregArbeidsforholdClientImplTest {
     }
 
     val aaregClient = AaregArbeidsforholdClientImpl(
-            "url",
-            mockStsClient,
-            client
+        "url",
+        mockStsClient,
+        client
     )
 
     @Disabled
     @Test
     fun `Returnerer gyldig objekt når alt er oK`() {
-        val response = runBlocking { aaregClient.hentArbeidsforhold("ident",  "call-id") }
+        val response = runBlocking { aaregClient.hentArbeidsforhold("ident", "call-id") }
         Assertions.assertThat(response).isNotNull
         Assertions.assertThat(response.find { it.arbeidsgiver.organisasjonsnummer == "896929119" }).isNotNull
     }

@@ -54,7 +54,6 @@ class AltinnRestClientTests {
         assertThat(authList).hasSize(4)
     }
 
-
     @Test
     internal fun `timeout from altinn throws exception`() {
         val altinnClient = AltinnRestClient("http://timeout", "api-gw-key", "altinn-key", serviceCode, client)

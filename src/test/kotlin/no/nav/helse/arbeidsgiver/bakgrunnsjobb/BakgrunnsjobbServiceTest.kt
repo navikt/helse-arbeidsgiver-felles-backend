@@ -1,9 +1,7 @@
 package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 
 import io.mockk.mockk
-import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.test.TestCoroutineScope
-import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -33,15 +31,15 @@ internal class BakgrunnsjobbServiceTest {
     @Test
     fun `sett jobb til ok hvis ingen feil `() {
         val testJobb = Bakgrunnsjobb(
-                type = EksempelProsesserer.JOBB_TYPE,
-                data = "ok"
+            type = EksempelProsesserer.JOBB_TYPE,
+            data = "ok"
         )
         repoMock.save(testJobb)
         testCoroutineScope.advanceTimeBy(1)
 
         val resultSet = repoMock.findByKjoeretidBeforeAndStatusIn(LocalDateTime.now(), setOf(BakgrunnsjobbStatus.OK))
         assertThat(resultSet)
-                .hasSize(1)
+            .hasSize(1)
 
         val completeJob = resultSet[0]
         assertThat(completeJob.forsoek).isEqualTo(1)
@@ -50,17 +48,17 @@ internal class BakgrunnsjobbServiceTest {
     @Test
     fun `sett jobb til stoppet og kjør stoppet-funksjonen hvis feiler for mye `() {
         val testJobb = Bakgrunnsjobb(
-                type = EksempelProsesserer.JOBB_TYPE,
-                opprettet = now.minusHours(1),
-                maksAntallForsoek = 3,
-                data = "fail"
+            type = EksempelProsesserer.JOBB_TYPE,
+            opprettet = now.minusHours(1),
+            maksAntallForsoek = 3,
+            data = "fail"
         )
         repoMock.save(testJobb)
         testCoroutineScope.advanceTimeBy(1)
 
-        //Den går rett til stoppet i denne testen
+        // Den går rett til stoppet i denne testen
         assertThat(repoMock.findByKjoeretidBeforeAndStatusIn(now.plusMinutes(1), setOf(BakgrunnsjobbStatus.STOPPET)))
-                .hasSize(1)
+            .hasSize(1)
 
         assertThat(eksempelProsesserer.bleStoppet).isTrue()
     }
@@ -78,24 +76,24 @@ internal class BakgrunnsjobbServiceTest {
         assertThat(repoMock.findAutoCleanJobs()).hasSize(0)
     }
 
-
     @Test
     fun `autoClean opprettes med riktig kjøretid`() {
         service.startAutoClean(2, 3)
         assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
-        assert(repoMock.findAutoCleanJobs().get(0).kjoeretid > now.plusHours(1) &&
+        assert(
+            repoMock.findAutoCleanJobs().get(0).kjoeretid > now.plusHours(1) &&
                 repoMock.findAutoCleanJobs().get(0).kjoeretid < now.plusHours(3)
         )
     }
 
     @Test
-    fun `autoClean oppretter jobb med riktig antall måneder`(){
-        service.startAutoClean(2,3)
+    fun `autoClean oppretter jobb med riktig antall måneder`() {
+        service.startAutoClean(2, 3)
         assertThat(repoMock.findAutoCleanJobs()).hasSize(1)
     }
 
     @Test
-    fun `opprett lager korrekt jobb`(){
+    fun `opprett lager korrekt jobb`() {
         val connectionMock = mockk<Connection>()
         service.opprettJobb<EksempelProsesserer>(data = "test", connection = connectionMock)
         val jobber =

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test
 class AaregArbeidsforholdClientImplTest {
     val client = AaregArbeidsforholdClientImpl(
         "https://helsearbeidsgiver-proxy.dev-fss-pub.nais.io/aareg-arbeidsforhold",
-        object: AccessTokenProvider {
+        object : AccessTokenProvider {
             override fun getToken() = "" // Sett inn token fra STS
         },
         TestUtils.commonHttpClient()
