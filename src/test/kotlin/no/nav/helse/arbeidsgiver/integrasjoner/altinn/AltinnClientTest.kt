@@ -12,7 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-class AltinnRestClientTests {
+class AltinnClientTest {
 
     val validAltinnResponse = "altinn-mock-data/organisasjoner-med-rettighet.json".loadFromResources()
 
@@ -53,7 +53,6 @@ class AltinnRestClientTests {
         val authList = altinnClient.hentOrgMedRettigheterForPerson(identitetsnummer)
         assertThat(authList).hasSize(4)
     }
-
 
     @Test
     internal fun `timeout from altinn throws exception`() {

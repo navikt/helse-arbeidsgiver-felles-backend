@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
 
-
-
 interface AccessTokenProvider {
     fun getToken(): String
 }
@@ -25,10 +23,12 @@ interface AccessTokenProvider {
  * Cacher tokenet til det 5 minutter unna å bli ugyldig.
  */
 @Deprecated("STS skal fases ut til fordel for OAuth2 Client Credentials og Token Exchange (TokenX)")
-class RestSTSAccessTokenProvider(username: String,
-                                 password: String,
-                                 stsEndpoint: String,
-                                 private val httpClient: HttpClient) : AccessTokenProvider {
+class RestSTSAccessTokenProvider(
+    username: String,
+    password: String,
+    stsEndpoint: String,
+    private val httpClient: HttpClient
+) : AccessTokenProvider {
 
     private val endpointURI: String
     private val basicAuth: String
@@ -40,7 +40,6 @@ class RestSTSAccessTokenProvider(username: String,
         endpointURI = "$stsEndpoint?grant_type=client_credentials&scope=openid"
         currentToken = requestToken()
     }
-
 
     override fun getToken(): String {
         if (isExpired(currentToken, Date.from(Instant.now().plusSeconds(300)))) {
@@ -67,10 +66,9 @@ class RestSTSAccessTokenProvider(username: String,
         return "Basic " + Base64.getEncoder().encodeToString("$username:$password".toByteArray())
     }
 
-
     private fun isExpired(jwtToken: JwtToken, date: Date): Boolean {
         return date.after(jwtToken.expirationTime) &&
-                jwtToken.expirationTime.before(date)
+            jwtToken.expirationTime.before(date)
     }
 
     private class JwtToken(encodedToken: String) {
@@ -92,8 +90,9 @@ class RestSTSAccessTokenProvider(username: String,
  * OAuth2 Token-klient for å hente access token for bruk i andre tjenester, feks joark, PDL eller Oppgave.
  */
 class OAuth2TokenProvider(
-        private val oauth2Service: OAuth2AccessTokenService,
-        private val clientProperties: ClientProperties) : AccessTokenProvider {
+    private val oauth2Service: OAuth2AccessTokenService,
+    private val clientProperties: ClientProperties
+) : AccessTokenProvider {
     override fun getToken(): String {
         return oauth2Service.getAccessToken(clientProperties).accessToken
     }

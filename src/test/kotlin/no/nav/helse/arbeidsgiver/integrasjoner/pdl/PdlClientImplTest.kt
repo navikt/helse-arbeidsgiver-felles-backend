@@ -27,11 +27,13 @@ class PdlClientImplTest {
 
     val client = HttpClient(MockEngine) {
 
-        install(JsonFeature) { serializer = JacksonSerializer {
-            configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-            registerModule(JavaTimeModule())
-            registerModule(KotlinModule())
-        } }
+        install(JsonFeature) {
+            serializer = JacksonSerializer {
+                configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                registerModule(JavaTimeModule())
+                registerModule(KotlinModule())
+            }
+        }
 
         engine {
             addHandler { request ->
@@ -57,36 +59,35 @@ class PdlClientImplTest {
     val objectMapper = ObjectMapper()
 
     val pdlClient = PdlClientImpl(
-            "url",
-            mockStsClient,
-            client,
-            objectMapper
+        "url",
+        mockStsClient,
+        client,
+        objectMapper
     )
 
     @Test
     internal fun `Returnerer en person ved gyldig respons fra PDL`() {
         val response = pdlClient.personNavn(testFnr)
         val name = response
-                ?.navn
-                ?.firstOrNull()
+            ?.navn
+            ?.firstOrNull()
         assertThat(name?.fornavn).isEqualTo("Ola")
         assertThat(name?.metadata?.master).isEqualTo("Freg")
-
     }
 
     @Test
     internal fun `Full Person returnerer en person ved gyldig respons fra PDL`() {
         val response = pdlClient.fullPerson(testFnr)
         val name = response
-                ?.hentPerson
-                ?.navn
-                ?.firstOrNull()
-                ?.fornavn
+            ?.hentPerson
+            ?.navn
+            ?.firstOrNull()
+            ?.fornavn
 
         assertThat(name).isEqualTo("TREIG")
         assertThat(response?.hentIdenter?.identer).hasSize(2)
-        assertThat(response?.hentIdenter?.identer?.filter { it.gruppe==PdlIdent.PdlIdentGruppe.AKTORID }).hasSize(1)
-        assertThat(response?.hentIdenter?.identer?.filter { it.gruppe==PdlIdent.PdlIdentGruppe.FOLKEREGISTERIDENT }).hasSize(1)
+        assertThat(response?.hentIdenter?.identer?.filter { it.gruppe == PdlIdent.PdlIdentGruppe.AKTORID }).hasSize(1)
+        assertThat(response?.hentIdenter?.identer?.filter { it.gruppe == PdlIdent.PdlIdentGruppe.FOLKEREGISTERIDENT }).hasSize(1)
 
         assertThat(response?.hentPerson?.adressebeskyttelse?.firstOrNull()?.gradering).isEqualTo("UGRADERT")
         assertThat(response?.hentGeografiskTilknytning?.gtType).isEqualTo(PdlHentFullPerson.PdlGeografiskTilknytning.PdlGtType.KOMMUNE)

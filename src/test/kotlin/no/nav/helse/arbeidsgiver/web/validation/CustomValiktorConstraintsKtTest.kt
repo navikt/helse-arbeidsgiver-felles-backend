@@ -4,7 +4,6 @@ import no.nav.helse.arbeidsgiver.TestData
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.valiktor.ConstraintViolationException
-
 import org.valiktor.validate
 
 internal class CustomValiktorConstraintsKtTest {

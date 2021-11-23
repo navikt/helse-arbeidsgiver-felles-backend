@@ -19,11 +19,11 @@ internal class SimpleHashMapCacheTest {
     val key = "123"
     val value = "cachedValue"
 
-    private val startTime = LocalDateTime.of(2010, 1, 10, 1,1)
+    private val startTime = LocalDateTime.of(2010, 1, 10, 1, 1)
 
     @BeforeEach
     fun setup() {
-        every {timeProviderMock.now() } returns startTime
+        every { timeProviderMock.now() } returns startTime
     }
 
     @Test
@@ -35,7 +35,7 @@ internal class SimpleHashMapCacheTest {
         assertThat(cache.get(key)).isEqualTo(value)
 
         // cache expires
-        every {timeProviderMock.now() } returns startTime.plusMinutes(duration.toMinutes()).plusSeconds(1)
+        every { timeProviderMock.now() } returns startTime.plusMinutes(duration.toMinutes()).plusSeconds(1)
         assertThat(cache.hasValidCacheEntry(key)).isFalse()
     }
 
@@ -44,7 +44,7 @@ internal class SimpleHashMapCacheTest {
         cache.put(key, value)
         assertThat(cache.size).isEqualTo(maxCacheSize)
 
-        every {timeProviderMock.now() } returns startTime.plusMinutes(duration.toMinutes()).plusSeconds(1)
+        every { timeProviderMock.now() } returns startTime.plusMinutes(duration.toMinutes()).plusSeconds(1)
         cache.put("newKey", "newValue")
 
         assertThat(cache.size).isEqualTo(maxCacheSize)

@@ -3,16 +3,16 @@ package no.nav.helse.arbeidsgiver.bakgrunnsjobb
 import java.time.LocalDateTime
 import java.util.*
 
-data class Bakgrunnsjobb (
-        var uuid: UUID = UUID.randomUUID(),
-        var type: String,
-        var behandlet: LocalDateTime? = null,
-        var opprettet: LocalDateTime = LocalDateTime.now(),
-        var status: BakgrunnsjobbStatus = BakgrunnsjobbStatus.OPPRETTET,
-        var kjoeretid: LocalDateTime = LocalDateTime.now(),
-        var forsoek: Int = 0,
-        var maksAntallForsoek: Int = 3,
-        var data: String
+data class Bakgrunnsjobb(
+    var uuid: UUID = UUID.randomUUID(),
+    var type: String,
+    var behandlet: LocalDateTime? = null,
+    var opprettet: LocalDateTime = LocalDateTime.now(),
+    var status: BakgrunnsjobbStatus = BakgrunnsjobbStatus.OPPRETTET,
+    var kjoeretid: LocalDateTime = LocalDateTime.now(),
+    var forsoek: Int = 0,
+    var maksAntallForsoek: Int = 3,
+    var data: String
 )
 
 enum class BakgrunnsjobbStatus {

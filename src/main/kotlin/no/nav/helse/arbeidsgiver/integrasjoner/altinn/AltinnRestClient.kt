@@ -21,22 +21,25 @@ import java.util.concurrent.CancellationException
  *
  */
 class AltinnRestClient(
-        altinnBaseUrl: String,
-        private val apiGwApiKey: String,
-        private val altinnApiKey: String,
-        serviceCode: String,
-        private val httpClient: HttpClient,
-        private val pageSize: Int = 500) : AltinnOrganisationsRepository {
+    altinnBaseUrl: String,
+    private val apiGwApiKey: String,
+    private val altinnApiKey: String,
+    serviceCode: String,
+    private val httpClient: HttpClient,
+    private val pageSize: Int = 500
+) : AltinnOrganisationsRepository {
 
     private val logger: org.slf4j.Logger = LoggerFactory.getLogger("AltinnClient")
 
     init {
-        logger.debug("""Altinn Config:
+        logger.debug(
+            """Altinn Config:
                     altinnBaseUrl: $altinnBaseUrl
                     apiGwApiKey: ${apiGwApiKey.take(1)}.....
                     altinnApiKey: ${altinnApiKey.take(1)}.....
                     serviceCode: $serviceCode
-        """.trimIndent())
+            """.trimIndent()
+        )
     }
 
     private val baseUrl = "$altinnBaseUrl/reportees/?ForceEIAuthentication&\$filter=Type+ne+'Person'+and+Status+eq+'Active'&serviceCode=$serviceCode&serviceEdition=1&&subject="
@@ -56,12 +59,12 @@ class AltinnRestClient(
                 do {
                     val urlWithPagesizeAndOffset = url + "&\$top=" + pageSize + "&\$skip=" + page * pageSize
                     val pageResults = httpClient.get<Set<AltinnOrganisasjon>>(urlWithPagesizeAndOffset) {
-                                        headers.append("X-NAV-APIKEY", apiGwApiKey)
-                                        headers.append("APIKEY", altinnApiKey)
-                                    }
+                        headers.append("X-NAV-APIKEY", apiGwApiKey)
+                        headers.append("APIKEY", altinnApiKey)
+                    }
                     allAccessRights.addAll(pageResults)
                     page++
-                } while(pageResults.size >= pageSize)
+                } while (pageResults.size >= pageSize)
 
                 logger.debug("Altinn brukte ${Duration.between(start, LocalDateTime.now()).toMillis()}ms på å svare med ${allAccessRights.size} rettigheter")
                 return@runBlocking allAccessRights
@@ -87,5 +90,5 @@ class AltinnRestClient(
 }
 
 class AltinnBrukteForLangTidException : Exception(
-        "Altinn brukte for lang tid til å svare på forespørselen om tilganger. Prøv igjen om litt."
+    "Altinn brukte for lang tid til å svare på forespørselen om tilganger. Prøv igjen om litt."
 )

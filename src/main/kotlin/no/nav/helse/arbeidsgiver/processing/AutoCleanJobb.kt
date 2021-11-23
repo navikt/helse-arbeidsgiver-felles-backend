@@ -4,8 +4,8 @@ import java.time.LocalDateTime
 import java.util.*
 
 data class AutoCleanJobb(
-        val id: UUID = UUID.randomUUID(),
-        val opprettet: LocalDateTime = LocalDateTime.now(),
-        val slettEldre: Long,
-        var interval: Int,
+    val id: UUID = UUID.randomUUID(),
+    val opprettet: LocalDateTime = LocalDateTime.now(),
+    val slettEldre: Long,
+    var interval: Int,
 )

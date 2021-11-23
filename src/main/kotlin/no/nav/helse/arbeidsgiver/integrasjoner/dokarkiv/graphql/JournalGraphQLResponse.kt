@@ -1,10 +1,9 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv.graphql
 
-import no.nav.helse.arbeidsgiver.integrasjoner.pdl.PdlError
 import java.time.LocalDateTime
 
-//https://confluence.adeo.no/display/BOA/Query:+journalpost
-data class JournalPost (
+// https://confluence.adeo.no/display/BOA/Query:+journalpost
+data class JournalPost(
     val journalpostId: String?,
     val tittel: String,
     val journalposttype: Journalposttype,
@@ -27,55 +26,60 @@ data class JournalPost (
     val antallRetur: String,
     val eksternReferanseId: String,
     val tilleggsopplysninger: List<Tilleggsopplysning>,
-    val dokumenter: List<DokumentInfo>) {
-    enum class Journalposttype {I,U,N}
+    val dokumenter: List<DokumentInfo>
+) {
+    enum class Journalposttype { I, U, N }
 
-    data class Bruker(val id: String,val type: BrukerIdType)
-    data class Sak(val datoOpprettet: LocalDateTime, val fagsakId: String, val fagsaksystem: String,
-                   val sakstype: Sakstype, val tema: Tema
+    data class Bruker(val id: String, val type: BrukerIdType)
+    data class Sak(
+        val datoOpprettet: LocalDateTime,
+        val fagsakId: String,
+        val fagsaksystem: String,
+        val sakstype: Sakstype,
+        val tema: Tema
     ) {
-        enum class Sakstype { GENERELL_SAK, FAGSAK}
+        enum class Sakstype { GENERELL_SAK, FAGSAK }
     }
-    data class AvsenderMottaker (
+    data class AvsenderMottaker(
         val id: String,
         val type: AvsenderMottakerIdType,
         val navn: String,
         val land: String,
-        val erLikBruker: Boolean?) {
-        enum class AvsenderMottakerIdType { FNR, ORGNR, HPRNR, UTL_ORG, NULL,UKJENT }
+        val erLikBruker: Boolean?
+    ) {
+        enum class AvsenderMottakerIdType { FNR, ORGNR, HPRNR, UTL_ORG, NULL, UKJENT }
     }
-
-
 }
 
-//https://confluence.adeo.no/display/BOA/Type:+RelevantDato
+// https://confluence.adeo.no/display/BOA/Type:+RelevantDato
 data class RelevantDato(
     /**
      * En kalenderdato med tid, trunkert til nærmeste sekund. YYYY-MM-DD'T'hh:mm:ss. Eksempel: 2018-01-01T12:00:00.
      */
-    val dato : LocalDateTime,
+    val dato: LocalDateTime,
     /**
      * datotype
      */
-    val datotype : Datotype
+    val datotype: Datotype
 )
-//https://confluence.adeo.no/display/BOA/Type:+Tilleggsopplysning
+// https://confluence.adeo.no/display/BOA/Type:+Tilleggsopplysning
 data class Tilleggsopplysning(
     /**
      * Nøkkelen til det fagspesifikke attributtet.
      */
-    val nokkel : String,
+    val nokkel: String,
     /**
      * Verdien til det fagspesifikke attributtet.
      */
-    val verdi: String)
+    val verdi: String
+)
 
-//https://confluence.adeo.no/display/BOA/Type:+DokumentInfo
+// https://confluence.adeo.no/display/BOA/Type:+DokumentInfo
 data class DokumentInfo(
     /**
      * Unik identifikator per dokumentinfo
      */
-    val dokumentInfoId : String,
+    val dokumentInfoId: String,
     /**
      * Kode som sier noe om dokumentets innhold og oppbygning.
      */
@@ -95,27 +99,27 @@ data class DokumentInfo(
     /**
      * Uttrykker at dokumentet er unntatt ordinær saksbehandling.
      */
-    val skjerming : Skjermingtype,
+    val skjerming: Skjermingtype,
     val logiskeVedlegg: LogiskVedlegg,
-    val dokumentvarianter : Dokumentvariant
+    val dokumentvarianter: Dokumentvariant
 )
-//https://confluence.adeo.no/display/BOA/Type:+LogiskVedlegg
+// https://confluence.adeo.no/display/BOA/Type:+LogiskVedlegg
 data class LogiskVedlegg(
     /**
      * Unik identifikator per logisk vedlegg
      */
-    val logiskVedleggId : String,
+    val logiskVedleggId: String,
     /**
      * Tittel på det logiske vedlegget
      */
-    val tittel : String
+    val tittel: String
 )
 
-//https://confluence.adeo.no/display/BOA/Type:+Dokumentvariant
+// https://confluence.adeo.no/display/BOA/Type:+Dokumentvariant
 data class Dokumentvariant(
-    val variantformat : Variantformat,
-    val filnavn : String,
-    val saksbehandlerHarTilgang : String,
+    val variantformat: Variantformat,
+    val filnavn: String,
+    val saksbehandlerHarTilgang: String,
     val skjerming: Skjermingtype
 )
 

@@ -1,6 +1,5 @@
 package no.nav.helse.arbeidsgiver.integrasjoner
 
-import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import com.fasterxml.jackson.databind.MapperFeature
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -11,6 +10,7 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -23,9 +23,11 @@ class AccessTokenProviderTests {
 
     val client = HttpClient(MockEngine) {
 
-        install(JsonFeature) { serializer = JacksonSerializer {
-            configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-        } }
+        install(JsonFeature) {
+            serializer = JacksonSerializer {
+                configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+            }
+        }
 
         engine {
             addHandler { request ->
@@ -43,7 +45,6 @@ class AccessTokenProviderTests {
             }
         }
     }
-
 
     @Test
     internal fun `valid answer from STS returns valid token, second call gives cached answer`() {

@@ -17,9 +17,9 @@ internal class DefaultAuthorizerTest {
     internal fun setUp() {
         val authRepoMock = mockk<AltinnOrganisationsRepository>()
         every { authRepoMock.hentOrgMedRettigheterForPerson(subjectWithAccess) } returns setOf(
-                AltinnOrganisasjon("Juridisk enhet", "Enterprise", organizationNumber = "123"),
-                AltinnOrganisasjon("Undernehet", "Business", organizationNumber = "567", parentOrganizationNumber = "123"),
-                AltinnOrganisasjon("person ", "Person", socialSecurityNumber = "01028454321")
+            AltinnOrganisasjon("Juridisk enhet", "Enterprise", organizationNumber = "123"),
+            AltinnOrganisasjon("Undernehet", "Business", organizationNumber = "567", parentOrganizationNumber = "123"),
+            AltinnOrganisasjon("person ", "Person", socialSecurityNumber = "01028454321")
         )
 
         every { authRepoMock.hentOrgMedRettigheterForPerson(doesNotHaveAccess) } returns setOf()

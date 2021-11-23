@@ -21,7 +21,9 @@ interface SyncOppgaveKlient {
 }
 
 class OppgaveKlientImpl(
-        private val url: String, private val stsClient: AccessTokenProvider, private val httpClient: HttpClient
+    private val url: String,
+    private val stsClient: AccessTokenProvider,
+    private val httpClient: HttpClient
 ) : OppgaveKlient, SyncOppgaveKlient {
 
     companion object {
@@ -74,11 +76,11 @@ class OppgaveKlientImpl(
     }
 
     override fun hentOppgaveSync(
-        oppgaveId: Int, callId: String
+        oppgaveId: Int,
+        callId: String
     ): OppgaveResponse {
-        return runBlocking {  hentOppgave( oppgaveId, callId ) }
+        return runBlocking { hentOppgave(oppgaveId, callId) }
     }
-
 }
 
 data class OppgaveResponse(
@@ -103,39 +105,39 @@ data class OppgaveResponse(
 )
 
 data class OpprettOppgaveRequest(
-        val tildeltEnhetsnr: String? = null,
-        val opprettetAvEnhetsnr: String? = null,
-        val aktoerId: String? = null,
-        val orgnr: String? = null,
-        val journalpostId: String? = null,
-        val journalpostkilde: String? = null,
-        val behandlesAvApplikasjon: String? = null,
-        val tilordnetRessurs: String? = null,
+    val tildeltEnhetsnr: String? = null,
+    val opprettetAvEnhetsnr: String? = null,
+    val aktoerId: String? = null,
+    val orgnr: String? = null,
+    val journalpostId: String? = null,
+    val journalpostkilde: String? = null,
+    val behandlesAvApplikasjon: String? = null,
+    val tilordnetRessurs: String? = null,
 
-        val saksreferanse: String? = null,
-        val beskrivelse: String? = null,
-        val temagruppe: String? = null,
-        val tema: String,
-        val oppgavetype: String,
+    val saksreferanse: String? = null,
+    val beskrivelse: String? = null,
+    val temagruppe: String? = null,
+    val tema: String,
+    val oppgavetype: String,
 
-        /**
-         * https://kodeverk-web.nais.adeo.no/kodeverksoversikt/kodeverk/Behandlingstyper
-         */
-        val behandlingstype: String? = null,
+    /**
+     * https://kodeverk-web.nais.adeo.no/kodeverksoversikt/kodeverk/Behandlingstyper
+     */
+    val behandlingstype: String? = null,
 
-        /**
-         * https://kodeverk-web.nais.adeo.no/kodeverksoversikt/kodeverk/Behandlingstema
-         */
-        val behandlingstema: String? = null,
-        val aktivDato: LocalDate,
-        val fristFerdigstillelse: LocalDate? = null,
-        val prioritet: String
+    /**
+     * https://kodeverk-web.nais.adeo.no/kodeverksoversikt/kodeverk/Behandlingstema
+     */
+    val behandlingstema: String? = null,
+    val aktivDato: LocalDate,
+    val fristFerdigstillelse: LocalDate? = null,
+    val prioritet: String
 )
 
 // https://oppgave.dev.adeo.no/#/Oppgave/opprettOppgave
 data class OpprettOppgaveResponse(
     val id: Int,
-    val tildeltEnhetsnr : String,
+    val tildeltEnhetsnr: String,
     val tema: String,
     val oppgavetype: String,
     val versjon: Int,
@@ -148,8 +150,8 @@ enum class Status { OPPRETTET, AAPNET, UNDER_BEHANDLING, FERDIGSTILT, FEILREGIST
 enum class Prioritet { HOY, NORM, LAV }
 
 data class OppgaveResultat(
-        val oppgaveId: Int,
-        val duplikat: Boolean
+    val oppgaveId: Int,
+    val duplikat: Boolean
 )
 
 const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"

@@ -27,12 +27,12 @@ import org.junit.jupiter.api.Test
 internal class PdlClientImplIntegrationTests {
 
     val pdlKlient = PdlClientImpl(
-            "https://pdl-api.dev-fss.nais.io/graphql",
-            object: AccessTokenProvider {
-                override fun getToken() = "" // Sett inn token fra STS
-            },
-            TestUtils.commonHttpClient(),
-            TestUtils.commonObjectMapper()
+        "https://pdl-api.dev-fss.nais.io/graphql",
+        object : AccessTokenProvider {
+            override fun getToken() = "" // Sett inn token fra STS
+        },
+        TestUtils.commonHttpClient(),
+        TestUtils.commonObjectMapper()
     )
 
     @Test
@@ -46,5 +46,4 @@ internal class PdlClientImplIntegrationTests {
         val person = pdlKlient.fullPerson("09127821914")
         assertThat(person).isNotNull()
     }
-
 }

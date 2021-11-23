@@ -26,7 +26,7 @@ internal class KubernetesProbeManagerTest {
 
         coVerify(exactly = 1) { livenessComponentMock.runLivenessCheck() }
     }
-    
+
     @Test
     internal fun `Kan registrere og kjøre probes på friske readynesskomponenter`() {
         probeManager.registerReadynessComponent(readynessComponentMock)
@@ -58,7 +58,6 @@ internal class KubernetesProbeManagerTest {
         coVerify(exactly = 1) { readynessComponentMock.runReadynessCheck() }
     }
 
-
     @Test
     internal fun `Kan registrere og kjøre probes på u-friske livenesskomponentner`() {
         coEvery { livenessComponentMock.runLivenessCheck() } throws RuntimeException()
@@ -76,6 +75,4 @@ internal class KubernetesProbeManagerTest {
 
         coVerify(exactly = 1) { livenessComponentMock.runLivenessCheck() }
     }
-
-
 }
