@@ -31,7 +31,7 @@ jobs:
         run: cd docker/local && docker-compose up -d && sleep 10
 
       - name: test and build
-        run: ./gradlew --console=plain build slowTests
+        run: ./gradlew --console=plain build test --tests "no.nav.helse.slowtests.*"
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
