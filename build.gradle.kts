@@ -4,7 +4,7 @@ import java.time.ZoneId
 import java.util.Date
 import java.util.TimeZone
 
-val kotlinVersion = "1.5.30"
+val kotlinVersion = "1.6.0"
 val logbackVersion = "1.2.1"
 val logbackContribVersion = "0.1.5"
 val coroutinesVersion = "1.5.1"
@@ -131,27 +131,22 @@ tasks.named<Jar>("jar") {
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
-        showStackTraces = true
-        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+tasks.test {
+    extensions.configure(kotlinx.kover.api.KoverTaskExtension::class) {
+        isEnabled = true
+        excludes = listOf("no\\.nav\\.helse\\.slowtests\\..*")
     }
 }
 
-tasks.named<Test>("test") {
-    include("no/nav/helse/arbeidsgiver/bakgrunn/**")
-}
-
-task<Test>("slowTests") {
-    include("no/nav/helse/slowtests/**")
-    outputs.upToDateWhen { false }
-}
-
-tasks.withType<Wrapper> {
-    gradleVersion = "7.2"
-}
+//
+//task<Test>("slowTests") {
+//    include("no/nav/helse/slowtests/**")
+//    outputs.upToDateWhen { false }
+//}
+//
+//tasks.withType<Wrapper> {
+//    gradleVersion = "7.2"
+//}
 
 configure<PublishingExtension> {
     repositories {
