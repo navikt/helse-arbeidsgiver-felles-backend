@@ -40,17 +40,24 @@ sonarqube {
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
-        property("sonar.exclusions", "**Mock**,**/App**")
-        property("sonar.sources", "src/main/kotlin")
+        property("sonar.exclusions", "**Mock**,**/App**,**/Koin*")
     }
 }
 
 tasks.jacocoTestReport {
-    executionData("build/jacoco/test.exec", "build/jacoco/slowTests.exec")
+    dependsOn(tasks.test)
     reports {
         xml.isEnabled = true
         html.isEnabled = true
     }
+}
+
+tasks.withType<JacocoReport> {
+    classDirectories.setFrom(
+        sourceSets.main.get().output.asFileTree.matching {
+            exclude("**/Koin**", "**/App**", "**Mock**")
+        }
+    )
 }
 
 buildscript {
