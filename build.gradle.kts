@@ -31,7 +31,7 @@ plugins {
     id("org.sonarqube") version "2.8"
     id("com.github.ben-manes.versions") version "0.27.0"
     id("maven-publish")
-    jacoco
+    id("org.jetbrains.kotlinx.kover") version "0.4.2"
 }
 
 sonarqube {
@@ -42,22 +42,6 @@ sonarqube {
         property("sonar.login", System.getenv("SONAR_TOKEN"))
         property("sonar.exclusions", "**Mock**,**/App**,**/Koin*")
     }
-}
-
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-}
-
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/Koin**", "**/App**", "**Mock**")
-        }
-    )
 }
 
 buildscript {
