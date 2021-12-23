@@ -82,7 +82,10 @@ class AltinnRestClient(
                         logger.warn("Fikk en timeout fra Altinn som vi antar er fiksbar lagg hos dem", ex)
                         throw AltinnBrukteForLangTidException()
                     }
-                    else -> throw ex
+                    else -> {
+                        logger.warn("Det oppstod en ukjent feil fra Altinn: ", ex.message)
+                        throw ex
+                    }
                 }
             }
         }
