@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.util.StdDateFormat
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.features.*
+import io.ktor.network.sockets.Connection
 import io.ktor.utils.io.*
 import io.prometheus.client.Counter
 import kotlinx.coroutines.CoroutineScope
@@ -119,7 +120,7 @@ class BakgrunnsjobbService(
                 bakgrunnsvarsler.rapporterPermanentFeiletJobb()
                 tryStopAction(prossessorForType, jobb)
             } else {
-                logger.warn("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}. $responseBodyMessage", ex)
+                logger.error("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}. $responseBodyMessage", ex)
                 FEILET_JOBB_COUNTER.labels(jobb.type).inc()
             }
         } finally {
