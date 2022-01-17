@@ -34,31 +34,6 @@ plugins {
     jacoco
 }
 
-sonarqube {
-    properties {
-        property("sonar.projectKey", "navikt_helse-arbeidsgiver-felles-backend")
-        property("sonar.organization", "navit")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.login", System.getenv("SONAR_TOKEN"))
-        property("sonar.exclusions", "**Mock**,**/App**,**/Koin*")
-    }
-}
-
-tasks.jacocoTestReport {
-    dependsOn(tasks.test)
-    reports {
-        xml.isEnabled = true
-        html.isEnabled = true
-    }
-}
-
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/Koin**", "**/App**", "**Mock**")
-        }
-    )
-}
 
 buildscript {
     dependencies {
@@ -124,9 +99,14 @@ java {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
-    maven("https://kotlin.bintray.com/ktor")
+    google()
+    maven(url = "https://packages.confluent.io/maven/")
+    maven(url = "https://jitpack.io") {
+        content {
+            excludeGroup("no.nav.helsearbeidsgiver")
+        }
+    }
 }
 
 tasks.named<Jar>("jar") {
