@@ -124,9 +124,14 @@ java {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
-    maven("https://kotlin.bintray.com/ktor")
+    google()
+    maven(url = "https://packages.confluent.io/maven/")
+    maven(url = "https://jitpack.io") {
+        content {
+            excludeGroup("no.nav.helsearbeidsgiver")
+        }
+    }
 }
 
 tasks.named<Jar>("jar") {
