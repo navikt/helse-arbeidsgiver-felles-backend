@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.util.StdDateFormat
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.ktor.client.features.*
-import io.ktor.network.sockets.Connection
 import io.ktor.utils.io.*
 import io.prometheus.client.Counter
 import kotlinx.coroutines.CoroutineScope
@@ -15,6 +14,7 @@ import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor.Companion.JOB_TYPE
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
 import org.slf4j.LoggerFactory
+import java.sql.Connection
 import java.time.LocalDateTime
 import kotlin.collections.HashMap
 
