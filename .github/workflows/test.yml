@@ -28,7 +28,7 @@ jobs:
             ${{ runner.os }}-gradle-cache-
 
       - name: test and build
-        run: ./gradlew --console=plain build test
+        run: ./gradlew --console=plain build test sonarqube
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}

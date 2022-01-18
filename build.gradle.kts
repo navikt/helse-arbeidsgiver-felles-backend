@@ -44,22 +44,6 @@ sonarqube {
     }
 }
 
-//tasks.jacocoTestReport {
-//    dependsOn(tasks.test)
-//    reports {
-//        xml.isEnabled = true
-//        html.isEnabled = true
-//    }
-//}
-//
-//tasks.withType<JacocoReport> {
-//    classDirectories.setFrom(
-//        sourceSets.main.get().output.asFileTree.matching {
-//            exclude("**/Koin**", "**/App**", "**Mock**")
-//        }
-//    )
-//}
-
 buildscript {
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
