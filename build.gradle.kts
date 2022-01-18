@@ -147,6 +147,7 @@ tasks.withType<Test> {
 
 tasks.named<Test>("test") {
     include("no/nav/helse/arbeidsgiver/bakgrunn/**")
+    exclude("no/nav/helse/slowtests/**")
 }
 
 task<Test>("slowTests") {
