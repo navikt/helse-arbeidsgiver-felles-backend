@@ -21,8 +21,9 @@ interface AccessTokenProvider {
  * Det returnerte tokenet representerer den angitte servicebrukeren (username, password)
  *
  * Cacher tokenet til det 5 minutter unna å bli ugyldig.
+ *
+ * STS skal fases ut til fordel for OAuth2 Client Credentials og Token Exchange (TokenX)
  */
-@Deprecated("STS skal fases ut til fordel for OAuth2 Client Credentials og Token Exchange (TokenX)")
 class RestSTSAccessTokenProvider(
     username: String,
     password: String,
