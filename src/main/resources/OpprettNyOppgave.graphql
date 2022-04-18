@@ -1,0 +1,53 @@
+mutation OpprettNyOppgave(
+    $eksternId: String!
+    $lenke: String!,
+    $tekst: String!,
+    $virksomhetsnummer: String!,
+    $merkelapp: String!,
+    $tidspunkt: ISO8601DateTime
+){
+    nyOppgave(nyOppgave: {
+        mottakere: [
+            {
+                altinnRolle: {
+                    roleDefinitionCode: "DAGL"
+                }
+            }
+            {
+                altinnRolle: {
+                    roleDefinitionCode: "LEDE"
+                }
+            }
+        ]
+        notifikasjon: {
+            lenke: $lenke,
+            tekst: $tekst,
+            merkelapp: $merkelapp
+        }
+        metadata: {
+            virksomhetsnummer: $virksomhetsnummer,
+            eksternId: $eksternId,
+            opprettetTidspunkt: $tidspunkt
+        }
+    }) {
+        __typename
+        ... on NyOppgaveVellykket {
+            id
+        }
+        ... on UgyldigMerkelapp {
+            feilmelding
+        }
+        ... on UgyldigMottaker {
+            feilmelding
+        }
+        ... on DuplikatEksternIdOgMerkelapp {
+            feilmelding
+        }
+        ... on UkjentProdusent {
+            feilmelding
+        }
+        ... on UkjentRolle {
+            feilmelding
+        }
+    }
+}

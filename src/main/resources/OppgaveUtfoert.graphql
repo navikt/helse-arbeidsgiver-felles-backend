@@ -1,0 +1,17 @@
+mutation OppgaveUtfoert($id: String!) {
+    oppgaveUtfoert(id: $id) {
+        __typename
+        ... on OppgaveUtfoertVellykket {
+            id
+        }
+        ... on UgyldigMerkelapp {
+            feilmelding
+        }
+        ... on NotifikasjonFinnesIkke {
+            feilmelding
+        }
+        ... on UkjentProdusent {
+            feilmelding
+        }
+    }
+}

@@ -17,6 +17,7 @@ val mockKVersion = "1.9.3"
 val ktorVersion = "1.5.3"
 val valiktorVersion = "0.12.0"
 val prometheusVersion = "0.6.0"
+val graphQLKotlinVersion = "5.3.2"
 
 // Versjonering av artifakten
 val dateFormat = SimpleDateFormat("yyyy.MM.dd-HH-mm")
@@ -31,6 +32,7 @@ plugins {
     id("org.sonarqube") version "2.8"
     id("com.github.ben-manes.versions") version "0.27.0"
     id("maven-publish")
+    id("com.expediagroup.graphql") version "5.3.2"
     jacoco
 }
 
@@ -95,6 +97,10 @@ dependencies {
     implementation("org.postgresql:postgresql:42.2.13")
     implementation("com.nimbusds:nimbus-jose-jwt:8.21.1")
     implementation("no.nav.security:token-client-core:1.3.7")
+    implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphQLKotlinVersion") {
+        exclude("com.expediagroup", "graphql-kotlin-client-serialization")
+    }
+    implementation("com.expediagroup:graphql-kotlin-client-jackson:$graphQLKotlinVersion")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
     testImplementation("io.mockk:mockk:$mockKVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
@@ -207,4 +213,9 @@ configure<PublishingExtension> {
             from(components["java"])
         }
     }
+}
+
+val graphqlGenerateClient by tasks.getting(com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask::class) {
+    packageName.set("no.nav.helse.helsearbeidsgiver.graphql.generated")
+    schemaFile.set(file("src/main/resources/schema.graphql"))
 }
