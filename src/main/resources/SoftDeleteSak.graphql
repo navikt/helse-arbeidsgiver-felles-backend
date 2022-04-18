@@ -1,0 +1,17 @@
+mutation SoftDeleteSak($softDeleteSakId: String!) {
+  softDeleteSak(id: $softDeleteSakId) {
+    __typename
+    ... on SoftDeleteSakVellykket {
+      id
+    }
+    ... on UgyldigMerkelapp {
+      feilmelding
+    }
+    ... on SakFinnesIkke {
+      feilmelding
+    }
+    ... on UkjentProdusent {
+      feilmelding
+    }
+  }
+}

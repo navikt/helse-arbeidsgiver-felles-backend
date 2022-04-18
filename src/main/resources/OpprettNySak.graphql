@@ -1,0 +1,51 @@
+mutation OpprettNySak(
+    $grupperingsid: String!
+    $merkelapp: String!
+    $virksomhetsnummer: String!
+    $tittel: String!
+    $lenke: String!
+    $tidspunkt: ISO8601DateTime
+) {
+    nySak(
+        grupperingsid: $grupperingsid,
+        merkelapp: $merkelapp,
+        virksomhetsnummer: $virksomhetsnummer,
+        mottakere: [
+            {
+                altinnRolle: {
+                    roleDefinitionCode: "DAGL"
+                }
+            }
+            {
+                altinnRolle: {
+                    roleDefinitionCode: "LEDE"
+                }
+            }
+        ],
+        tittel: $tittel,
+        lenke: $lenke,
+        initiell_status: UNDER_BEHANDLING
+        tidspunkt: $tidspunkt
+    )
+    {
+        __typename
+        ... on NySakVellykket {
+            id
+        }
+        ... on UgyldigMerkelapp {
+            feilmelding
+        }
+        ... on UgyldigMottaker {
+            feilmelding
+        }
+        ... on UkjentProdusent {
+            feilmelding
+        }
+        ... on DuplikatGrupperingsid {
+            feilmelding
+        }
+        ... on UkjentRolle {
+            feilmelding
+        }
+    }
+}
