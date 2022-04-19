@@ -10,7 +10,7 @@ internal class OppgaveKlientImplTest {
 
     @Test
     fun `Returnerer id og et responsobjekt ved suksess`() {
-        val oppgaveKlientImpl = buildOppgaveKlient(HttpStatusCode.Created, validResponse)
+        val oppgaveKlientImpl = buildClient(HttpStatusCode.Created, validResponse)
         val response = runBlocking { oppgaveKlientImpl.opprettOppgave(oppgaveRequest, "call-id") }
         Assertions.assertThat(response).isNotNull
         Assertions.assertThat(response.id).isGreaterThan(0)
@@ -18,7 +18,7 @@ internal class OppgaveKlientImplTest {
 
     @Test
     fun `Kaster ClientRequestException ved feil i requesten`() {
-        val oppgaveKlientImpl = buildOppgaveKlient(HttpStatusCode.BadRequest, errorResponse)
+        val oppgaveKlientImpl = buildClient(HttpStatusCode.BadRequest, errorResponse)
         org.junit.jupiter.api.assertThrows<ClientRequestException> {
             runBlocking { oppgaveKlientImpl.opprettOppgave(oppgaveRequest, "call-id") }
         }
@@ -26,7 +26,7 @@ internal class OppgaveKlientImplTest {
 
     @Test
     fun `Returnerer responsobjekt ved suksess`() {
-        val oppgaveKlientImpl = buildOppgaveKlient(HttpStatusCode.OK, validResponse)
+        val oppgaveKlientImpl = buildClient(HttpStatusCode.OK, validResponse)
         val response = runBlocking { oppgaveKlientImpl.hentOppgave(1, "call-id") }
         Assertions.assertThat(response).isNotNull
         Assertions.assertThat(response.id).isGreaterThan(0)

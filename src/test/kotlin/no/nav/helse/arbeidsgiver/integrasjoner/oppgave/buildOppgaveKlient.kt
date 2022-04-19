@@ -12,7 +12,7 @@ import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import java.time.LocalDate
 
-fun buildOppgaveKlient(status: HttpStatusCode, content: String): OppgaveKlientImpl {
+internal fun buildClient(status: HttpStatusCode, content: String): OppgaveKlientImpl {
     return OppgaveKlientImpl(
         "url",
         mockk<AccessTokenProvider>(relaxed = true),
@@ -20,7 +20,7 @@ fun buildOppgaveKlient(status: HttpStatusCode, content: String): OppgaveKlientIm
     )
 }
 
-fun mockHttpClient(status: HttpStatusCode, content: String): HttpClient {
+private fun mockHttpClient(status: HttpStatusCode, content: String): HttpClient {
     val mockEngine = MockEngine { request ->
         respond(
             content = content,
