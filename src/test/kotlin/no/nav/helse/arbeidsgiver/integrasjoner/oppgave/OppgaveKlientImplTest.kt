@@ -8,7 +8,6 @@ import io.ktor.client.engine.mock.*
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.http.*
-import io.ktor.http.content.*
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
@@ -21,48 +20,37 @@ internal class OppgaveKlientImplTest {
     val validResponse = "oppgave-mock-data/oppgave-success-response.json".loadFromResources()
     val errorResponse = "oppgave-mock-data/oppgave-error-response.json".loadFromResources()
 
-    val mockStsClient = mockk<AccessTokenProvider>(relaxed = true)
-    private val badRequest = "bad request"
-    private val successRequest = "success request"
+    fun buildOppgaveKlient(status: HttpStatusCode, content: String): OppgaveKlientImpl {
+        return OppgaveKlientImpl(
+            "url",
+            mockk<AccessTokenProvider>(relaxed = true),
+            mockHttpClient(status, content)
+        )
+    }
 
-    val client = HttpClient(MockEngine) {
-
-        install(JsonFeature) {
-            serializer = JacksonSerializer {
-                configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-                registerModule(JavaTimeModule())
-                disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            }
+    fun mockHttpClient(status: HttpStatusCode, content: String): HttpClient {
+        val mockEngine = MockEngine { request ->
+            respond(
+                content = content,
+                status = status,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
         }
-
-        engine {
-            addHandler { request ->
-                val body = (request.body as TextContent).text
-                when {
-                    body.contains(successRequest) -> {
-                        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-                        respond(validResponse, headers = responseHeaders)
-                    }
-                    body.contains(badRequest) -> {
-                        val responseHeaders = headersOf("Content-Type" to listOf(ContentType.Application.Json.toString()))
-                        respond(errorResponse, status = HttpStatusCode.BadRequest)
-                    }
-                    else -> error("Unhandled ${request.url}")
+        return HttpClient(mockEngine) {
+            install(JsonFeature) {
+                serializer = JacksonSerializer {
+                    configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                    registerModule(JavaTimeModule())
+                    disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 }
             }
         }
     }
 
-    val dokarkivKlient = OppgaveKlientImpl(
-        "url",
-        mockStsClient,
-        client
-    )
-
     private val request = OpprettOppgaveRequest(
         aktoerId = "aktørId",
         journalpostId = "journalpostId",
-        beskrivelse = successRequest,
+        beskrivelse = "beskrivelse",
         tema = "SYK",
         oppgavetype = "ROB_BEH",
         behandlingstema = "ab0433",
@@ -73,21 +61,24 @@ internal class OppgaveKlientImplTest {
 
     @Test
     fun `Returnerer id og et responsobjekt ved suksess`() {
-        val response = runBlocking { dokarkivKlient.opprettOppgave(request, "call-id") }
+        val oppgaveKlientImpl = buildOppgaveKlient(HttpStatusCode.Created, validResponse)
+        val response = runBlocking { oppgaveKlientImpl.opprettOppgave(request, "call-id") }
         Assertions.assertThat(response).isNotNull
         Assertions.assertThat(response.id).isGreaterThan(0)
     }
 
     @Test
     fun `Kaster ClientRequestException ved feil i requesten`() {
+        val oppgaveKlientImpl = buildOppgaveKlient(HttpStatusCode.BadRequest, errorResponse)
         org.junit.jupiter.api.assertThrows<ClientRequestException> {
-            runBlocking { dokarkivKlient.opprettOppgave(request.copy(beskrivelse = badRequest), "call-id") }
+            runBlocking { oppgaveKlientImpl.opprettOppgave(request, "call-id") }
         }
     }
 
     @Test
     fun `Returnerer responsobjekt ved suksess`() {
-        val response = runBlocking { dokarkivKlient.hentOppgave(1, "call-id") }
+        val oppgaveKlientImpl = buildOppgaveKlient(HttpStatusCode.OK, validResponse)
+        val response = runBlocking { oppgaveKlientImpl.hentOppgave(1, "call-id") }
         Assertions.assertThat(response).isNotNull
         Assertions.assertThat(response.id).isGreaterThan(0)
     }
