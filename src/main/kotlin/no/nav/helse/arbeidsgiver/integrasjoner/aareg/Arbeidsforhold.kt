@@ -1,9 +1,14 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.aareg
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Arbeidsforhold(
+    val navArbeidsforholdId: Int?,
+    val arbeidsforholdId: String?,
+    val arbeidstaker: Any?,
     val arbeidsgiver: Arbeidsgiver,
     val opplysningspliktig: Opplysningspliktig,
     val arbeidsavtaler: List<Arbeidsavtale>,
@@ -12,12 +17,21 @@ data class Arbeidsforhold(
 )
 
 data class Arbeidsavtale(
+    val type: String,
+    val arbeidstidsordning: String,
+    val yrke: String,
     val stillingsprosent: Double,
-    val gyldighetsperiode: Periode
+    val antallTimerPrUke: Double,
+    val beregnetAntallTimerPrUke: Double,
+    val bruksperiode: Periode,
+    val gyldighetsperiode: Periode,
+    val sporingsinformasjon: Any
 )
 
 data class Ansettelsesperiode(
-    val periode: Periode
+    val periode: Periode,
+    val bruksperiode: Periode,
+    val sporingsinformasjon: Any?
 )
 
 data class Arbeidsgiver(
