@@ -1,7 +1,6 @@
 # Denne dokumentasjonen er skrev i "du/dere"-form, hvor du/dere er produsenter, og "vi" er
 # notifikasjons-plattformen.
 
-
 directive @Validate on ARGUMENT_DEFINITION
 directive @MaxLength(max: Int) on INPUT_FIELD_DEFINITION
 directive @NonIdentifying on INPUT_FIELD_DEFINITION

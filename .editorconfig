@@ -4,6 +4,8 @@
 
 root = true
 
+[**.graphql]
+charset = utf-8
 
 # Kotlin
 [**.{kt,kts}]

@@ -168,7 +168,7 @@ tasks.withType<Test> {
 }
 
 tasks.named<Test>("test") {
-    include("no/nav/helse/arbeidsgiver/bakgrunn/**")
+    include("no/nav/helse/arbeidsgiver/**")
 }
 
 task<Test>("slowTests") {
@@ -216,6 +216,6 @@ configure<PublishingExtension> {
 }
 
 val graphqlGenerateClient by tasks.getting(com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask::class) {
-    packageName.set("no.nav.helse.helsearbeidsgiver.graphql.generated")
+    packageName.set("no")
     schemaFile.set(file("src/main/resources/schema.graphql"))
 }
