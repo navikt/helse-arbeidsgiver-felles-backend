@@ -168,12 +168,14 @@ tasks.withType<Test> {
 }
 
 tasks.named<Test>("test") {
-    include("no/nav/helse/arbeidsgiver/bakgrunn/**")
+    include("no/nav/helse/**")
+    exclude("no/nav/helse/slowtests/**")
 }
 
 task<Test>("slowTests") {
     include("no/nav/helse/slowtests/**")
     outputs.upToDateWhen { false }
+    group = "verification"
 }
 
 tasks.withType<Wrapper> {

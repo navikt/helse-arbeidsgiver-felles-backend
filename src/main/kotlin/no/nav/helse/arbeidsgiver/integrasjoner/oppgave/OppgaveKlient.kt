@@ -1,10 +1,15 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.oppgave
 
 import io.ktor.client.HttpClient
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.call.receive
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.statement.HttpStatement
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
+import io.ktor.http.withCharset
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import org.slf4j.LoggerFactory

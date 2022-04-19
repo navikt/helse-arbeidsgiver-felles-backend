@@ -89,7 +89,7 @@ class PdlClientImplTest {
         assertThat(response?.hentIdenter?.identer?.filter { it.gruppe == PdlIdent.PdlIdentGruppe.AKTORID }).hasSize(1)
         assertThat(response?.hentIdenter?.identer?.filter { it.gruppe == PdlIdent.PdlIdentGruppe.FOLKEREGISTERIDENT }).hasSize(1)
 
-        assertThat(response?.hentPerson?.adressebeskyttelse?.firstOrNull()?.gradering).isEqualTo("UGRADERT")
+        assertThat(response?.hentPerson?.adressebeskyttelse?.firstOrNull()?.gradering).isNull()
         assertThat(response?.hentGeografiskTilknytning?.gtType).isEqualTo(PdlHentFullPerson.PdlGeografiskTilknytning.PdlGtType.KOMMUNE)
         assertThat(response?.hentPerson?.foedsel?.firstOrNull()?.foedselsdato).isEqualTo(LocalDate.of(1978, 12, 9))
         assertThat(response?.hentPerson?.doedsfall).hasSize(0)

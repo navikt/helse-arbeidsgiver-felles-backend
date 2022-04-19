@@ -1,6 +1,7 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv
 
 import com.fasterxml.jackson.databind.MapperFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import io.ktor.client.features.*
@@ -28,6 +29,7 @@ internal class DokarkivKlientImplTest {
         install(JsonFeature) {
             serializer = JacksonSerializer {
                 configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+                registerModule(JavaTimeModule())
             }
         }
 
