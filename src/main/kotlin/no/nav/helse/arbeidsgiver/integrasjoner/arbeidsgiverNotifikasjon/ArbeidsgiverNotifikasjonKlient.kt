@@ -132,27 +132,27 @@ class ArbeidsgiverNotifikasjonKlientImpl(
             when (nyOppgave) {
                 is NyOppgaveUgyldigMottaker -> {
                     logger.error("Feilmelding {}", nyOppgave.feilmelding)
-                    throw opprettNyOppgaveFeiletException(nyOppgave.feilmelding)
+                    throw OpprettNyOppgaveFeiletException(nyOppgave.feilmelding)
                 }
                 is NyOppgaveUkjentRolle -> {
                     logger.error("Feilmelding {}", nyOppgave.feilmelding)
-                    throw opprettNyOppgaveFeiletException(nyOppgave.feilmelding)
+                    throw OpprettNyOppgaveFeiletException(nyOppgave.feilmelding)
                 }
                 is NyOppgaveUgyldigMerkelapp -> {
                     logger.error("Feilmelding {}", nyOppgave.feilmelding)
-                    throw opprettNyOppgaveFeiletException(nyOppgave.feilmelding)
+                    throw OpprettNyOppgaveFeiletException(nyOppgave.feilmelding)
                 }
                 is NyOppgaveUkjentProdusent -> {
                     logger.error("Feilmelding {}", nyOppgave.feilmelding)
-                    throw opprettNyOppgaveFeiletException(nyOppgave.feilmelding)
+                    throw OpprettNyOppgaveFeiletException(nyOppgave.feilmelding)
                 }
                 is NyOppgaveDuplikatEksternIdOgMerkelapp -> {
                     logger.error("Feilmelding {}", nyOppgave.feilmelding)
-                    throw opprettNyOppgaveFeiletException(nyOppgave.feilmelding)
+                    throw OpprettNyOppgaveFeiletException(nyOppgave.feilmelding)
                 }
             }
             logger.error("Kunne ikke opprette ny oppgave", nyOppgave)
-            throw opprettNySakFeiletException("ukjent feil")
+            throw OpprettNySakFeiletException("ukjent feil")
         }
         logger.info("Opprettet ny oppgave {}", nyOppgave.id)
         return nyOppgave
@@ -166,9 +166,6 @@ class ArbeidsgiverNotifikasjonKlientImpl(
 
         logger.info("Forsøker å opprette ny sak mot arbeidsgiver-notifikasjoner")
 
-        // TODO: Remove
-        logger.info("Token: $accessToken}")
-
         val resultat = runBlocking {
             client.execute(query) {
                 header(Authorization, "Bearer $accessToken")
@@ -176,26 +173,23 @@ class ArbeidsgiverNotifikasjonKlientImpl(
         }
         val utfoertOppgave = resultat.data?.oppgaveUtfoert
 
-        // TODO: Remove
-        logger.info("arbeidsgiver-notifikasjoner respons: $resultat")
-
         if (utfoertOppgave !is OppgaveUtfoertVellykket) {
             when (utfoertOppgave) {
                 is OppgaveUtfoertUkjentProdusent -> {
                     logger.error("Feilmelding {}", utfoertOppgave.feilmelding)
-                    throw oppgaveUtfoertFeiletException(id, utfoertOppgave.feilmelding)
+                    throw OppgaveUtfoertFeiletException(id, utfoertOppgave.feilmelding)
                 }
                 is OppgaveUtfoertUgyldigMerkelapp -> {
                     logger.error("Feilmelding {}", utfoertOppgave.feilmelding)
-                    throw oppgaveUtfoertFeiletException(id, utfoertOppgave.feilmelding)
+                    throw OppgaveUtfoertFeiletException(id, utfoertOppgave.feilmelding)
                 }
                 is OppgaveUtfoertNotifikasjonFinnesIkke -> {
                     logger.error("Feilmelding {}", utfoertOppgave.feilmelding)
-                    throw oppgaveUtfoertFeiletException(id, utfoertOppgave.feilmelding)
+                    throw OppgaveUtfoertFeiletException(id, utfoertOppgave.feilmelding)
                 }
             }
             logger.error("Kunne ikke opprette ny sak", utfoertOppgave)
-            throw opprettNySakFeiletException("ukjent feil")
+            throw OpprettNySakFeiletException("ukjent feil")
         }
         logger.info("Oppgave utført {}", utfoertOppgave.id)
         return utfoertOppgave
@@ -223,6 +217,9 @@ class ArbeidsgiverNotifikasjonKlientImpl(
 
         logger.info("Forsøker å opprette ny sak mot arbeidsgiver-notifikasjoner")
 
+        // TODO: Remove
+        logger.info("Token: $accessToken}")
+
         val resultat = runBlocking {
             client.execute(query) {
                 header(Authorization, "Bearer $accessToken")
@@ -230,31 +227,34 @@ class ArbeidsgiverNotifikasjonKlientImpl(
         }
         val nySak = resultat.data?.nySak
 
+        // TODO: Remove
+        logger.info("arbeidsgiver-notifikasjoner respons: $resultat")
+
         if (nySak !is NySakVellykket) {
             when (nySak) {
                 is UgyldigMerkelapp -> {
                     logger.error("Feilmelding {}", nySak.feilmelding)
-                    throw opprettNySakFeiletException(nySak.feilmelding)
+                    throw OpprettNySakFeiletException(nySak.feilmelding)
                 }
                 is UgyldigMottaker -> {
                     logger.error("Feilmelding {}", nySak.feilmelding)
-                    throw opprettNySakFeiletException(nySak.feilmelding)
+                    throw OpprettNySakFeiletException(nySak.feilmelding)
                 }
                 is UkjentProdusent -> {
                     logger.error("Feilmelding {}", nySak.feilmelding)
-                    throw opprettNySakFeiletException(nySak.feilmelding)
+                    throw OpprettNySakFeiletException(nySak.feilmelding)
                 }
                 is UkjentRolle -> {
                     logger.error("Feilmelding {}", nySak.feilmelding)
-                    throw opprettNySakFeiletException(nySak.feilmelding)
+                    throw OpprettNySakFeiletException(nySak.feilmelding)
                 }
                 is DuplikatGrupperingsid -> {
                     logger.error("Feilmelding {}", nySak.feilmelding)
-                    throw opprettNySakFeiletException(nySak.feilmelding)
+                    throw OpprettNySakFeiletException(nySak.feilmelding)
                 }
             }
             logger.error("Kunne ikke opprette ny sak", nySak)
-            throw opprettNySakFeiletException("ukjent feil")
+            throw OpprettNySakFeiletException("ukjent feil")
         }
         logger.info("Opprettet ny sak {}", nySak.id)
         return nySak
@@ -283,15 +283,15 @@ class ArbeidsgiverNotifikasjonKlientImpl(
             when (nyStatusSak) {
                 is SakFinnesIkke -> {
                     logger.error("Feilmelding {}", nyStatusSak.feilmelding)
-                    throw nySakStatusFeiletException(id, status, nyStatusSak.feilmelding)
+                    throw NySakStatusFeiletException(id, status, nyStatusSak.feilmelding)
                 }
                 is Konflikt -> {
                     logger.error("Feilmelding {}", nyStatusSak.feilmelding)
-                    throw nySakStatusFeiletException(id, status, nyStatusSak.feilmelding)
+                    throw NySakStatusFeiletException(id, status, nyStatusSak.feilmelding)
                 }
             }
             logger.error("Kunne ikke opprette ny sak", nyStatusSak)
-            throw nySakStatusFeiletException(id, status, "ukjent feil")
+            throw NySakStatusFeiletException(id, status, "ukjent feil")
         }
         logger.info("Satt ny status $status for sak {}", nyStatusSak.id)
         return nyStatusSak
@@ -318,15 +318,15 @@ class ArbeidsgiverNotifikasjonKlientImpl(
             when (deleteSak) {
                 is SoftDeleteUgyldigMerkelapp -> {
                     logger.error("Feilmelding {}", deleteSak.feilmelding)
-                    throw softDeleteSakFeiletException(id, deleteSak.feilmelding)
+                    throw SoftDeleteSakFeiletException(id, deleteSak.feilmelding)
                 }
                 is SoftDeleteSakFinnesIkke -> {
                     logger.error("Feilmelding {}", deleteSak.feilmelding)
-                    throw softDeleteSakFeiletException(id, deleteSak.feilmelding)
+                    throw SoftDeleteSakFeiletException(id, deleteSak.feilmelding)
                 }
                 is SoftDeleteUkjentProdusent -> {
                     logger.error("Feilmelding {}", deleteSak.feilmelding)
-                    throw softDeleteSakFeiletException(id, deleteSak.feilmelding)
+                    throw SoftDeleteSakFeiletException(id, deleteSak.feilmelding)
                 }
             }
         }
@@ -334,18 +334,18 @@ class ArbeidsgiverNotifikasjonKlientImpl(
         return deleteSak
     }
 
-    class opprettNyOppgaveFeiletException(feilmelding: String?) :
+    class OpprettNyOppgaveFeiletException(feilmelding: String?) :
         Exception("Opprettelse av ny oppgave mot arbeidsgiver-notifikasjon-api feilet: $feilmelding")
 
-    class oppgaveUtfoertFeiletException(id: String, feilmelding: String?) :
+    class OppgaveUtfoertFeiletException(id: String, feilmelding: String?) :
         Exception("Utføring av oppgave $id mot arbeidsgiver-notifikasjon-api feilet: $feilmelding")
 
-    class nySakStatusFeiletException(id: String, status: SaksStatus, feilmelding: String?) :
+    class NySakStatusFeiletException(id: String, status: SaksStatus, feilmelding: String?) :
         Exception("Ny status $status for sak $id arbeidsgiver-notifikasjon-api feilet med: $feilmelding")
 
-    class opprettNySakFeiletException(feilmelding: String?) :
+    class OpprettNySakFeiletException(feilmelding: String?) :
         Exception("Opprettelse av ny sak mot arbeidsgiver-notifikasjon-api feilet: $feilmelding")
 
-    class softDeleteSakFeiletException(id: String, feilmelding: String?) :
+    class SoftDeleteSakFeiletException(id: String, feilmelding: String?) :
         Exception("Sletting av sak $id mot arbeidsgiver-notifikasjon-api feilet: $feilmelding")
 }
