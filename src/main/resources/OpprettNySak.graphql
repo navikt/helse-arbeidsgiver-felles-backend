@@ -4,28 +4,22 @@ mutation OpprettNySak(
     $virksomhetsnummer: String!
     $tittel: String!
     $lenke: String!
-    $tidspunkt: ISO8601DateTime
 ) {
     nySak(
-        grupperingsid: $grupperingsid,
-        merkelapp: $merkelapp,
-        virksomhetsnummer: $virksomhetsnummer,
+        grupperingsid: $grupperingsid
+        merkelapp: $merkelapp
+        virksomhetsnummer: $virksomhetsnummer
         mottakere: [
             {
-                altinnRolle: {
-                    roleDefinitionCode: "DAGL"
+                altinn: {
+                    serviceCode: "4936"
+                    serviceEdition: "1"
                 }
             }
-            {
-                altinnRolle: {
-                    roleDefinitionCode: "LEDE"
-                }
-            }
-        ],
-        tittel: $tittel,
-        lenke: $lenke,
+        ]
+        tittel: $tittel
+        lenke: $lenke
         initiell_status: UNDER_BEHANDLING
-        tidspunkt: $tidspunkt
     )
     {
         __typename

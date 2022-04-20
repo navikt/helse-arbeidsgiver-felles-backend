@@ -152,7 +152,7 @@ class ArbeidsgiverNotifikasjonKlientImpl(
                 }
             }
             logger.error("Kunne ikke opprette ny oppgave", nyOppgave)
-            throw OpprettNySakFeiletException("ukjent feil")
+            throw OpprettNySakFeiletException("ukjent feil: ${resultat.errors}")
         }
         logger.info("Opprettet ny oppgave {}", nyOppgave.id)
         return nyOppgave
@@ -189,7 +189,7 @@ class ArbeidsgiverNotifikasjonKlientImpl(
                 }
             }
             logger.error("Kunne ikke opprette ny sak", utfoertOppgave)
-            throw OpprettNySakFeiletException("ukjent feil")
+            throw OpprettNySakFeiletException("ukjent feil: ${resultat.errors}")
         }
         logger.info("Oppgave utført {}", utfoertOppgave.id)
         return utfoertOppgave
@@ -210,8 +210,7 @@ class ArbeidsgiverNotifikasjonKlientImpl(
                 merkelapp,
                 virksomhetsnummer,
                 tittel,
-                lenke,
-                tidspunkt
+                lenke
             )
         )
 
@@ -251,7 +250,7 @@ class ArbeidsgiverNotifikasjonKlientImpl(
                 }
             }
             logger.error("Kunne ikke opprette ny sak", nySak)
-            throw OpprettNySakFeiletException(resultat?.errors.toString())
+            throw OpprettNySakFeiletException("ukjent feil: ${resultat.errors}")
         }
         logger.info("Opprettet ny sak {}", nySak.id)
         return nySak
@@ -288,7 +287,7 @@ class ArbeidsgiverNotifikasjonKlientImpl(
                 }
             }
             logger.error("Kunne ikke opprette ny sak", nyStatusSak)
-            throw NySakStatusFeiletException(id, status, "ukjent feil")
+            throw NySakStatusFeiletException(id, status, "ukjent feil: ${resultat.errors}")
         }
         logger.info("Satt ny status $status for sak {}", nyStatusSak.id)
         return nyStatusSak
