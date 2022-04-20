@@ -227,9 +227,6 @@ class ArbeidsgiverNotifikasjonKlientImpl(
         }
         val nySak = resultat.data?.nySak
 
-        // TODO: Remove
-        logger.info("arbeidsgiver-notifikasjoner respons: $resultat")
-
         if (nySak !is NySakVellykket) {
             when (nySak) {
                 is UgyldigMerkelapp -> {
@@ -254,7 +251,7 @@ class ArbeidsgiverNotifikasjonKlientImpl(
                 }
             }
             logger.error("Kunne ikke opprette ny sak", nySak)
-            throw OpprettNySakFeiletException("ukjent feil")
+            throw OpprettNySakFeiletException(resultat?.errors.toString())
         }
         logger.info("Opprettet ny sak {}", nySak.id)
         return nySak
