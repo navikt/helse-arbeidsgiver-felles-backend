@@ -7,7 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
-class AltinnClientTest {
+class AltinnRestClientTest {
 
     @Test
     internal fun `valid answer from altinn returns properly serialized list of all active org forms`() {
