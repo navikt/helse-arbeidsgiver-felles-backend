@@ -1,0 +1,22 @@
+mutation NyStatusSakByGrupperingsid(
+    $grupperingsid: String!
+    $merkelapp: String!
+    $nyStatus: SaksStatus!
+) {
+    nyStatusSakByGrupperingsid(
+        grupperingsid: $grupperingsid
+        merkelapp: $merkelapp
+        ny_status: $nyStatus
+    ) {
+        __typename
+        ... on NyStatusSakVellykket {
+            id
+        }
+        ... on SakFinnesIkke {
+            feilmelding
+        }
+        ... on Konflikt {
+            feilmelding
+        }
+    }
+}

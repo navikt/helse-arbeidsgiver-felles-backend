@@ -16,11 +16,21 @@ import no.nav.helse.helsearbeidsgiver.graphql.generated.oppgaveutfoert.OppgaveUt
 import no.nav.helse.helsearbeidsgiver.graphql.generated.oppgaveutfoert.OppgaveUtfoertVellykket
 import no.nav.helse.helsearbeidsgiver.graphql.generated.opprettnyoppgave.NyOppgaveResultat
 import no.nav.helse.helsearbeidsgiver.graphql.generated.opprettnyoppgave.NyOppgaveVellykket
-import no.nav.helse.helsearbeidsgiver.graphql.generated.opprettnysak.*
+import no.nav.helse.helsearbeidsgiver.graphql.generated.opprettnysak.DuplikatGrupperingsid
+import no.nav.helse.helsearbeidsgiver.graphql.generated.opprettnysak.NySakResultat
+import no.nav.helse.helsearbeidsgiver.graphql.generated.opprettnysak.NySakVellykket
+import no.nav.helse.helsearbeidsgiver.graphql.generated.opprettnysak.UgyldigMerkelapp
+import no.nav.helse.helsearbeidsgiver.graphql.generated.opprettnysak.UgyldigMottaker
+import no.nav.helse.helsearbeidsgiver.graphql.generated.opprettnysak.UkjentProdusent
+import no.nav.helse.helsearbeidsgiver.graphql.generated.opprettnysak.UkjentRolle
 import no.nav.helse.helsearbeidsgiver.graphql.generated.softdeletesak.SoftDeleteSakResultat
 import no.nav.helse.helsearbeidsgiver.graphql.generated.softdeletesak.SoftDeleteSakVellykket
 import org.slf4j.LoggerFactory
 import java.net.URL
+import no.nav.helse.helsearbeidsgiver.graphql.generated.nystatussakbygrupperingsid.Konflikt as NyStatusByGrupperingsidKonflikt
+import no.nav.helse.helsearbeidsgiver.graphql.generated.nystatussakbygrupperingsid.NyStatusSakResultat as NyStatusSakByGrupperingsidResultat
+import no.nav.helse.helsearbeidsgiver.graphql.generated.nystatussakbygrupperingsid.NyStatusSakVellykket as NyStatusSakByGrupperingsidVellykket
+import no.nav.helse.helsearbeidsgiver.graphql.generated.nystatussakbygrupperingsid.SakFinnesIkke as NyStatusByGrupperingsidSakFinnesIkke
 import no.nav.helse.helsearbeidsgiver.graphql.generated.oppgaveutfoert.NotifikasjonFinnesIkke as OppgaveUtfoertNotifikasjonFinnesIkke
 import no.nav.helse.helsearbeidsgiver.graphql.generated.oppgaveutfoert.UgyldigMerkelapp as OppgaveUtfoertUgyldigMerkelapp
 import no.nav.helse.helsearbeidsgiver.graphql.generated.oppgaveutfoert.UkjentProdusent as OppgaveUtfoertUkjentProdusent
@@ -32,6 +42,11 @@ import no.nav.helse.helsearbeidsgiver.graphql.generated.opprettnyoppgave.UkjentR
 import no.nav.helse.helsearbeidsgiver.graphql.generated.softdeletesak.SakFinnesIkke as SoftDeleteSakFinnesIkke
 import no.nav.helse.helsearbeidsgiver.graphql.generated.softdeletesak.UgyldigMerkelapp as SoftDeleteUgyldigMerkelapp
 import no.nav.helse.helsearbeidsgiver.graphql.generated.softdeletesak.UkjentProdusent as SoftDeleteUkjentProdusent
+import no.nav.helse.helsearbeidsgiver.graphql.generated.softdeletesakbygrupperingsid.SakFinnesIkke as SoftDeleteSakByGrupperingsidFinnesIkke
+import no.nav.helse.helsearbeidsgiver.graphql.generated.softdeletesakbygrupperingsid.SoftDeleteSakResultat as SoftDeleteSakByGrupperingsidSakResultat
+import no.nav.helse.helsearbeidsgiver.graphql.generated.softdeletesakbygrupperingsid.SoftDeleteSakVellykket as SoftDeleteSakByGrupperingsidSakVellykket
+import no.nav.helse.helsearbeidsgiver.graphql.generated.softdeletesakbygrupperingsid.UgyldigMerkelapp as SoftDeleteSakByGrupperingsidUgyldigMerkelapp
+import no.nav.helse.helsearbeidsgiver.graphql.generated.softdeletesakbygrupperingsid.UkjentProdusent as SoftDeleteSakByGrupperingsidUkjentProdusent
 
 /**
  * Lager notfikasjoner og saker for arbeidsgivere slik at de får med seg viktig informasjon og oppgaver som venter.
@@ -48,13 +63,19 @@ interface ArbeidsgiverNotifikasjonKlient {
         virksomhetsnummer: String,
         tittel: String,
         lenke: String,
-        tidspunkt: ISO8601DateTime? = null
+        tidspunkt: ISO8601DateTime?
     ): NySakResultat?
 
     fun nySakStatus(
         id: String,
         status: SaksStatus
     ): NyStatusSakResultat?
+
+    fun nyStatusSakByGrupperingsid(
+        grupperingsid: String,
+        merkelapp: String,
+        nyStatus: SaksStatus
+    ): NyStatusSakByGrupperingsidResultat?
 
     fun oppgaveUtfoert(
         id: String
@@ -66,10 +87,12 @@ interface ArbeidsgiverNotifikasjonKlient {
         tekst: String,
         virksomhetsnummer: String,
         merkelapp: String,
-        tidspunkt: ISO8601DateTime? = null
+        tidspunkt: ISO8601DateTime?
     ): NyOppgaveResultat?
 
     fun softDeleteSak(id: String): SoftDeleteSakResultat?
+
+    fun softDeleteSakByGrupperingsid(grupperingsid: String, merkelapp: String): SoftDeleteSakByGrupperingsidSakResultat?
 }
 
 class ArbeidsgiverNotifikasjonKlientImpl(
@@ -216,9 +239,6 @@ class ArbeidsgiverNotifikasjonKlientImpl(
 
         logger.info("Forsøker å opprette ny sak mot arbeidsgiver-notifikasjoner")
 
-        // TODO: Remove
-        logger.info("Token: $accessToken}")
-
         val resultat = runBlocking {
             client.execute(query) {
                 header(Authorization, "Bearer $accessToken")
@@ -293,6 +313,48 @@ class ArbeidsgiverNotifikasjonKlientImpl(
         return nyStatusSak
     }
 
+    override fun nyStatusSakByGrupperingsid(
+        grupperingsid: String,
+        merkelapp: String,
+        nyStatus: SaksStatus
+    ): NyStatusSakByGrupperingsidResultat? {
+        val accessToken = tokenClient.getToken()
+
+        logger.info("Forsøker å sette ny status $nyStatus for grupperingsid $grupperingsid")
+
+        val query = NyStatusSakByGrupperingsid(
+            variables = NyStatusSakByGrupperingsid.Variables(
+                grupperingsid,
+                merkelapp,
+                nyStatus
+            )
+        )
+        val resultat = runBlocking {
+            client.execute(query) {
+                header(Authorization, "Bearer $accessToken")
+            }
+        }
+
+        val nyStatusSak = resultat.data?.nyStatusSakByGrupperingsid
+
+        if (nyStatusSak !is NyStatusSakByGrupperingsidVellykket) {
+            when (nyStatusSak) {
+                is NyStatusByGrupperingsidSakFinnesIkke -> {
+                    logger.error("Feilmelding {}", nyStatusSak.feilmelding)
+                    throw NySakStatusFeiletException(grupperingsid, nyStatus, nyStatusSak.feilmelding)
+                }
+                is NyStatusByGrupperingsidKonflikt -> {
+                    logger.error("Feilmelding {}", nyStatusSak.feilmelding)
+                    throw NySakStatusFeiletException(grupperingsid, nyStatus, nyStatusSak.feilmelding)
+                }
+            }
+            logger.error("Kunne ikke opprette ny sak", nyStatusSak)
+            throw NySakStatusFeiletException(grupperingsid, nyStatus, "ukjent feil: ${resultat.errors}")
+        }
+        logger.info("Satt ny status $nyStatus for sak {}", nyStatusSak.id)
+        return nyStatusSak
+    }
+
     override fun softDeleteSak(id: String): SoftDeleteSakResultat? {
         val accessToken = tokenClient.getToken()
 
@@ -323,6 +385,44 @@ class ArbeidsgiverNotifikasjonKlientImpl(
                 is SoftDeleteUkjentProdusent -> {
                     logger.error("Feilmelding {}", deleteSak.feilmelding)
                     throw SoftDeleteSakFeiletException(id, deleteSak.feilmelding)
+                }
+            }
+        }
+        logger.info("Slettet sak {}", deleteSak.id)
+        return deleteSak
+    }
+
+    override fun softDeleteSakByGrupperingsid(grupperingsid: String, merkelapp: String): SoftDeleteSakByGrupperingsidSakResultat? {
+        val accessToken = tokenClient.getToken()
+
+        logger.info("Forsøker å slette sak med grupperingsid $grupperingsid og merkelapp $merkelapp")
+
+        val query = SoftDeleteSakByGrupperingsid(
+            variables = SoftDeleteSakByGrupperingsid.Variables(
+                grupperingsid,
+                merkelapp
+            )
+        )
+        val resultat = runBlocking {
+            client.execute(query) {
+                header(Authorization, "Bearer $accessToken")
+            }
+        }
+
+        val deleteSak = resultat.data?.softDeleteSakByGrupperingsid
+        if (deleteSak !is SoftDeleteSakByGrupperingsidSakVellykket) {
+            when (deleteSak) {
+                is SoftDeleteSakByGrupperingsidUgyldigMerkelapp -> {
+                    logger.error("Feilmelding {}", deleteSak.feilmelding)
+                    throw SoftDeleteSakFeiletException(grupperingsid, deleteSak.feilmelding)
+                }
+                is SoftDeleteSakByGrupperingsidFinnesIkke -> {
+                    logger.error("Feilmelding {}", deleteSak.feilmelding)
+                    throw SoftDeleteSakFeiletException(grupperingsid, deleteSak.feilmelding)
+                }
+                is SoftDeleteSakByGrupperingsidUkjentProdusent -> {
+                    logger.error("Feilmelding {}", deleteSak.feilmelding)
+                    throw SoftDeleteSakFeiletException(grupperingsid, deleteSak.feilmelding)
                 }
             }
         }
