@@ -166,12 +166,18 @@ class ArbeidsgiverNotifikasjonKlientImpl(
 
         logger.info("Forsøker å opprette ny sak mot arbeidsgiver-notifikasjoner")
 
+        // TODO: Remove
+        logger.info("Token: $accessToken}")
+
         val resultat = runBlocking {
             client.execute(query) {
                 header(Authorization, "Bearer $accessToken")
             }
         }
         val utfoertOppgave = resultat.data?.oppgaveUtfoert
+
+        // TODO: Remove
+        logger.info("arbeidsgiver-notifikasjoner respons: $resultat")
 
         if (utfoertOppgave !is OppgaveUtfoertVellykket) {
             when (utfoertOppgave) {

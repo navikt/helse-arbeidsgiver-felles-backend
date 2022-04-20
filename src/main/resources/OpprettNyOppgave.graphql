@@ -9,13 +9,9 @@ mutation OpprettNyOppgave(
     nyOppgave(nyOppgave: {
         mottakere: [
             {
-                altinnRolle: {
-                    roleDefinitionCode: "DAGL"
-                }
-            }
-            {
-                altinnRolle: {
-                    roleDefinitionCode: "LEDE"
+                altinn: {
+                    serviceCode: "4936"
+                    serviceEdition: "1"
                 }
             }
         ]
