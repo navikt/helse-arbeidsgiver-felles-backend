@@ -3,10 +3,10 @@ name: Snyk
 on:
   push:
     branches-ignore:
-      - '!dependabot/**'
+      - 'dependabot/**'
 
 jobs:
-  snyk:
+  Snyk:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
