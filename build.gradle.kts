@@ -56,7 +56,6 @@ tasks.jacocoTestReport {
 }
 
 tasks.jacocoTestCoverageVerification {
-    dependsOn(tasks.jacocoTestReport)
     violationRules {
         rule {
             limit {
@@ -68,7 +67,6 @@ tasks.jacocoTestCoverageVerification {
 
 tasks.test {
     finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-    finalizedBy(tasks.jacocoTestCoverageVerification) // report is always generated after tests run
 }
 
 buildscript {
