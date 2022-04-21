@@ -1,12 +1,11 @@
 name: Snyk
 
 on:
-  push:
-    branches:
-      - '!dependabot/*'
+  schedule:
+    - cron:  "0 13 * * 1"
 
 jobs:
-  snyk:
+  Snyk:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
