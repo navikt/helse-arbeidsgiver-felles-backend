@@ -215,7 +215,10 @@ configure<PublishingExtension> {
     }
 }
 
-val graphqlGenerateClient by tasks.getting(com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask::class) {
-    packageName.set("no.nav.helse.helsearbeidsgiver.graphql.generated")
-    schemaFile.set(file("src/main/resources/schema.graphql"))
+graphql {
+    client {
+        packageName = "no.nav.helse.helsearbeidsgiver.graphql.generated"
+        schemaFile = file("src/main/resources/arbeidsgivernotifikasjon/schema.graphql")
+        queryFiles = file("src/main/resources/arbeidsgivernotifikasjon/").listFiles().toList()
+    }
 }
