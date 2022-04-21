@@ -7,8 +7,8 @@ import no.nav.helse.arbeidsgiver.integrasjoner.mockHttpClient
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import java.time.LocalDate
 
-internal fun buildClient(status: HttpStatusCode, content: String): OppgaveKlientImpl {
-    return OppgaveKlientImpl(
+internal fun buildClient(status: HttpStatusCode, content: String): OppgaveKlient {
+    return OppgaveKlient(
         "url",
         mockk<AccessTokenProvider>(relaxed = true),
         mockHttpClient(status, content)

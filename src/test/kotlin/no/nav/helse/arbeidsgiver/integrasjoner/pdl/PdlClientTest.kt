@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 
-class PdlClientImplTest {
+class PdlClientTest {
 
     @Test
     internal fun `Returnerer en person ved gyldig respons fra PDL`() {
@@ -39,7 +39,7 @@ class PdlClientImplTest {
 
     @Test
     internal fun `Kaster PdlException ved feilrespons fra PDL`() {
-        assertThrows<PdlClientImpl.PdlException> {
+        assertThrows<PdlClient.PdlException> {
             buildClient(HttpStatusCode.OK, errorPdlResponse).personNavn(testFnr)
         }
     }

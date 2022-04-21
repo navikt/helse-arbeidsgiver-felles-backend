@@ -1,12 +1,11 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.dokarkiv
 
-import io.ktor.client.features.*
 import io.ktor.http.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-internal class DokarkivKlientImplTest {
+internal class DokarkivKlientTest {
 
     @Test
     internal fun `Returnerer id og et responsobjekt ved suksess av ferdigstilling`() {
@@ -18,7 +17,7 @@ internal class DokarkivKlientImplTest {
 
     @Test
     internal fun `Kaster FerdigstillingFeiletException ved 200 OK men ikke ferdistilt når man ville ferdigstille`() {
-        val exception = assertThrows<DokarkivKlientImpl.FerdigstillingFeiletException> {
+        val exception = assertThrows<FerdigstillingFeiletException> {
             buildClient(HttpStatusCode.OK, ikkeFerdigstiltResponse).journalførDokument(request.copy(kanal = "ugyldig for ferdigstillelse"), true, "call-id")
         }
 
@@ -26,7 +25,7 @@ internal class DokarkivKlientImplTest {
     }
     @Test
     internal fun `Kaster ClientRequestException ved feil i requesten`() {
-        assertThrows<DokarkivKlientImpl.FerdigstillingFeiletException> {
+        assertThrows<FerdigstillingFeiletException> {
             buildClient(HttpStatusCode.OK, errorResponse).journalførDokument(request, true, "call-id")
         }
     }
