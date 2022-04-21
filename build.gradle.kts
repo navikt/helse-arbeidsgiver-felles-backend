@@ -29,7 +29,7 @@ version = "${dateFormat.format(Date())}-$gitHash"
 
 plugins {
     kotlin("jvm") version "1.5.30"
-    id("org.sonarqube") version "2.8"
+    id("org.sonarqube") version "3.3"
     id("com.github.ben-manes.versions") version "0.27.0"
     id("maven-publish")
     id("com.expediagroup.graphql") version "5.3.2"
@@ -168,7 +168,7 @@ tasks.withType<Test> {
 }
 
 tasks.named<Test>("test") {
-    include("no/nav/helse/arbeidsgiver/bakgrunn/**")
+    include("no/nav/helse/arbeidsgiver/**")
 }
 
 task<Test>("slowTests") {

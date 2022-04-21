@@ -1,13 +1,12 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.oppgave
 
-import io.ktor.client.HttpClient
+import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
 interface OppgaveKlient {
@@ -25,10 +24,6 @@ class OppgaveKlientImpl(
     private val stsClient: AccessTokenProvider,
     private val httpClient: HttpClient
 ) : OppgaveKlient, SyncOppgaveKlient {
-
-    companion object {
-        private val log = LoggerFactory.getLogger(OppgaveKlientImpl::class.java)
-    }
 
     override suspend fun opprettOppgave(opprettOppgaveRequest: OpprettOppgaveRequest, callId: String): OpprettOppgaveResponse {
         val stsToken = stsClient.getToken()
@@ -155,20 +150,3 @@ data class OppgaveResultat(
 )
 
 const val OPPGAVETYPE_FORDELINGSOPPGAVE = "FDR"
-fun createForedlingsOppgaveRequest(
-    journalpostId: String,
-    beskrivelse: String,
-    behandlingstype: String,
-    frist: LocalDate,
-    behandlesAvApplikasjon: String
-) = OpprettOppgaveRequest(
-    journalpostId = journalpostId,
-    behandlesAvApplikasjon = behandlesAvApplikasjon,
-    beskrivelse = beskrivelse,
-    tema = "SYK",
-    oppgavetype = OPPGAVETYPE_FORDELINGSOPPGAVE,
-    behandlingstype = behandlingstype,
-    aktivDato = LocalDate.now(),
-    fristFerdigstillelse = frist,
-    prioritet = Prioritet.NORM.name
-)
