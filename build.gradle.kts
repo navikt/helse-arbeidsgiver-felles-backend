@@ -41,25 +41,32 @@ sonarqube {
         property("sonar.projectKey", "navikt_helse-arbeidsgiver-felles-backend")
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
-        property("sonar.exclusions", "**Mock**,**/App**,**/Koin*")
     }
 }
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
     reports {
-        xml.isEnabled = true
-        html.isEnabled = true
+        xml.required.set(true)
+        csv.required.set(false)
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
     }
 }
 
-tasks.withType<JacocoReport> {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/Koin**", "**/App**", "**Mock**")
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.9".toBigDecimal()
+            }
         }
-    )
+    }
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
 }
 
 buildscript {
