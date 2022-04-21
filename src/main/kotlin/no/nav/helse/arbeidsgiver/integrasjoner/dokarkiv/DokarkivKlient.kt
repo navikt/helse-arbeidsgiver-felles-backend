@@ -8,29 +8,21 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import org.slf4j.LoggerFactory
 
-interface DokarkivKlient {
-    fun journalførDokument(
-        journalpost: JournalpostRequest,
-        forsoekFerdigstill: Boolean,
-        callId: String
-    ): JournalpostResponse
-}
-
 /**
  * Oppretter en journalpost i dokarkiv @see JournalpostRequest
  *
  * Servicebrukeren i Token provdieren må være i AD-gruppen 0000-GA-joark-journalpostapi-skriv
  * Joark tilgangskontroll-dok: https://confluence.adeo.no/pages/viewpage.action?pageId=315962195
  */
-class DokarkivKlientImpl(
+class DokarkivKlient(
     private val dokarkivBaseUrl: String,
     private val httpClient: HttpClient,
     private val accessTokenProvider: AccessTokenProvider
-) : DokarkivKlient {
+) {
 
     private val logger: org.slf4j.Logger = LoggerFactory.getLogger("DokarkivClient")
 
-    override fun journalførDokument(
+    fun journalførDokument(
         journalpost: JournalpostRequest,
         forsoekFerdigstill: Boolean,
         callId: String
@@ -52,9 +44,9 @@ class DokarkivKlientImpl(
 
         return response
     }
-
-    class FerdigstillingFeiletException(
-        val journalpostId: String,
-        feilmelding: String?
-    ) : Exception("Ferdigstillelse av journalposten feilet: $feilmelding")
 }
+
+class FerdigstillingFeiletException(
+    val journalpostId: String,
+    feilmelding: String?
+) : Exception("Ferdigstillelse av journalposten feilet: $feilmelding")

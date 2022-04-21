@@ -7,32 +7,23 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
-import org.slf4j.LoggerFactory
 
-interface DokarkivGraphQLClient {
-    fun getJournalpost(journalpostId: String): JournalPost?
-}
-
-interface LoggedInDokarkivGraphQLClient {
-    fun getJournalpost(journalpostId: String, userLoginToken: String): JournalPost?
-}
-
-class DokarkivGraphQLClientImpl(
+class DokarkivGraphQLClient(
     private val journalPostUrl: String,
     private val stsClient: AccessTokenProvider,
     private val httpClient: HttpClient,
     private val om: ObjectMapper
-) : DokarkivGraphQLClient, LoggedInDokarkivGraphQLClient {
+) {
     private val hentJournalPostQuery = this::class.java.getResource("/journal/hentJournalPost.graphql").readText().replace(Regex("[\n\r]"), "")
 
     //  return queryJournalPost<JournalPost?, JournalPostResponse<JournalPost?>>(entity)
-    override fun getJournalpost(journalpostId: String): JournalPost? {
+    fun getJournalpost(journalpostId: String): JournalPost? {
         val entity = JournalPostQueryObject(hentJournalPostQuery, QueryVariables(journalpostId))
         return queryJournalPost(entity)
     }
 
     // queryJournalPost<JournalPost?, JournalPostResponse<JournalPost?>>(entity, userLoginToken)
-    override fun getJournalpost(journalpostId: String, userLoginToken: String): JournalPost? {
+    fun getJournalpost(journalpostId: String, userLoginToken: String): JournalPost? {
         val entity = JournalPostQueryObject(hentJournalPostQuery, QueryVariables(journalpostId))
         return queryJournalPost(entity, userLoginToken)
     }
@@ -49,9 +40,5 @@ class DokarkivGraphQLClientImpl(
         }
 
         return JournalResponse.data
-    }
-
-    companion object {
-        private val LOG = LoggerFactory.getLogger(DokarkivGraphQLClientImpl::class.java)
     }
 }

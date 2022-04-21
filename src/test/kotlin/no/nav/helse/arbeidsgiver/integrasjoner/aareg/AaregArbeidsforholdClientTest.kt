@@ -6,7 +6,7 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-internal class AaregArbeidsforholdClientImplTest {
+internal class AaregArbeidsforholdClientTest {
 
     @Test
     fun `Returnerer gyldig objekt når alt er oK`() {

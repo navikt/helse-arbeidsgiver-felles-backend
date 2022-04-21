@@ -1,19 +1,14 @@
-package no.nav.helse.arbeidsgiver.integrasjoner
+package no.nav.helse.arbeidsgiver.integrasjoner.accesstoken
 
 import com.nimbusds.jwt.JWT
 import com.nimbusds.jwt.JWTParser
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
-import no.nav.security.token.support.client.core.ClientProperties
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.*
-
-interface AccessTokenProvider {
-    fun getToken(): String
-}
 
 /**
  * STS-klient for å hente access token for bruk i andre tjenester, feks joark, PDL eller Oppgave.
@@ -33,7 +28,6 @@ class RestSTSAccessTokenProvider(
 
     private val endpointURI: String
     private val basicAuth: String
-
     private var currentToken: JwtToken
 
     init {
@@ -84,17 +78,5 @@ class RestSTSAccessTokenProvider(
 
     companion object {
         private val log = LoggerFactory.getLogger(RestSTSAccessTokenProvider::class.java)
-    }
-}
-
-/**
- * OAuth2 Token-klient for å hente access token for bruk i andre tjenester, feks joark, PDL eller Oppgave.
- */
-class OAuth2TokenProvider(
-    private val oauth2Service: OAuth2AccessTokenService,
-    private val clientProperties: ClientProperties
-) : AccessTokenProvider {
-    override fun getToken(): String {
-        return oauth2Service.getAccessToken(clientProperties).accessToken
     }
 }
