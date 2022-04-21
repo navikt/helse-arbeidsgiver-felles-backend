@@ -2,8 +2,8 @@ name: Snyk
 
 on:
   push:
-    branches:
-      - '!dependabot/*'
+    branches-ignore:
+      - '!dependabot/**'
 
 jobs:
   snyk:
