@@ -53,6 +53,16 @@ tasks.jacocoTestReport {
     }
 }
 
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = "0.9".toBigDecimal()
+            }
+        }
+    }
+}
+
 buildscript {
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0")
