@@ -59,7 +59,7 @@ tasks.jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = "0.9".toBigDecimal()
+                minimum = "0.5".toBigDecimal()
             }
         }
     }
@@ -117,8 +117,6 @@ dependencies {
     testImplementation("io.ktor:ktor-client-apache:$ktorVersion") // Brukes i integrasjonstester
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }
-
-tasks.named<KotlinCompile>("compileKotlin")
 
 tasks.named<KotlinCompile>("compileKotlin") {
     kotlinOptions.jvmTarget = "11"

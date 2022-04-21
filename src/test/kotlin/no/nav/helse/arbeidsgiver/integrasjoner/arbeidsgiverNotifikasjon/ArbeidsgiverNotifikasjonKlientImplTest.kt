@@ -2,8 +2,6 @@ package no.nav.helse.arbeidsgiver.integrasjoner.arbeidsgiverNotifikasjon
 
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
-
 internal class ArbeidsgiverNotifikasjonKlientImplTest {
 
     @Test
