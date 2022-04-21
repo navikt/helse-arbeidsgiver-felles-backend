@@ -41,6 +41,7 @@ sonarqube {
         property("sonar.projectKey", "navikt_helse-arbeidsgiver-felles-backend")
         property("sonar.organization", "navit")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
     }
 }
@@ -48,7 +49,7 @@ sonarqube {
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
     reports {
-        xml.required.set(false)
+        xml.required.set(true)
         csv.required.set(false)
         html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
     }
