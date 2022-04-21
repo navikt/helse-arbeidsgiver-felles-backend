@@ -10,7 +10,6 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: '11.x'
-
       - name: Cache Gradle wrapper
         uses: actions/cache@v2
         with:
@@ -18,7 +17,6 @@ jobs:
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-wrapper-
-
       - name: Cache Gradle packages
         uses: actions/cache@v2
         with:
@@ -26,9 +24,19 @@ jobs:
           key: ${{ runner.os }}-gradle-cache-${{ hashFiles('build.gradle') }}
           restore-keys: |
             ${{ runner.os }}-gradle-cache-
-
-      - name: test and build
-        run: ./gradlew --console=plain build test jacocoTestReport
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew build sonarqube --info
+      - name: Test
+        run: ./gradlew --console=plain test jacocoTestReport
         env:
           ORG_GRADLE_PROJECT_githubUser: x-access-token
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
