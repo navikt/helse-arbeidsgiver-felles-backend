@@ -19,6 +19,10 @@ class SimpleHashMapCache<T>(
         return cache[key]?.isValid() ?: false
     }
 
+    fun dummyTest(x: Int): Int {
+        return x * x
+    }
+
     fun get(key: String): T {
         return cache[key]!!.value
     }
