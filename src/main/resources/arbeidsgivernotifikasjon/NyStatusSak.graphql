@@ -1,5 +1,5 @@
 mutation NyStatusSak($nyStatusSakId: String!, $nyStatus: SaksStatus!) {
-  nyStatusSak(id: $nyStatusSakId, ny_status: $nyStatus) {
+  nyStatusSak(id: $nyStatusSakId, nyStatus: $nyStatus) {
     __typename
     ... on NyStatusSakVellykket {
       id
