@@ -10,6 +10,7 @@ directive @MaxValue(upToIncluding: Int) on ARGUMENT_DEFINITION
 
 """
 DateTime med offset etter ISO8601-standaren. F.eks. '2011-12-03T10:15:30+01:00'.
+
 Er representert som String.
 """
 scalar ISO8601DateTime
@@ -19,6 +20,13 @@ Dato og lokaltid etter ISO8601-standaren. F.eks. '2001-12-24T10:44:01'.
 Vi tolker tidspunktet som Oslo-tid ('Europe/Oslo').
 """
 scalar ISO8601LocalDateTime
+
+"""
+Duration ISO8601-standaren. F.eks. 'P2DT3H4M'.
+
+Er representert som String.
+"""
+scalar ISO8601Duration
 
 """
 Tilstanden til en oppgave.
@@ -57,6 +65,7 @@ type Query {
     mineNotifikasjoner(
         "antall notifikasjoner du ønsker å hente"
         first: Int @Validate @MaxValue(upToIncluding: 10000)
+
         """Cursor til notifikasjonen du henter fra. Cursor får du fra [NotifikasjonEdge](#notifikasjonedge)."""
         after: String
 
@@ -234,6 +243,7 @@ for å kunne filtrere saksoversikten på min side arbeidsgiver.
 enum SaksStatus {
     """
     Naturlig start-tilstand for en sak.
+
     Default tekst som vises til bruker: "Mottatt"
     """
     MOTTATT
@@ -246,6 +256,7 @@ enum SaksStatus {
     """
     Slutt-tilstand for en sak. Når en sak er `FERDIG`, så vil vi
     nedprioritere visningen av den på min side arbeidsgivere.
+
     Default tekst som vises til bruker: "Ferdig".
     """
     FERDIG
@@ -282,68 +293,112 @@ type Mutation {
         NB. At en bruker har tilgang til en sak påvirker ikke om de har tilgang
         til en notifikasjon. De tilgangsstyres hver for seg.
         """
-        mottakere: [MottakerInput!]!
+        mottakere: [MottakerInput!]! @Validate
 
         """En tittel på saken, som vises til brukeren."""
         tittel: String!
+
         """Her oppgir dere en lenke som brukeren kan klikke på for å komme rett til saken."""
         lenke: String!
+
         """
         """
-        initiell_status: SaksStatus!
+        initiellStatus: SaksStatus!
+
         """
         Når endringen skjedde. Det kan godt være i fortiden.
         Dette feltet er frivillig. Hvis feltet ikke er oppgitt, bruker vi tidspunktet dere gjør
         kallet på.
         """
         tidspunkt: ISO8601DateTime
+
         """
         Dette feltet er frivillig. Det lar deg overstyre hvilken tekst vi viser
         til brukeren. Se `SaksStatus` for default tekster.
         """
         overstyrStatustekstMed: String
+
+        """
+        Oppgi dersom dere ønsker at hard delete skal skeduleres
+        """
+        hardDelete: FutureTemporalInput @Validate
     ): NySakResultat!
+
     nyStatusSak(
         idempotencyKey: String
         id: ID!
-        ny_status: SaksStatus!
+        nyStatus: SaksStatus!
+
         """
         Når endringen skjedde. Det kan godt være i fortiden.
         Dette feltet er frivillig. Hvis feltet ikke er oppgitt, bruker vi tidspunktet dere gjør
         kallet på.
         """
         tidspunkt: ISO8601DateTime
+
         """
         Dette feltet er frivillig. Det lar deg overstyre hvilken tekst vi viser
         til brukeren. Se `SaksStatus` for default tekster.
         """
         overstyrStatustekstMed: String
+
+        """
+        Se: [HardDeleteUpdateInput typen](#harddeleteupdateinput)
+        """
+        hardDelete: HardDeleteUpdateInput
+
+        """
+        Her kan dere endre lenken til saken. F.eks hvis saken har gått fra å være en
+        søknad til en kvittering, så kan det være dere har behov for å endre url som brukeren sendes til.
+        Dette feltet er frivillig; er det ikke oppgitt (eller er null), så forblir lenken knyttet til saken uendret.
+        """
+        nyLenkeTilSak: String
+
     ): NyStatusSakResultat!
+
     nyStatusSakByGrupperingsid(
         idempotencyKey: String
         grupperingsid: String!
         merkelapp: String!
-        ny_status: SaksStatus!
+
+        nyStatus: SaksStatus!
+
         """
         Når endringen skjedde. Det kan godt være i fortiden.
         Dette feltet er frivillig. Hvis feltet ikke er oppgitt, bruker vi tidspunktet dere gjør
         kallet på.
         """
         tidspunkt: ISO8601DateTime
+
         """
         Dette feltet er frivillig. Det lar deg overstyre hvilken tekst vi viser
         til brukeren. Se `SaksStatus` for default tekster.
         """
         overstyrStatustekstMed: String
+
+        """
+        Se: [HardDeleteUpdateInput typen](#harddeleteupdateinput)
+        """
+        hardDelete: HardDeleteUpdateInput
+
+        """
+        Her kan dere endre lenken til saken. F.eks hvis saken har gått fra å være en
+        søknad til en kvittering, så kan det være dere har behov for å endre url som brukeren sendes til.
+        Dette feltet er frivillig; er det ikke oppgitt (eller er null), så forblir lenken knyttet til saken uendret.
+        """
+        nyLenkeTilSak: String
     ): NyStatusSakResultat!
+
     """
     Opprett en ny beskjed.
     """
     nyBeskjed(nyBeskjed: NyBeskjedInput! @Validate): NyBeskjedResultat!
+
     """
     Opprett en ny oppgave.
     """
     nyOppgave(nyOppgave: NyOppgaveInput! @Validate): NyOppgaveResultat!
+
     """
     Marker en oppgave (identifisert ved id) som utført.
     """
@@ -352,6 +407,11 @@ type Mutation {
         ID-en som oppgaven har. Den du fikk da du opprettet oppgaven med `nyOppgave`.
         """
         id: ID!
+
+        """
+        Se: [HardDeleteUpdateInput typen](#harddeleteupdateinput)
+        """
+        hardDelete: HardDeleteUpdateInput
     ): OppgaveUtfoertResultat!
 
     """
@@ -367,6 +427,11 @@ type Mutation {
         ID-en som *dere ga oss* da dere opprettet oppgaven med `nyOppgave`.
         """
         eksternId: ID!
+
+        """
+        Se: [HardDeleteUpdateInput typen](#harddeleteupdateinput)
+        """
+        hardDelete: HardDeleteUpdateInput
     ): OppgaveUtfoertResultat!
     @deprecated(reason:
     "Using the type ID for `eksternId` can lead to unexpected behaviour. Use oppgaveUtfoertByEksternId_V2 instead."
@@ -385,6 +450,11 @@ type Mutation {
         ID-en som *dere ga oss* da dere opprettet oppgaven med `nyOppgave`.
         """
         eksternId: String!
+
+        """
+        Se: [HardDeleteUpdateInput typen](#harddeleteupdateinput)
+        """
+        hardDelete: HardDeleteUpdateInput
     ): OppgaveUtfoertResultat!
 
 
@@ -488,6 +558,7 @@ type Mutation {
     Advarsel: ingen notifikasjoner blir slettet, selv om de har samme grupperingsid.
     """
     softDeleteSak(id: ID!): SoftDeleteSakResultat!
+
     """
     Se dokumentasjon for `softDeleteSak(id)`.
     """
@@ -608,15 +679,18 @@ input NyBeskjedInput {
     Dere må gi oss minst 1 mottaker.
     """
     mottakere: [MottakerInput!]! = []
+
     notifikasjon: NotifikasjonInput!
     metadata: MetadataInput!
     eksterneVarsler: [EksterntVarselInput!]! = []
 }
+
 input NyOppgaveInput {
     """
     Se dokumentasjonen til `mottakere`-feltet.
     """
     mottaker: MottakerInput
+
     """
     Her bestemmer dere hvem som skal få se notifikasjonen.
 
@@ -630,10 +704,12 @@ input NyOppgaveInput {
     metadata: MetadataInput!
     eksterneVarsler: [EksterntVarselInput!]! = []
 }
+
 input EksterntVarselInput @ExactlyOneFieldGiven {
     sms: EksterntVarselSmsInput
     epost: EksterntVarselEpostInput
 }
+
 enum Sendevindu {
     """
     Vi sender varselet slik at mottaker skal ha mulighet for å kontakte NAVs
@@ -644,6 +720,8 @@ enum Sendevindu {
     at NKS er utilgjengelig.
     """
     NKS_AAPNINGSTID
+
+
     """
     Vi sender varselet på dagtid, mandag til lørdag.
     Altså sender vi ikke om kvelden og om natten, og ikke i det hele tatt på søndager.
@@ -651,11 +729,13 @@ enum Sendevindu {
     Vi tar ikke hensyn til røde dager.
     """
     DAGTID_IKKE_SOENDAG
+
     """
     Vi sender varslet så fort vi kan.
     """
     LOEPENDE
 }
+
 """
 Med denne typen velger du når du ønsker at det eksterne varselet blir sendt.
 Du skal velge en (og kun en) av feltene, ellers blir forespørselen din avvist
@@ -730,7 +810,9 @@ input EpostKontaktInfoInput {
 
 """
 Hvem som skal se notifikasjonen.
+
 Du kan spesifisere mottaker av notifikasjoner på forskjellige måter. Du skal bruke nøyaktig ett av feltene.
+
 Vi har implementert det på denne måten fordi GraphQL ikke støtter union-typer som input.
 """
 input MottakerInput @ExactlyOneFieldGiven {
@@ -743,6 +825,7 @@ input MottakerInput @ExactlyOneFieldGiven {
 """
 Spesifiser mottaker ved hjelp av tilganger i Altinn. Enhver som har den gitte tilgangen vil
 kunne se notifikasjone.
+
 Tilgangssjekken utføres hver gang en bruker ser på notifikasjoner. Det betyr at hvis en
 bruker mister en Altinn-tilgang, så vil de hverken se historiske eller nye notifikasjone knyttet til den Altinn-tilgangen.
 Og motsatt, hvis en bruker får en Altinn-tilgang, vil de se tidligere notifikasjoner for den Altinn-tilgangen.
@@ -756,6 +839,7 @@ input AltinnMottakerInput {
 Spesifiser mottaker ved hjelp av fødselsnummer. Fødselsnummeret er det til nærmeste leder. Det er kun denne personen
 som potensielt kan se notifikasjonen. Det er videre en sjekk for å se om denne personen fortsatt er nærmeste leder
 for den ansatte notifikasjonen gjelder.
+
 Tilgangssjekken utføres hver gang en bruker ønsker se notifikasjonen.
 """
 input NaermesteLederMottakerInput {
@@ -767,6 +851,7 @@ input NaermesteLederMottakerInput {
 Spesifiser mottaker ved hjelp av fødselsnummer.
 Flere skjemaer krever kun en "tilknytning" til et orgnr for å sende inn/se status.
 Tilknytningen er da at man er "reportee" for virksomheten, uten å spesifisere noen enkeltrettighet.
+
 Tilgangssjekken utføres hver gang en bruker ønsker se notifikasjonen. Dersom personen ikke lenger er tilknyttet
 virksomheten så vil de hverken se historiske eller nye notifikasjoner knyttet til virksomheten.
 """
@@ -776,9 +861,11 @@ input AltinnReporteeMottakerInput {
 
 """
 Spesifiser mottaker ved hjelp av rollekode.  Enhver som har den gitte rollen vil kunne se notifikasjonen.
+
 Tilgangssjekken utføres hver gang en bruker ser på notifikasjoner. Det betyr at hvis en
 bruker mister en Altinn-tilgang, så vil de hverken se historiske eller nye notifikasjone knyttet til den Altinn-tilgangen.
 Og motsatt, hvis en bruker får en Altinn-rolle, vil de se tidligere notifikasjoner for den Altinn-tilgangen.
+
 Tilgangssjekken utføres hver gang en bruker ønsker se notifikasjonen.
 """
 input AltinnRolleMottakerInput {
@@ -791,6 +878,7 @@ input AltinnRolleMottakerInput {
 input NotifikasjonInput {
     """
     Merkelapp for beskjeden. Er typisk navnet på ytelse eller lignende. Den vises til brukeren.
+
     Hva du kan oppgi som merkelapp er bestemt av produsent-registeret.
     """
     merkelapp: String!
@@ -820,11 +908,13 @@ input MetadataInput {
     uten at dere må lagre ID-ene vi genererer og returnerer til dere.
     """
     eksternId: String!
+
     """
     Hvilken dato vi viser til brukeren. Dersom dere ikke oppgir noen dato, så
     bruker vi tidspuktet dere gjør kallet på.
     """
     opprettetTidspunkt: ISO8601DateTime
+
     """
     Grupperings-id-en gjør det mulig å knytte sammen forskjellige oppgaver, beskjed og saker.
     Det vises ikke til brukere.
@@ -838,6 +928,42 @@ input MetadataInput {
     Ta kontakt med #arbeidsgiver-notifikasjon på slack for å melde interesse!
     """
     grupperingsid: String
+
+    """
+    Oppgi dersom dere ønsker at hard delete skal skeduleres
+    """
+    hardDelete: FutureTemporalInput
+}
+
+input FutureTemporalInput @ExactlyOneFieldGiven {
+    den: ISO8601LocalDateTime
+    om: ISO8601Duration
+}
+
+"""
+Dersom dere vet at saken/notifikasjonen senere skal slettes helt kan det angis her.
+"""
+input HardDeleteUpdateInput {
+    """
+    Det vil bli utført en hardDelete når det angitte tidspunktet har passert.
+    """
+    nyTid: FutureTemporalInput!
+
+    """
+    hvis det finnes fremtidig sletting hvordan skal vi håndtere dette
+    """
+    strategi: NyTidStrategi!
+}
+
+enum NyTidStrategi {
+    """
+    Vi bruker den tiden som er lengst i fremtiden.
+    """
+    FORLENG
+    """
+    Vi bruker den nye tiden uansett.
+    """
+    OVERSKRIV
 }
 
 union NyOppgaveResultat =
@@ -894,6 +1020,7 @@ type UkjentProdusent implements Error {
 """
 Denne feilen returneres dersom du prøver å referere til en notifikasjon
 som ikke eksisterer.
+
 Utover at dere kan ha oppgitt feil informasjon, så kan det potensielt være på grunn
 av "eventual consistency" i systemet vårt.
 """
@@ -934,3 +1061,4 @@ type Konflikt implements Error {
 interface Error {
     feilmelding: String!
 }
+
