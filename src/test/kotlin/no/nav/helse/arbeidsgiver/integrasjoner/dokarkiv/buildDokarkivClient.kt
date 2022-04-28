@@ -7,8 +7,8 @@ import no.nav.helse.arbeidsgiver.integrasjoner.mockHttpClient
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 import java.time.LocalDate
 
-internal fun buildClient(status: HttpStatusCode, content: String): DokarkivKlient {
-    return DokarkivKlient(
+internal fun buildClient(status: HttpStatusCode, content: String): DokarkivKlientImpl {
+    return DokarkivKlientImpl(
         "url",
         mockHttpClient(status, content),
         mockk<AccessTokenProvider>(relaxed = true)

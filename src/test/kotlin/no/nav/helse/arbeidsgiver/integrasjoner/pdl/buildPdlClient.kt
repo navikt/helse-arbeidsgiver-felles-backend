@@ -7,8 +7,8 @@ import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.mockHttpClient
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 
-internal fun buildClient(status: HttpStatusCode, content: String): PdlClient {
-    return PdlClient(
+internal fun buildClient(status: HttpStatusCode, content: String): PdlClientImpl {
+    return PdlClientImpl(
         "url",
         mockk<AccessTokenProvider>(relaxed = true),
         mockHttpClient(status, content),

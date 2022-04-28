@@ -1,7 +1,7 @@
 package no.nav.helse.arbeidsgiver.integrasjoner.sts
 
 import io.ktor.http.*
-import no.nav.helse.arbeidsgiver.integrasjoner.accesstoken.RestSTSAccessTokenProvider
+import no.nav.helse.arbeidsgiver.integrasjoner.RestSTSAccessTokenProvider
 import no.nav.helse.arbeidsgiver.integrasjoner.mockHttpClient
 import no.nav.helse.arbeidsgiver.utils.loadFromResources
 

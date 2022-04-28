@@ -7,6 +7,25 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
+import org.slf4j.LoggerFactory
+
+interface PdlClient {
+    /**
+     * Ident kan være enten FNR eller AktørID
+     */
+    fun personNavn(ident: String): PdlHentPersonNavn.PdlPersonNavneliste?
+    fun fullPerson(ident: String): PdlHentFullPerson?
+}
+
+/**
+ * Interface for en PDL-klient som har en innlogget saksbehandler.
+ * Når denne brukes gjør PDL en sjekk av at brukeren har tilgang til å se informasjon om identen
+ * det spørres om
+ */
+interface LoggedInPdlClient {
+    fun personNavn(ident: String, userLoginToken: String): PdlHentPersonNavn.PdlPersonNavneliste?
+    fun fullPerson(ident: String, userLoginToken: String): PdlHentFullPerson?
+}
 
 /**
  * Enkel GraphQL-klient for PDL som kan enten hente navn fra aktør eller fnr (ident)
@@ -18,34 +37,34 @@ import no.nav.helse.arbeidsgiver.integrasjoner.AccessTokenProvider
  *
  * Klienten vil alltid gi PDL-Temaet 'SYK', så om du trenger et annet tema må du endre denne klienten.
  */
-class PdlClient(
+class PdlClientImpl(
     private val pdlUrl: String,
     private val stsClient: AccessTokenProvider,
     private val httpClient: HttpClient,
     private val om: ObjectMapper
-) {
+) : PdlClient, LoggedInPdlClient {
     private val personNavnQuery = this::class.java.getResource("/pdl/hentPersonNavn.graphql").readText().replace(Regex("[\n\r]"), "")
     private val fullPersonQuery = this::class.java.getResource("/pdl/hentFullPerson.graphql").readText().replace(Regex("[\n\r]"), "")
 
-    fun personNavn(ident: String): PdlHentPersonNavn.PdlPersonNavneliste? {
+    override fun personNavn(ident: String): PdlHentPersonNavn.PdlPersonNavneliste? {
         val entity = PdlQueryObject(personNavnQuery, Variables(ident))
         val response = queryPdl<PdlHentPersonNavn?, PdlResponse<PdlHentPersonNavn?>>(entity)
         return response?.hentPerson
     }
 
-    fun fullPerson(ident: String): PdlHentFullPerson? {
+    override fun fullPerson(ident: String): PdlHentFullPerson? {
         val queryObject = PdlQueryObject(fullPersonQuery, Variables(ident))
         val response = queryPdl<PdlHentFullPerson?, PdlResponse<PdlHentFullPerson?>>(queryObject)
         return response
     }
 
-    fun personNavn(ident: String, userLoginToken: String): PdlHentPersonNavn.PdlPersonNavneliste? {
+    override fun personNavn(ident: String, userLoginToken: String): PdlHentPersonNavn.PdlPersonNavneliste? {
         val entity = PdlQueryObject(personNavnQuery, Variables(ident))
         val response = queryPdl<PdlHentPersonNavn?, PdlResponse<PdlHentPersonNavn?>>(entity, userLoginToken)
         return response?.hentPerson
     }
 
-    fun fullPerson(ident: String, userLoginToken: String): PdlHentFullPerson? {
+    override fun fullPerson(ident: String, userLoginToken: String): PdlHentFullPerson? {
         val queryObject = PdlQueryObject(fullPersonQuery, Variables(ident))
         val response = queryPdl<PdlHentFullPerson?, PdlResponse<PdlHentFullPerson?>>(queryObject, userLoginToken)
         return response
@@ -68,6 +87,10 @@ class PdlClient(
         }
 
         return pdlPersonReponse.data
+    }
+
+    companion object {
+        private val LOG = LoggerFactory.getLogger(PdlClient::class.java)
     }
 
     class PdlException(val pdlErrors: List<PdlError>?) : RuntimeException()
