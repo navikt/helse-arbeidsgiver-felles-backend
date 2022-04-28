@@ -6,7 +6,7 @@ mutation NyStatusSakByGrupperingsid(
     nyStatusSakByGrupperingsid(
         grupperingsid: $grupperingsid
         merkelapp: $merkelapp
-        ny_status: $nyStatus
+        nyStatus: $nyStatus
     ) {
         __typename
         ... on NyStatusSakVellykket {
