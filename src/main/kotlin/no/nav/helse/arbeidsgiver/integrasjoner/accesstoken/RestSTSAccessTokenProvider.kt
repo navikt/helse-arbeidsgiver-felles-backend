@@ -72,7 +72,6 @@ class RestSTSAccessTokenProvider(
         val expirationTime = jwt.jwtClaimsSet.expirationTime
     }
 
-    @Suppress("kotlin:S117")
     private data class STSOidcResponse(
         val access_token: String
     )
