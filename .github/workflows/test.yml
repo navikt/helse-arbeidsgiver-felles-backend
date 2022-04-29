@@ -42,10 +42,3 @@ jobs:
           ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      - name: Coverage
-        run: ./gradlew --console=plain jacocoTestCoverageVerification
-        env:
-          ORG_GRADLE_PROJECT_githubUser: x-access-token
-          ORG_GRADLE_PROJECT_githubPassword: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
