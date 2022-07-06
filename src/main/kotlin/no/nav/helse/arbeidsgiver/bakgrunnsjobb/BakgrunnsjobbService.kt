@@ -13,7 +13,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor
 import no.nav.helse.arbeidsgiver.processing.AutoCleanJobbProcessor.Companion.JOB_TYPE
 import no.nav.helse.arbeidsgiver.utils.RecurringJob
-import org.slf4j.LoggerFactory
+import no.nav.helse.arbeidsgiver.utils.logger
 import java.sql.Connection
 import java.time.LocalDateTime
 import kotlin.collections.HashMap
@@ -24,9 +24,9 @@ class BakgrunnsjobbService(
     val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
     val bakgrunnsvarsler: Bakgrunnsvarsler = TomVarsler()
 ) : RecurringJob(coroutineScope, delayMillis) {
+    private val logger = this.logger()
 
     val prossesserere = HashMap<String, BakgrunnsjobbProsesserer>()
-    val log = LoggerFactory.getLogger(BakgrunnsjobbService::class.java)
 
     fun startAutoClean(frekvensITimer: Int, slettEldreEnnMaaneder: Long) {
         val om = ObjectMapper().apply {
@@ -35,7 +35,7 @@ class BakgrunnsjobbService(
             dateFormat = StdDateFormat()
         }
         if (frekvensITimer < 1 || slettEldreEnnMaaneder < 0) {
-            log.info("startautoclean forsøkt startet med ugyldige parametre.")
+            logger.info("startautoclean forsøkt startet med ugyldige parametre.")
             throw java.lang.IllegalArgumentException("start autoclean må ha en frekvens støtte enn 1 og slettEldreEnnMaander større enn 0")
         }
 

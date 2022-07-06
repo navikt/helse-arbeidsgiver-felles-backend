@@ -3,14 +3,12 @@ package no.nav.helse.arbeidsgiver.utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.slf4j.LoggerFactory
 
 abstract class RecurringJob(
     private val coroutineScope: CoroutineScope,
     private val waitMillisBetweenRuns: Long
 ) {
-
-    protected val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = this.logger()
 
     protected var isRunning = false
 
