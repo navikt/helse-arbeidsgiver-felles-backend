@@ -108,19 +108,19 @@ class BakgrunnsjobbService(
             jobb.kjoeretid = prossessorForType.nesteForsoek(jobb.forsoek, LocalDateTime.now())
             prossessorForType.prosesser(jobb.copy())
             jobb.status = BakgrunnsjobbStatus.OK
-            OK_JOBB_COUNTER.labels(jobb.type).inc()
+            CountersJobb.OK.inc(jobb)
         } catch (ex: Throwable) {
             val responseBody = tryGetResponseBody(ex)
             val responseBodyMessage = if (responseBody != null) "Feil fra ekstern tjeneste: $responseBody" else ""
             jobb.status = if (jobb.forsoek >= jobb.maksAntallForsoek) BakgrunnsjobbStatus.STOPPET else BakgrunnsjobbStatus.FEILET
             if (jobb.status == BakgrunnsjobbStatus.STOPPET) {
                 logger.error("Jobb ${jobb.uuid} feilet permanent og ble stoppet fra å kjøre igjen. $responseBodyMessage", ex)
-                STOPPET_JOBB_COUNTER.labels(jobb.type).inc()
+                CountersJobb.STOPPET.inc(jobb)
                 bakgrunnsvarsler.rapporterPermanentFeiletJobb()
                 tryStopAction(prossessorForType, jobb)
             } else {
                 logger.error("Jobb ${jobb.uuid} feilet, forsøker igjen ${jobb.kjoeretid}. $responseBodyMessage", ex)
-                FEILET_JOBB_COUNTER.labels(jobb.type).inc()
+                CountersJobb.FEILET.inc(jobb)
             }
         } finally {
             bakgrunnsjobbRepository.update(jobb)
@@ -208,23 +208,31 @@ interface BakgrunnsjobbProsesserer {
     }
 }
 
-val FEILET_JOBB_COUNTER = Counter.build()
-    .namespace("helsearbeidsgiver")
-    .name("feilet_jobb")
-    .labelNames("jobbtype")
-    .help("Teller jobber som har midlertidig feilet, men vil bli forsøkt igjen")
-    .register()
+private fun Counter.inc(jobb: Bakgrunnsjobb) {
+    this.labels(jobb.type).inc()
+}
 
-val STOPPET_JOBB_COUNTER = Counter.build()
-    .namespace("helsearbeidsgiver")
-    .name("stoppet_jobb")
-    .labelNames("jobbtype")
-    .help("Teller jobber som har feilet permanent og må følges opp")
-    .register()
+object CountersJobb {
+    val OK = counter(
+        navn = "jobb_ok",
+        hjelp = "Teller jobber som har blitt utført OK",
+    )
 
-val OK_JOBB_COUNTER = Counter.build()
-    .namespace("helsearbeidsgiver")
-    .name("jobb_ok")
-    .labelNames("jobbtype")
-    .help("Teller jobber som har blitt utført OK")
-    .register()
+    val STOPPET = counter(
+        navn = "stoppet_jobb",
+        hjelp = "Teller jobber som har feilet permanent og må følges opp",
+    )
+
+    val FEILET = counter(
+        navn = "feilet_jobb",
+        hjelp = "Teller jobber som har midlertidig feilet, men vil bli forsøkt igjen",
+    )
+
+    private fun counter(navn: String, hjelp: String): Counter =
+        Counter.build()
+            .namespace("helsearbeidsgiver")
+            .labelNames("jobbtype")
+            .name(navn)
+            .help(hjelp)
+            .register()!!
+}
