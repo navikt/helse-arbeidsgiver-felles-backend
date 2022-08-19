@@ -4,6 +4,7 @@ import no.nav.helse.arbeidsgiver.system.TimeProvider
 import java.time.Duration
 import java.time.LocalDateTime
 
+@Deprecated("Bruk LocalCache fra https://github.com/navikt/helsearbeidsgiver-utils")
 class SimpleHashMapCache<T>(
     private val cacheDuration: Duration,
     private val maxCachedItems: Int,
