@@ -40,6 +40,8 @@ class RestSTSAccessTokenProvider(username: String, password: String, stsEndpoint
         currentToken = requestToken()
     }
 
+    constructor(username: String, password: String, stsEndpoint: String, httpClient: HttpClient) : this(username = username,password = password, stsEndpoint= stsEndpoint,"undefined", httpClient = httpClient)
+
     override fun getToken(): String {
         if (isExpired(currentToken, Date.from(Instant.now().plusSeconds(300)))) {
             log.debug("OIDC Token is expired, getting a new one from the STS")
