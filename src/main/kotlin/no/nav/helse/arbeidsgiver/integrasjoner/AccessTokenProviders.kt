@@ -15,7 +15,6 @@ import java.util.*
 
 interface AccessTokenProvider {
     fun getToken(): String
-
 }
 
 /**
@@ -27,7 +26,13 @@ interface AccessTokenProvider {
  *
  * STS skal fases ut til fordel for OAuth2 Client Credentials og Token Exchange (TokenX)
  */
-class RestSTSAccessTokenProvider(username: String, password: String, stsEndpoint: String, private val exchangeEndpoint: String = "undefined", private val httpClient: HttpClient) : AccessTokenProvider {
+class RestSTSAccessTokenProvider(
+    username: String,
+    password: String,
+    stsEndpoint: String,
+    private val exchangeEndpoint: String = "undefined",
+    private val httpClient: HttpClient
+) : AccessTokenProvider {
 
     private val tokenEndpointURI: String
     private val basicAuth: String
@@ -40,7 +45,13 @@ class RestSTSAccessTokenProvider(username: String, password: String, stsEndpoint
         currentToken = requestToken()
     }
 
-    constructor(username: String, password: String, stsEndpoint: String, httpClient: HttpClient) : this(username = username,password = password, stsEndpoint= stsEndpoint,"undefined", httpClient = httpClient)
+    constructor(username: String, password: String, stsEndpoint: String, httpClient: HttpClient) : this(
+        username = username,
+        password = password,
+        stsEndpoint = stsEndpoint,
+        "undefined",
+        httpClient = httpClient
+    )
 
     override fun getToken(): String {
         if (isExpired(currentToken, Date.from(Instant.now().plusSeconds(300)))) {
@@ -68,12 +79,14 @@ class RestSTSAccessTokenProvider(username: String, password: String, stsEndpoint
                 headers.append("Authorization", basicAuth)
                 headers.append("Accept", "application/json")
 
-                body = FormDataContent(Parameters.build {
-                    append("grant_type", "urn:ietf:params:oauth:grant-type:token-exchange")
-                    append("requested_token_type", "urn:ietf:params:oauth:token-type:saml2")
-                    append("subject_token_type", "urn:ietf:params:oauth:token-type:access_token")
-                    append("subject_token", b64EncodedToken)
-                })
+                body = FormDataContent(
+                    Parameters.build {
+                        append("grant_type", "urn:ietf:params:oauth:grant-type:token-exchange")
+                        append("requested_token_type", "urn:ietf:params:oauth:token-type:saml2")
+                        append("subject_token_type", "urn:ietf:params:oauth:token-type:access_token")
+                        append("subject_token", b64EncodedToken)
+                    }
+                )
             }
         }
         return JwtToken(response.access_token).tokenAsString
