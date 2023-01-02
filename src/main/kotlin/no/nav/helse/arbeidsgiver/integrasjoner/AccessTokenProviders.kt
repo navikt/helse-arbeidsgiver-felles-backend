@@ -31,17 +31,18 @@ class RestSTSAccessTokenProvider(
     username: String,
     password: String,
     stsEndpoint: String,
+    private val exchangeEndpoint: String = "undefined",
     private val httpClient: HttpClient
 ) : AccessTokenProvider {
 
-    private val endpointURI: String
+    private val tokenEndpointURI: String
     private val basicAuth: String
 
     private var currentToken: JwtToken
 
     init {
         basicAuth = basicAuth(username, password)
-        endpointURI = "$stsEndpoint?grant_type=client_credentials&scope=openid"
+        tokenEndpointURI = "$stsEndpoint?grant_type=client_credentials&scope=openid"
         currentToken = requestToken()
     }
 
@@ -56,7 +57,7 @@ class RestSTSAccessTokenProvider(
 
     private fun requestToken(): JwtToken {
         val response = runBlocking {
-            httpClient.get<STSOidcResponse>(endpointURI) {
+            httpClient.get<STSOidcResponse>(tokenEndpointURI) {
                 headers.append("Authorization", basicAuth)
                 headers.append("Accept", "application/json")
             }
@@ -67,7 +68,7 @@ class RestSTSAccessTokenProvider(
 
     fun exchangeForSaml(b64EncodedToken: String) : String {
         val response = runBlocking {
-            httpClient.post<STSOidcResponse>(endpointURI) {
+            httpClient.post<STSOidcResponse>(exchangeEndpoint) {
                 headers.append("Authorization",basicAuth)
                 headers.append("Accept", "application/json")
 
