@@ -4,6 +4,8 @@ import com.nimbusds.jwt.JWT
 import com.nimbusds.jwt.JWTParser
 import io.ktor.client.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
@@ -13,6 +15,7 @@ import java.util.*
 
 interface AccessTokenProvider {
     fun getToken(): String
+
 }
 
 /**
@@ -60,6 +63,23 @@ class RestSTSAccessTokenProvider(
         }
 
         return JwtToken(response.access_token)
+    }
+
+    fun exchangeForSaml(b64EncodedToken: String) : String {
+        val response = runBlocking {
+            httpClient.post<STSOidcResponse>(endpointURI) {
+                headers.append("Authorization",basicAuth)
+                headers.append("Accept", "application/json")
+
+                body = FormDataContent(Parameters.build {
+                    append("grant_type","urn:ietf:params:oauth:grant-type:token-exchange")
+                    append("requested_token_type", "urn:ietf:params:oauth:token-type:saml2")
+                    append("subject_token_type", "urn:ietf:params:oauth:token-type:access_token")
+                    append("subject_token",b64EncodedToken)
+                })
+            }
+        }
+        return JwtToken(response.access_token).tokenAsString
     }
 
     private fun basicAuth(username: String, password: String): String {
