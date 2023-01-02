@@ -7,10 +7,10 @@ import no.nav.helse.arbeidsgiver.utils.loadFromResources
 
 fun buildClient(status: HttpStatusCode, content: String): RestSTSAccessTokenProvider {
     return RestSTSAccessTokenProvider(
-        "",
-        "",
-        "",
-        mockHttpClient(status, content)
+        username = "",
+        password = "",
+        stsEndpoint = "",
+        httpClient = mockHttpClient(status, content)
     )
 }
 
