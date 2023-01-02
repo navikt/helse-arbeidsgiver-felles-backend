@@ -10,7 +10,7 @@ fun buildClient(status: HttpStatusCode, content: String): RestSTSAccessTokenProv
         username = "",
         password = "",
         stsEndpoint = "",
-        httpClient =  mockHttpClient(status, content)
+        httpClient = mockHttpClient(status, content)
     )
 }
 
