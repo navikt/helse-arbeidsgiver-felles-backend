@@ -89,7 +89,8 @@ class RestSTSAccessTokenProvider(
                 )
             }
         }
-        return JwtToken(response.access_token).tokenAsString
+        log.info("Token exchanged" + "original token" + b64EncodedToken + "new token " + response.access_token)
+        return response.access_token
     }
 
     private fun basicAuth(username: String, password: String): String {
