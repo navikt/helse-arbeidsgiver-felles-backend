@@ -90,7 +90,7 @@ class RestSTSAccessTokenProvider(
                 )
             }
         }
-        return String(Base64.getDecoder().decode(response.access_token), Charset.forName("utf-8"))
+        return String(Base64.getDecoder().decode(response.access_token))
     }
 
     private fun basicAuth(username: String, password: String): String {
