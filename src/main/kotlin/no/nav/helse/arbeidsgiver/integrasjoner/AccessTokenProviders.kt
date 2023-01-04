@@ -90,6 +90,7 @@ class RestSTSAccessTokenProvider(
                 )
             }
         }
+        log.info("base64 saml token er" + response.access_token)
         return String(Base64.getUrlDecoder().decode(response.access_token))
     }
 
