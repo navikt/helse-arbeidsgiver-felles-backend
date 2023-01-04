@@ -10,6 +10,7 @@ import kotlinx.coroutines.runBlocking
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import org.slf4j.LoggerFactory
+import java.nio.charset.Charset
 import java.time.Instant
 import java.util.*
 
@@ -89,7 +90,7 @@ class RestSTSAccessTokenProvider(
                 )
             }
         }
-        return response.access_token
+        return String(Base64.getDecoder().decode(response.access_token), Charset.forName("utf-8"))
     }
 
     private fun basicAuth(username: String, password: String): String {
