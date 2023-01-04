@@ -90,7 +90,7 @@ class RestSTSAccessTokenProvider(
                 )
             }
         }
-        return String(Base64.getDecoder().decode(response.access_token))
+        return String(Base64.getUrlDecoder().decode(response.access_token))
     }
 
     private fun basicAuth(username: String, password: String): String {
