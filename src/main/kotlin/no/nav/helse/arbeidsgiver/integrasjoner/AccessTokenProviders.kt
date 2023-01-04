@@ -89,7 +89,7 @@ class RestSTSAccessTokenProvider(
                 )
             }
         }
-        return JwtToken(response.access_token).tokenAsString
+        return response.access_token
     }
 
     private fun basicAuth(username: String, password: String): String {
