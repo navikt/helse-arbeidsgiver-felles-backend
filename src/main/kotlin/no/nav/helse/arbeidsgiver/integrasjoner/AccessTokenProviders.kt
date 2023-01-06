@@ -66,17 +66,17 @@ class RestSTSAccessTokenProvider(
     fun getSamlToken(): String {
         var stsEndpoint = "https://security-token-service.nais.preprod.local/rest/v1/sts/samltoken"
         val response = runBlocking {
-            httpClient.get<STSOidcResponse>() {
+            httpClient.post<STSOidcResponse>() {
                 headers.append("Authorization", basicAuth)
             }
         }
         log.info("base64 saml token er" + response.access_token)
-        return String(Base64.getUrlDecoder().decode(response.access_token))
+        return String(Base64.getUrlDecoder().decode(response.access_token),Charsets.UTF_8)
     }
 
     private fun requestToken(): JwtToken {
         val response = runBlocking {
-            httpClient.get<STSOidcResponse>(tokenEndpointURI) {
+            httpClient.post<STSOidcResponse>(tokenEndpointURI) {
                 headers.append("Authorization", basicAuth)
                 headers.append("Accept", "application/json")
             }
