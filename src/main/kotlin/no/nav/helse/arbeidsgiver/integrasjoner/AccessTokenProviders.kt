@@ -71,7 +71,7 @@ class RestSTSAccessTokenProvider(
             }
         }
         log.info("base64 saml token er" + response.access_token)
-        return String(Base64.getUrlDecoder().decode(response.access_token),Charsets.UTF_8)
+        return String(Base64.getDecoder().decode(response.access_token),Charsets.UTF_8)
     }
 
     private fun requestToken(): JwtToken {
