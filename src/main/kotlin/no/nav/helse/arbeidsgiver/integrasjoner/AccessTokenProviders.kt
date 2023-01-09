@@ -66,7 +66,7 @@ class RestSTSAccessTokenProvider(
     fun getSamlToken(): String {
         var stsEndpoint = "https://security-token-service.nais.preprod.local/rest/v1/sts/samltoken"
         val response = runBlocking {
-            httpClient.get<STSOidcResponse>() {
+            httpClient.get<STSOidcResponse>(stsEndpoint) {
                 headers.append("Authorization", basicAuth)
             }
         }
