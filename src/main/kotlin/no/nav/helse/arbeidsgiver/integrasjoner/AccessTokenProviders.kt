@@ -72,7 +72,7 @@ class RestSTSAccessTokenProvider(
                 headers.append("Authorization", basicAuth)
             }
         }
-        log.info("base64 saml token er" + response.access_token)
+        log.debug("base64 saml token er " + response.access_token)
         return String(Base64.getDecoder().decode(response.access_token),Charsets.UTF_8)
     }
 
@@ -104,7 +104,7 @@ class RestSTSAccessTokenProvider(
                 )
             }
         }
-        log.info("base64 saml token er" + response.access_token)
+        log.debug("base64 saml token er " + response.access_token)
         return String(Base64.getUrlDecoder().decode(response.access_token), Charsets.UTF_8)
     }
 
