@@ -76,7 +76,7 @@ class RestSTSAccessTokenProvider(
         return String(Base64.getDecoder().decode(response.access_token),Charsets.UTF_8)
     }
 
-    private fun requestToken(): JwtToken {s
+    private fun requestToken(): JwtToken {
         val response = runBlocking {
             httpClient.get<STSOidcResponse>(tokenEndpointURI) {
                 headers.append("Authorization", basicAuth)
