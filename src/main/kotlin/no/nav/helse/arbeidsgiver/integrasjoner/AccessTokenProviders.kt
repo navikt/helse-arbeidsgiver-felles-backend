@@ -32,6 +32,7 @@ class RestSTSAccessTokenProvider(
     password: String,
     stsEndpoint: String,
     private val exchangeEndpoint: String = "undefined",
+    private val tokenSamlEndpoint: String = "undefined",
     private val httpClient: HttpClient
 ) : AccessTokenProvider {
 
@@ -51,6 +52,7 @@ class RestSTSAccessTokenProvider(
         password = password,
         stsEndpoint = stsEndpoint,
         "undefined",
+        "undefined",
         httpClient = httpClient
     )
 
@@ -64,9 +66,9 @@ class RestSTSAccessTokenProvider(
     }
 
     fun getSamlToken(): String {
-        var stsEndpoint = "https://security-token-service.nais.preprod.local/rest/v1/sts/samltoken"
+        if (tokenSamlEndpoint == "undefined") log.error("SAML token endpoint is undefined")
         val response = runBlocking {
-            httpClient.get<STSOidcResponse>(stsEndpoint) {
+            httpClient.get<STSOidcResponse>(tokenSamlEndpoint) {
                 headers.append("Authorization", basicAuth)
             }
         }
@@ -74,7 +76,7 @@ class RestSTSAccessTokenProvider(
         return String(Base64.getDecoder().decode(response.access_token),Charsets.UTF_8)
     }
 
-    private fun requestToken(): JwtToken {
+    private fun requestToken(): JwtToken {s
         val response = runBlocking {
             httpClient.get<STSOidcResponse>(tokenEndpointURI) {
                 headers.append("Authorization", basicAuth)
@@ -86,6 +88,7 @@ class RestSTSAccessTokenProvider(
     }
 
     fun exchangeForSaml(b64EncodedToken: String): String {
+        if (exchangeEndpoint == "undefined") log.error("Saml token exchange endpoint is undefined")
         val response = runBlocking {
             httpClient.post<STSOidcResponse>(exchangeEndpoint) {
                 headers.append("Authorization", basicAuth)
