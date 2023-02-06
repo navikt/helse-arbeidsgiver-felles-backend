@@ -78,7 +78,6 @@ class PdlClientImpl(
                 body = TextContent(om.writeValueAsString(graphqlQuery), contentType = ContentType.Application.Json)
                 header("Tema", "SYK")
                 header("Authorization", "Bearer ${loggedInUserToken ?: stsToken}")
-                header("Nav-Consumer-Token", "Bearer $stsToken")
             }
         }
 
