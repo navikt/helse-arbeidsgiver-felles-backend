@@ -71,7 +71,10 @@ class PdlClientImpl(
     }
 
     private inline fun <K, reified T : PdlResponse<K>> queryPdl(graphqlQuery: PdlQueryObject, loggedInUserToken: String? = null): K? {
-        val stsToken = stsClient.getToken()
+        var stsToken = ""
+        if (loggedInUserToken == null) {
+            stsToken = stsClient.getToken()
+        }
         val pdlPersonReponse = runBlocking {
             httpClient.post<T> {
                 url(pdlUrl)
