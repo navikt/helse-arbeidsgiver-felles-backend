@@ -10,7 +10,6 @@ import kotlinx.coroutines.runBlocking
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import org.slf4j.LoggerFactory
-import java.nio.charset.Charset
 import java.time.Instant
 import java.util.*
 
@@ -33,7 +32,7 @@ class RestSTSAccessTokenProvider(
     stsEndpoint: String,
     private val exchangeEndpoint: String = "undefined",
     private val tokenSamlEndpoint: String = "undefined",
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
 ) : AccessTokenProvider {
 
     private val tokenEndpointURI: String
@@ -53,7 +52,7 @@ class RestSTSAccessTokenProvider(
         stsEndpoint = stsEndpoint,
         "undefined",
         "undefined",
-        httpClient = httpClient
+        httpClient = httpClient,
     )
 
     override fun getToken(): String {
@@ -73,7 +72,7 @@ class RestSTSAccessTokenProvider(
             }
         }
         log.debug("base64 saml token er " + response.access_token)
-        return String(Base64.getDecoder().decode(response.access_token),Charsets.UTF_8)
+        return String(Base64.getDecoder().decode(response.access_token), Charsets.UTF_8)
     }
 
     private fun requestToken(): JwtToken {
@@ -100,7 +99,7 @@ class RestSTSAccessTokenProvider(
                         append("requested_token_type", "urn:ietf:params:oauth:token-type:saml2")
                         append("subject_token_type", "urn:ietf:params:oauth:token-type:access_token")
                         append("subject_token", b64EncodedToken)
-                    }
+                    },
                 )
             }
         }
