@@ -77,6 +77,7 @@ class PdlClientImpl(
                 url(pdlUrl)
                 body = TextContent(om.writeValueAsString(graphqlQuery), contentType = ContentType.Application.Json)
                 header("Tema", "SYK")
+                header("Behandlingsnummer", "B139")
                 header("Authorization", "Bearer ${loggedInUserToken ?: stsToken}")
             }
         }
