@@ -30,6 +30,8 @@ jobs:
       - name: compose up
         run: cd docker/local && docker-compose up -d && sleep 10
       - name: test and build
+        permissions:
+          packages: write
         run: ./gradlew --console=plain build test slowTests publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
