@@ -10,7 +10,6 @@ import kotlinx.coroutines.runBlocking
 import no.nav.security.token.support.client.core.ClientProperties
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import org.slf4j.LoggerFactory
-import java.nio.charset.Charset
 import java.time.Instant
 import java.util.*
 
@@ -73,7 +72,7 @@ class RestSTSAccessTokenProvider(
             }
         }
         log.debug("base64 saml token er " + response.access_token)
-        return String(Base64.getDecoder().decode(response.access_token),Charsets.UTF_8)
+        return String(Base64.getDecoder().decode(response.access_token), Charsets.UTF_8)
     }
 
     private fun requestToken(): JwtToken {
