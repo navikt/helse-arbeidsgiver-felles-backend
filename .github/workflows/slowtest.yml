@@ -28,7 +28,7 @@ jobs:
             ${{ runner.os }}-gradle-cache-
 
       - name: compose up
-        run: cd docker/local && docker-compose up -d && sleep 10
+        run: cd docker/local && docker compose up -d && sleep 10
 
       - name: test and build
         run: ./gradlew --console=plain build slowTests

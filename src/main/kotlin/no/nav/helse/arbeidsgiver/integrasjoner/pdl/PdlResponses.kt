@@ -36,7 +36,7 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
 
     data class PdlFullPersonliste(
         val navn: List<PdlNavn>,
-        val foedsel: List<PdlFoedsel>,
+        val foedselsdato: List<PdlFoedsel>,
         val doedsfall: List<PdlDoedsfall>,
         val adressebeskyttelse: List<PdlAdressebeskyttelse>,
         val statsborgerskap: List<PdlStatsborgerskap>,
@@ -47,7 +47,7 @@ data class PdlHentFullPerson(val hentPerson: PdlFullPersonliste?, val hentIdente
         fun trekkUtFulltNavn() = navn.map { "${it.fornavn} ${it.mellomnavn ?: ""} ${it.etternavn}".replace("  ", " ") }.firstOrNull()
         fun trekkUtKjoenn() = kjoenn.firstOrNull()?.kjoenn
         fun trekkUtDoedsfalldato() = doedsfall.firstOrNull()?.doedsdato
-        fun trekkUtFoedselsdato() = foedsel.firstOrNull()?.foedselsdato
+        fun trekkUtFoedselsdato() = foedselsdato.firstOrNull()?.foedselsdato
         fun trekkUtDiskresjonskode() = adressebeskyttelse.firstOrNull()?.getKodeverkDiskresjonskode()
 
         data class PdlNavn(

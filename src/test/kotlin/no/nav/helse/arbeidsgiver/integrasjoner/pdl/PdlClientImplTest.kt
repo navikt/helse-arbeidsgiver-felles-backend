@@ -32,7 +32,7 @@ class PdlClientImplTest {
         assertThat(response?.hentIdenter?.identer?.filter { it.gruppe == PdlIdent.PdlIdentGruppe.AKTORID }).hasSize(1)
         assertThat(response?.hentIdenter?.identer?.filter { it.gruppe == PdlIdent.PdlIdentGruppe.FOLKEREGISTERIDENT }).hasSize(1)
         assertThat(response?.hentGeografiskTilknytning?.gtType).isEqualTo(PdlHentFullPerson.PdlGeografiskTilknytning.PdlGtType.KOMMUNE)
-        assertThat(response?.hentPerson?.foedsel?.firstOrNull()?.foedselsdato).isEqualTo(LocalDate.of(1984, 1, 31))
+        assertThat(response?.hentPerson?.foedselsdato?.firstOrNull()?.foedselsdato).isEqualTo(LocalDate.of(1984, 1, 31))
         assertThat(response?.hentPerson?.doedsfall).hasSize(0)
         assertThat(response?.hentPerson?.kjoenn?.firstOrNull()?.kjoenn).isEqualTo("MANN")
     }
