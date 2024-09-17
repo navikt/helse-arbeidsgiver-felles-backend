@@ -1,25 +1,25 @@
 query($ident: ID!) {
     hentIdenter(ident: $ident) {
-        identer {ident gruppe}
+        identer { ident gruppe }
     }
 
     hentPerson(ident: $ident) {
         navn {
             fornavn mellomnavn etternavn
-            metadata {  master }
+            metadata { master }
         }
         bostedsadresse(historikk: false) {
             angittFlyttedato
-            gyldigTilOgMed
             gyldigFraOgMed
-            vegadresse {kommunenummer}
-            matrikkeladresse{kommunenummer}
-            ukjentBosted{bostedskommune}
+            gyldigTilOgMed
+            vegadresse { kommunenummer }
+            matrikkeladresse{ kommunenummer }
+            ukjentBosted{ bostedskommune }
         }
         statsborgerskap { land }
-        foedsel {foedselsdato}
-        doedsfall {doedsdato}
-        adressebeskyttelse {gradering}
+        foedselsdato { foedselsdato }
+        doedsfall { doedsdato }
+        adressebeskyttelse { gradering }
         kjoenn { kjoenn }
     }
 
