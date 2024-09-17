@@ -30,7 +30,7 @@ version = "${dateFormat.format(Date())}-$gitHash"
 plugins {
     kotlin("jvm") version "1.5.30"
     id("org.sonarqube") version "3.3"
-    id("com.github.ben-manes.versions") version "0.27.0"
+    id("com.github.ben-manes.versions") version "0.48.0"
     id("maven-publish")
     id("com.expediagroup.graphql") version "5.3.2"
     jacoco
